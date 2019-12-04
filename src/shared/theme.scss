@@ -1,0 +1,17 @@
+$white: #ffffff;
+$grayE8: #e8e8e8;
+$grayA3: #a3a3a3;
+$gray9B: #9b9b9b;
+$black: #20222d;
+$yellow: #fbd52f;
+$yellow-gradient: linear-gradient(45deg, #ffd009 0%, #ffde75 100%);
+$green: #10d26b;
+$blue: #4fadff;
+
+@mixin link($color) {
+  color: $color;
+
+  &:hover {
+    border-bottom-color: $color;
+  }
+}

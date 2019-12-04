@@ -1,16 +1,20 @@
-import React, {FC, useEffect} from "react"
+import React, {FC, useEffect, useState} from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {Form, Field} from "react-final-form"
 
+import Link from "../shared/link"
 import useAuth, {AuthCredentials} from "./context"
 import $auth from "./service"
 
-/* import classes from "./login.module.scss" */
+import classes from "./login.module.scss"
+
+type Step = "email" | "password"
 
 const Login: FC<RouteComponentProps> = props => {
+  const [step, setStep] = useState<Step>("email")
   const auth = useAuth()
 
-  async function onSubmit(credentials: AuthCredentials) {
+  async function nextStep(credentials: AuthCredentials) {
     try {
       await $auth.login(credentials)
     } catch (err) {
@@ -28,25 +32,96 @@ const Login: FC<RouteComponentProps> = props => {
     return null
   }
 
+  const renderFields = () => {
+    switch (step) {
+      case "email":
+        return (
+          <>
+            <div className={classes.login}>
+              <label className={classes.label}>Adresse email</label>
+              <Field
+                autoFocus
+                className={classes.input}
+                name="email"
+                component="input"
+                type="email"
+              />
+            </div>
+
+            <button className={classes.continue} type="submit">
+              Continuer
+            </button>
+
+            <div className={classes.separator}>
+              <span>ou</span>
+            </div>
+
+            <div className={classes.otherContinues}>
+              <button className={classes.continueWithGoogle} type="button">
+                Continuer avec Google
+              </button>
+              <button className={classes.continueWithFacebook} type="button">
+                Continuer avec Facebook
+              </button>
+            </div>
+
+            <div>
+              <Link className={classes.link} to="/forgotten-password">
+                Créer un compte
+              </Link>
+            </div>
+          </>
+        )
+
+      case "password":
+        return (
+          <>
+            <div className={classes.formItem}>
+              <label className={classes.label}>Login</label>
+              <Field
+                autoFocus
+                className={classes.input}
+                name="email"
+                component="input"
+                type="email"
+              />
+            </div>
+
+            <div className={classes.formItem}>
+              <label className={classes.label}>Password</label>
+              <Field className={classes.input} name="password" component="input" type="password" />
+              <div>
+                <Link className={classes.link} to="/forgotten-password">
+                  Mot de passe oublié
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <button className={classes.submit} type="submit">
+                Connecter
+              </button>
+            </div>
+          </>
+        )
+
+      default:
+        return null
+    }
+  }
+
   return (
-    <Form
-      onSubmit={onSubmit}
-      render={({handleSubmit}) => (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Login</label>
-            <Field name="email" component="input" type="email" placeholder="Email" />
-          </div>
-
-          <div>
-            <label>Password</label>
-            <Field name="password" component="input" type="password" placeholder="Password" />
-          </div>
-
-          <button type="submit">Send</button>
-        </form>
-      )}
-    />
+    <div className={classes.container}>
+      <img className={classes.logo} src="/images/logo.svg" alt="" />
+      <Form
+        onSubmit={nextStep}
+        render={({handleSubmit}) => (
+          <form className={classes.form} onSubmit={handleSubmit}>
+            {renderFields()}
+          </form>
+        )}
+      />
+    </div>
   )
 }
 

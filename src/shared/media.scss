@@ -1,0 +1,23 @@
+$lg: 1200px; // Large screen / wide desktop
+$md: 900px; // Medium screen / desktop
+$sm: 550px; // Small screen / tablet
+
+@mixin media($size) {
+  @if $size == lg {
+    @media screen and (max-width: $lg) {
+      @content;
+    }
+  } @else if $size == md {
+    @media screen and (max-width: $md) {
+      @content;
+    }
+  } @else if $size == sm {
+    @media screen and (max-width: $sm) {
+      @content;
+    }
+  } @else if $size == xs {
+    @media screen and (min-width: $sm - 1) {
+      @content;
+    }
+  }
+}
