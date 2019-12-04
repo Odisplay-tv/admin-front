@@ -44,6 +44,11 @@
   grid-template-rows: max-content;
 }
 
+.password {
+  @include form-item;
+  grid-template-rows: max-content;
+}
+
 .otherContinues {
   @include form-item;
 }
