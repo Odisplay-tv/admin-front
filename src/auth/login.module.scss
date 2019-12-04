@@ -16,20 +16,30 @@
   width: 400px;
 }
 
-.form {
-  align-content: center;
+.content {
   align-items: center;
   background: $white;
   border-radius: 50%;
   box-shadow: 0 0 10px rgba($black, 0.3);
   display: grid;
-  grid-auto-rows: max-content;
-  grid-row-gap: 20px;
+  grid-template: 1fr / 1fr;
   height: 550px;
   justify-items: center;
+  overflow: hidden;
   padding: 80px 0;
-  text-align: center;
   width: 550px;
+}
+
+.form {
+  align-content: center;
+  align-items: center;
+  display: grid;
+  grid-auto-rows: max-content;
+  grid-column: 1;
+  grid-row: 1;
+  grid-row-gap: 20px;
+  justify-items: center;
+  text-align: center;
 }
 
 @mixin form-item {
