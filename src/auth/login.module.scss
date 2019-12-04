@@ -16,6 +16,13 @@
   width: 400px;
 }
 
+.loader {
+  height: 24px;
+  position: absolute;
+  right: 10px;
+  width: 24px;
+}
+
 .content {
   align-items: center;
   background: $white;
@@ -99,10 +106,15 @@
   font-size: 18px;
   font-weight: bold;
   padding: 10px 50px;
-  transition: 250ms background;
+  transition-duration: 250ms;
+  transition-property: background, opacity;
 
   &:hover {
     background: darken($background, 5%);
+  }
+
+  &[disabled] {
+    opacity: 0.25;
   }
 }
 
@@ -124,6 +136,8 @@
 
 .continue {
   @include button($green, $white);
+  display: flex;
+  position: relative;
 }
 
 .continueWithGoogle {

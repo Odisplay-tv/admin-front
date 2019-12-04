@@ -1,18 +1,21 @@
 import React, {FC, useEffect, useState} from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {animated, useSpring, useTransition} from "react-spring"
+import {toast} from "react-toastify"
 
+import Loader from "../async/loader"
+import useAsync from "../async/context"
 import Link from "../shared/link"
 import useAuth from "./context"
 import $auth from "./service"
 
 import classes from "./login.module.scss"
 
-type Step = "get-email" | "get-password" | "login"
+type Step = "get-email" | "get-password"
 
 type LoginFormProps = {
   step: Step
-  nextStep: (field: string) => void
+  nextStep: (field: string) => Promise<void>
 }
 
 const transitionConf = {
@@ -28,7 +31,6 @@ const transitionConf = {
 
 const Login: FC<RouteComponentProps> = props => {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [step, setStep] = useState<Step>("get-email")
   const auth = useAuth()
 
@@ -42,12 +44,6 @@ const Login: FC<RouteComponentProps> = props => {
       props.history.push("/")
     }
   }, [auth, props.history])
-
-  useEffect(() => {
-    if (step === "login") {
-      $auth.loginWithCredentials({email, password}).catch(err => console.log(err))
-    }
-  }, [email, password, step])
 
   if (!auth.state.initialized) {
     return null
@@ -72,7 +68,7 @@ const Login: FC<RouteComponentProps> = props => {
       >
         <EmailStep
           step={step}
-          nextStep={data => {
+          nextStep={async data => {
             setEmail(data)
             setStep("get-password")
           }}
@@ -80,9 +76,8 @@ const Login: FC<RouteComponentProps> = props => {
 
         <PasswordStep
           step={step}
-          nextStep={data => {
-            setPassword(data)
-            setStep("login")
+          nextStep={async password => {
+            await $auth.loginWithCredentials({email, password})
           }}
         />
       </animated.div>
@@ -92,6 +87,7 @@ const Login: FC<RouteComponentProps> = props => {
 
 const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
   const [email, setEmail] = useState("")
+  const {loading, setLoading} = useAsync()
   const transitions = useTransition(step === "get-email", null, transitionConf)
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
@@ -105,17 +101,21 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
 
   async function loginWithGoogle() {
     try {
+      setLoading(true)
       await $auth.loginWithGoogle()
     } catch (err) {
-      console.log(err)
+      setLoading(false)
+      toast.error(err.code)
     }
   }
 
   async function loginWithFacebook() {
     try {
+      setLoading(true)
       await $auth.loginWithFacebook()
     } catch (err) {
-      console.log(err)
+      setLoading(false)
+      toast.error(err.code)
     }
   }
 
@@ -129,13 +129,14 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
               className={classes.input}
               type="email"
               name="email"
-              autoFocus
               onChange={handleChange}
+              autoFocus
             />
           </div>
 
-          <button className={classes.continue} type="submit">
-            Continuer
+          <button className={classes.continue} type="submit" disabled={!email || loading}>
+            <span>Continuer</span>
+            <Loader className={classes.loader} />
           </button>
 
           <div>
@@ -164,21 +165,29 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
       ),
   )
 
-  // Wrap render inside fragments to please TypeScript
+  // TypeScript doesn't like <animated> element
   return <>{render}</>
 }
 
 const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
   const [password, setPassword] = useState("")
+  const {loading, setLoading} = useAsync()
   const transitions = useTransition(step === "get-password", null, transitionConf)
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     setPassword(evt.target.value)
   }
 
-  function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()
-    nextStep(password)
+
+    try {
+      setLoading(true)
+      await nextStep(password)
+    } catch (err) {
+      toast.error(err.code)
+      setLoading(false)
+    }
   }
 
   const render = transitions.map(
@@ -191,13 +200,14 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
               className={classes.input}
               type="password"
               name="password"
-              autoFocus
               onChange={handleChange}
+              autoFocus
             />
           </div>
 
-          <button className={classes.continue} type="submit">
-            Continuer
+          <button className={classes.continue} type="submit" disabled={!password || loading}>
+            <span>Continuer</span>
+            <Loader className={classes.loader} />
           </button>
 
           <div>
@@ -209,7 +219,7 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
       ),
   )
 
-  // TypeScript doesn't like animated element
+  // TypeScript doesn't like <animated> element
   return <>{render}</>
 }
 

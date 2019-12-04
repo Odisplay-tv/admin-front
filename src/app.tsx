@@ -2,6 +2,7 @@ import React, {FC, ComponentType} from "react"
 import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom"
 
 import {AuthContextProvider} from "./auth/context"
+import {AsyncContextProvider} from "./async/context"
 import Login from "./auth/login"
 import Logout from "./auth/logout"
 import PrivateRoute from "./auth/private-route"
@@ -22,7 +23,9 @@ const App: FC = () => {
 
 const withContexts = (Component: ComponentType) => () => (
   <AuthContextProvider>
-    <Component />
+    <AsyncContextProvider>
+      <Component />
+    </AsyncContextProvider>
   </AuthContextProvider>
 )
 

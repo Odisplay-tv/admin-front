@@ -17,8 +17,8 @@ type AuthAction =
     }
 
 type AuthState = {
-  initialized: Boolean
-  authenticated: Boolean
+  initialized: boolean
+  authenticated: boolean
   user: firebase.auth.Auth["currentUser"]
 }
 
