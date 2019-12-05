@@ -1,0 +1,122 @@
+@import "./theme";
+@import "./media";
+
+.nav {
+  background: $black;
+  color: $white;
+  display: grid;
+  grid-auto-flow: rows;
+  grid-auto-rows: max-content;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  grid-template-rows: 190px;
+  min-width: 80px;
+  transition-duration: 250ms;
+  transition-property: left, box-shadow;
+  transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+
+  @include media(md) {
+    grid-template-rows: 50px;
+  }
+
+  @include media(sm) {
+    bottom: 0;
+    box-shadow: none;
+    left: -80px;
+    position: fixed;
+    top: 0;
+
+    &[data-visible] {
+      box-shadow: 5px 0 10px rgba($black, 0.25);
+      left: 0;
+    }
+  }
+}
+
+.logo {
+  align-items: center;
+  background: $yellow-gradient;
+  display: grid;
+  grid-row: 1;
+  justify-items: center;
+  padding: 10px;
+}
+
+@mixin item {
+  align-items: center;
+  border-left: 3px solid transparent;
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  margin: 20px 0 0 0;
+  padding: 10px 20px;
+  transition-duration: 200ms;
+  transition-property: background, border;
+
+  &:hover {
+    background: rgba($white, 0.1);
+  }
+
+  &.active {
+    border-left-color: $yellow;
+  }
+
+  @include media(md) {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 10px;
+  }
+}
+
+.item {
+  @include item();
+  font-size: 21px;
+}
+
+.subitem {
+  @include item;
+  color: $gray9B;
+  font-size: 14px;
+  font-weight: 100;
+  margin-top: 0;
+
+  @include media(md) {
+    display: none;
+  }
+}
+
+.itemText {
+  grid-column: 2;
+  grid-row: 1;
+
+  @include media(md) {
+    display: none;
+  }
+}
+
+.itemCount {
+  align-items: center;
+  background: $green;
+  border: 2px solid $grayE8;
+  border-radius: 50%;
+  display: flex;
+  font-size: 18px;
+  grid-column: 2;
+  grid-row: 1;
+  height: 30px;
+  justify-content: center;
+  justify-self: end;
+  width: 30px;
+
+  @include media(md) {
+    display: none;
+  }
+}
+
+.itemPill {
+  background: $blue;
+  border-radius: 50%;
+  display: inline-block;
+  height: 7px;
+  margin-right: 7px;
+  width: 7px;
+}

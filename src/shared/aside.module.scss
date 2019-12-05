@@ -1,0 +1,141 @@
+@import "./theme";
+@import "./media";
+
+@mixin hoverable {
+  transition-duration: 200ms;
+  transition-property: background;
+
+  &:hover {
+    background: lighten($black, 75%);
+  }
+}
+
+.aside {
+  align-items: stretch;
+  background: $white;
+  display: grid;
+  grid-auto-columns: max-content;
+  grid-auto-flow: column;
+  grid-column: 2;
+  grid-row: 1;
+  grid-template-columns: repeat(2, max-content) 1fr;
+  padding-right: 30px;
+
+  @include media(lg) {
+    grid-template-columns: max-content 1fr;
+  }
+
+  @include media(sm) {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+}
+
+.aside-burger {
+  align-self: center;
+  display: none;
+  padding: 0 15px;
+  z-index: 1;
+
+  @include media(sm) {
+    display: block;
+  }
+}
+
+.aside-account {
+  @include hoverable;
+  display: grid;
+  grid-column-gap: 15px;
+  grid-template-columns: 50px 1fr;
+  padding-left: 15px;
+
+  @include media(sm) {
+    grid-template-columns: 1fr;
+    padding: 0 15px;
+  }
+}
+
+.aside-account-icon {
+  align-self: end;
+  grid-column: 1;
+  justify-self: center;
+
+  img {
+    height: 35px;
+    width: 35px;
+
+    @include media(sm) {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  @include media(sm) {
+    align-self: center;
+  }
+}
+
+.aside-account-label {
+  align-self: center;
+  font-size: 18px;
+  font-weight: bold;
+  grid-column: 2;
+  margin-right: 30px;
+
+  @include media(sm) {
+    display: none;
+  }
+}
+
+.aside-info {
+  align-items: center;
+  background: $blue;
+  display: grid;
+  grid-gap: 30px;
+  grid-template-columns: 20px 1fr;
+
+  @include media(lg) {
+    display: none;
+  }
+}
+
+.aside-info-arrow {
+  border: 10px solid transparent;
+  border-left-color: $white;
+  height: 0;
+  transition-duration: 200ms;
+  transition-property: border;
+  width: 0;
+}
+
+.aside-account:hover + .aside-info > .aside-info-arrow {
+  border-left-color: lighten($black, 75%);
+}
+
+.aside-info-label {
+  color: $white;
+  font-size: 18px;
+  margin: 0 15px 4px 0;
+
+  strong:first-of-type {
+    font-size: 22px;
+  }
+}
+
+.aside-nav-item {
+  @include hoverable;
+  align-items: center;
+  display: grid;
+  font-size: 16px;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  grid-column-gap: 10px;
+  grid-template-columns: max-content;
+  padding: 0 15px;
+
+  @include media(sm) {
+    div {
+      display: none;
+    }
+  }
+}

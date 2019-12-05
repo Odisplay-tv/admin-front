@@ -8,6 +8,9 @@ import ResetPassword from "./auth/reset-password"
 import Login from "./auth/login"
 import Logout from "./auth/logout"
 import PrivateRoute from "./auth/private-route"
+import Nav from "./shared/nav"
+import Aside from "./shared/aside"
+import Main from "./shared/main"
 import Home from "./home/home"
 
 const App: FC = () => {
@@ -18,12 +21,22 @@ const App: FC = () => {
         <Route path="/register" component={Register} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/logout" component={Logout} />
-        <PrivateRoute path="/" component={Home} />
+        <PrivateRoute path="/" component={withLayout(Home)} />
         <Redirect to="/login" />
       </Switch>
     </Router>
   )
 }
+
+const withLayout = (Component: ComponentType): FC => props => (
+  <>
+    <Nav />
+    <Aside />
+    <Main>
+      <Component {...props} />
+    </Main>
+  </>
+)
 
 const withContexts = (Component: ComponentType) => () => (
   <AuthContextProvider>
