@@ -6,11 +6,16 @@ import Link from "./link"
 
 import classes from "./nav.module.scss"
 
-const Nav: FC = () => {
+type NavProps = {
+  visible: boolean
+}
+
+const Nav: FC<NavProps> = ({visible}) => {
   const {t} = useTranslation()
+  const dataVisible = visible ? {"data-visible": ""} : {}
 
   return (
-    <nav className={classes.nav}>
+    <nav className={classes.nav} {...dataVisible}>
       <header className={classes.logo}>
         <img src="/images/logo.svg" alt="" />
       </header>

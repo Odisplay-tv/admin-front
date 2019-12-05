@@ -40,6 +40,12 @@
   grid-row: 1;
   justify-items: center;
   padding: 10px;
+
+  @include media(sm) {
+    img {
+      display: none;
+    }
+  }
 }
 
 @mixin item {

@@ -1,4 +1,4 @@
-import React, {FC, ComponentType} from "react"
+import React, {FC, ComponentType, useState} from "react"
 import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom"
 
 import {AuthContextProvider} from "./auth/context"
@@ -28,15 +28,19 @@ const App: FC = () => {
   )
 }
 
-const withLayout = (Component: ComponentType): FC => props => (
-  <>
-    <Nav />
-    <Aside />
-    <Main>
-      <Component {...props} />
-    </Main>
-  </>
-)
+const withLayout = (Component: ComponentType): FC => props => {
+  const [visible, setVisible] = useState(false)
+
+  return (
+    <>
+      <Nav visible={visible} />
+      <Aside onBurgerClick={() => setVisible(!visible)} />
+      <Main>
+        <Component {...props} />
+      </Main>
+    </>
+  )
+}
 
 const withContexts = (Component: ComponentType) => () => (
   <AuthContextProvider>

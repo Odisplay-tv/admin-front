@@ -1,18 +1,29 @@
-import React, {FC} from "react"
+import React, {FC, MouseEvent} from "react"
 import {useTranslation} from "react-i18next"
 
 import Link from "./link"
 
 import classes from "./aside.module.scss"
 
-const Aside: FC = () => {
+type AsideProps = {
+  onBurgerClick: () => void
+}
+
+const Aside: FC<AsideProps> = props => {
   const {t} = useTranslation(["translation", "auth"])
+
+  function handleBurgerClick(evt: MouseEvent) {
+    evt.preventDefault()
+    console.log("coucou")
+    props.onBurgerClick()
+  }
 
   return (
     <aside className={classes.aside}>
       <div className={classes.burger}>
-        <a href="/">
+        <a href="/" onClick={handleBurgerClick}>
           <img src="#" alt="" />
+          burger
         </a>
       </div>
       <Link className={classes.account} to="/account">
