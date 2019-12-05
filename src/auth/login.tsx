@@ -1,5 +1,6 @@
 import React, {FC, useEffect, useState} from "react"
 import {RouteComponentProps} from "react-router-dom"
+import {useTranslation} from "react-i18next"
 import {animated, useSpring, useTransition} from "react-spring"
 import {toast} from "react-toastify"
 
@@ -19,12 +20,12 @@ type LoginFormProps = {
 }
 
 const transitionConf = {
-  from: {transform: "translateX(50px)", opacity: 0},
+  from: {transform: "translateX(100px)", opacity: 0},
   enter: {transform: "translateX(0)", opacity: 1},
-  leave: {transform: "translateX(-250px)", opacity: 0},
+  leave: {transform: "translateX(-500px)", opacity: 0},
   config: {
     mass: 1,
-    tension: 150,
+    tension: 130,
     friction: 25,
   },
 }
@@ -49,12 +50,11 @@ const Login: FC<RouteComponentProps> = props => {
     return null
   }
 
+  const trans = (x: number, y: number) => `perspective(600px) rotateX(${x}deg) rotateY(${y}deg)`
   const calc = (x: number, y: number) => [
     -(y - window.innerHeight / 2) / 300,
     (x - window.innerWidth / 2) / 500,
   ]
-
-  const trans = (x: number, y: number) => `perspective(600px) rotateX(${x}deg) rotateY(${y}deg)`
 
   return (
     <div
@@ -89,13 +89,16 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
   const [email, setEmail] = useState("")
   const {loading, setLoading} = useAsync()
   const transitions = useTransition(step === "get-email", null, transitionConf)
+  const {t} = useTranslation("auth")
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
+    if (loading) return
     setEmail(evt.target.value)
   }
 
   function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()
+    if (loading) return
     nextStep(email)
   }
 
@@ -105,7 +108,7 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
       await $auth.loginWithGoogle()
     } catch (err) {
       setLoading(false)
-      toast.error(err.code)
+      toast.error(t(err.code))
     }
   }
 
@@ -115,7 +118,7 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
       await $auth.loginWithFacebook()
     } catch (err) {
       setLoading(false)
-      toast.error(err.code)
+      toast.error(t(err.code))
     }
   }
 
@@ -124,7 +127,7 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
       item && (
         <animated.form key={key} className={classes.form} onSubmit={handleSubmit} style={props}>
           <div className={classes.login}>
-            <label className={classes.label}>Adresse email</label>
+            <label className={classes.label}>{t("email")}</label>
             <input
               className={classes.input}
               type="email"
@@ -135,30 +138,30 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
           </div>
 
           <button className={classes.continue} type="submit" disabled={!email || loading}>
-            <span>Continuer</span>
+            <span>{t("continue")}</span>
             <Loader className={classes.loader} />
           </button>
 
           <div>
             <Link className={classes.link} to="/register">
-              Créer un compte
+              {t("register")}
             </Link>
           </div>
 
           <div className={classes.separator}>
-            <span>ou</span>
+            <span>{t("or")}</span>
           </div>
 
           <div className={classes.otherContinues}>
             <button className={classes.continueWithGoogle} type="button" onClick={loginWithGoogle}>
-              Continuer avec Google
+              {t("continue-with-google")}
             </button>
             <button
               className={classes.continueWithFacebook}
               type="button"
               onClick={loginWithFacebook}
             >
-              Continuer avec Facebook
+              {t("continue-with-facebook")}
             </button>
           </div>
         </animated.form>
@@ -173,19 +176,22 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
   const [password, setPassword] = useState("")
   const {loading, setLoading} = useAsync()
   const transitions = useTransition(step === "get-password", null, transitionConf)
+  const {t} = useTranslation("auth")
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
+    if (loading) return
     setPassword(evt.target.value)
   }
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()
+    if (loading) return
 
     try {
       setLoading(true)
       await nextStep(password)
     } catch (err) {
-      toast.error(err.code)
+      toast.error(t(err.code))
       setLoading(false)
     }
   }
@@ -195,7 +201,7 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
       item && (
         <animated.form key={key} className={classes.form} onSubmit={handleSubmit} style={props}>
           <div className={classes.login}>
-            <label className={classes.label}>Mot de passe</label>
+            <label className={classes.label}>{t("password")}</label>
             <input
               className={classes.input}
               type="password"
@@ -206,13 +212,13 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
           </div>
 
           <button className={classes.continue} type="submit" disabled={!password || loading}>
-            <span>Continuer</span>
+            <span>{t("continue")}</span>
             <Loader className={classes.loader} />
           </button>
 
           <div>
             <Link className={classes.link} to="/forgotten-password">
-              Mot de passe oublié
+              {t("forgotten-password")}
             </Link>
           </div>
         </animated.form>
@@ -224,3 +230,4 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
 }
 
 export default Login
+

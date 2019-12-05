@@ -11,7 +11,8 @@ $blue: #4fadff;
 @mixin link($color) {
   color: $color;
 
-  &:hover {
+  &:hover,
+  &:focus {
     border-bottom-color: $color;
   }
 }

@@ -60,6 +60,10 @@ a {
   border-bottom: 1px solid transparent;
   text-decoration: none;
   transition: 250ms border-bottom;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 input:focus {
