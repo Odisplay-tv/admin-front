@@ -1,5 +1,8 @@
 {
+  "my-account": "Mon compte",
+  "need-help": "Besoin d'aide",
   "plannings": "Plannings",
   "playlists": "Playlists",
-  "screens": "Écrans"
+  "screens": "Écrans",
+  "trial-days-left": "Il vous reste <strong>{{days}}</strong> jours d'évaluation. <strong>Passez au premium</strong>"
 }

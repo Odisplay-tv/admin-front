@@ -1,9 +1,9 @@
 import React, {FC} from "react"
 
-/* import classes from './main.module.scss' */
+import classes from "./main.module.scss"
 
-const Main: FC = () => {
-  return <div>nav</div>
+const Main: FC = ({children}) => {
+  return <main className={classes.main}>{children}</main>
 }
 
 export default Main

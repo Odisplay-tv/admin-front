@@ -44,5 +44,6 @@ rules:
   react/jsx-filename-extension: [1, {extensions: [.tsx]}]
   react/jsx-one-expression-per-line: 0
   react/jsx-props-no-spreading: 0
+  react/no-danger: 0
   react/prop-types: 0
   space-in-brackets: 0

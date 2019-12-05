@@ -31,7 +31,7 @@
   }
 }
 
-.aside-burger {
+.burger {
   align-self: center;
   display: none;
   padding: 0 15px;
@@ -42,7 +42,7 @@
   }
 }
 
-.aside-account {
+.account {
   @include hoverable;
   display: grid;
   grid-column-gap: 15px;
@@ -55,7 +55,7 @@
   }
 }
 
-.aside-account-icon {
+.accountIcon {
   align-self: end;
   grid-column: 1;
   justify-self: center;
@@ -75,7 +75,7 @@
   }
 }
 
-.aside-account-label {
+.accountLabel {
   align-self: center;
   font-size: 18px;
   font-weight: bold;
@@ -87,7 +87,7 @@
   }
 }
 
-.aside-info {
+.info {
   align-items: center;
   background: $blue;
   display: grid;
@@ -99,7 +99,7 @@
   }
 }
 
-.aside-info-arrow {
+.infoArrow {
   border: 10px solid transparent;
   border-left-color: $white;
   height: 0;
@@ -108,11 +108,11 @@
   width: 0;
 }
 
-.aside-account:hover + .aside-info > .aside-info-arrow {
+.account:hover + .info > .infoArrow {
   border-left-color: lighten($black, 75%);
 }
 
-.aside-info-label {
+.infoLabel {
   color: $white;
   font-size: 18px;
   margin: 0 15px 4px 0;
@@ -122,7 +122,7 @@
   }
 }
 
-.aside-nav-item {
+.navItem {
   @include hoverable;
   align-items: center;
   display: grid;
