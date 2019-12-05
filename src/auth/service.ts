@@ -1,6 +1,10 @@
 import firebase, {auth} from "../shared/firebase"
 import {AuthCredentials} from "./context"
 
+export function register({email, password}: AuthCredentials) {
+  return auth.createUserWithEmailAndPassword(email, password)
+}
+
 export async function loginWithCredentials({email, password}: AuthCredentials) {
   return auth.signInWithEmailAndPassword(email, password).then(res => res.user)
 }
@@ -19,4 +23,4 @@ export function logout() {
   return auth.signOut()
 }
 
-export default {loginWithCredentials, loginWithGoogle, loginWithFacebook, logout}
+export default {register, loginWithCredentials, loginWithGoogle, loginWithFacebook, logout}

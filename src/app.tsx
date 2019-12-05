@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom
 import {AuthContextProvider} from "./auth/context"
 import {AsyncContextProvider} from "./async/context"
 import Login from "./auth/login"
+import Register from "./auth/register"
 import Logout from "./auth/logout"
 import PrivateRoute from "./auth/private-route"
 import Home from "./home/home"
@@ -13,6 +14,7 @@ const App: FC = () => {
     <Router>
       <Switch>
         <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
         <Route path="/logout" component={Logout} />
         <PrivateRoute path="/" component={Home} />
         <Redirect to="/login" />

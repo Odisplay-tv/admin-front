@@ -10,7 +10,7 @@ import Link from "../shared/link"
 import useAuth from "./context"
 import $auth from "./service"
 
-import classes from "./login.module.scss"
+import classes from "./auth.module.scss"
 
 type Step = "get-email" | "get-password"
 
@@ -132,6 +132,7 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
               className={classes.input}
               type="email"
               name="email"
+              autoComplete="email"
               onChange={handleChange}
               autoFocus
             />
@@ -206,6 +207,7 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
               className={classes.input}
               type="password"
               name="password"
+              autoComplete="current-password"
               onChange={handleChange}
               autoFocus
             />
@@ -230,4 +232,3 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
 }
 
 export default Login
-
