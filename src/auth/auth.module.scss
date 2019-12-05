@@ -135,20 +135,26 @@
   }
 }
 
-.continue {
+.buttonSuccess {
   @include button($green, $white);
   display: flex;
   position: relative;
 }
 
-.continueWithGoogle {
+.buttonDanger {
+  @include button($red, $white);
+  display: flex;
+  position: relative;
+}
+
+.buttonSuccessGoogle {
   @include button($white, $black);
   border: 1px solid $grayA3;
   font-size: 12px;
   padding: 8px 50px;
 }
 
-.continueWithFacebook {
+.buttonSuccessFacebook {
   @include button(#3b5998, $white);
   font-size: 12px;
   padding: 8px 50px;

@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {useTranslation} from "react-i18next"
-import {animated, useSpring, useTransition} from "react-spring"
+import {animated} from "react-spring"
 import {toast} from "react-toastify"
 
 import Loader from "../async/loader"
@@ -9,36 +9,23 @@ import useAsync from "../async/context"
 import Link from "../shared/link"
 import useAuth from "./context"
 import $auth from "./service"
+import {useStepTranslation, usePerspective} from "./animations"
 
 import classes from "./auth.module.scss"
 
 type Step = "get-email" | "get-password"
 
 type LoginFormProps = {
+  email: string
   step: Step
   nextStep: (field: string) => Promise<void>
-}
-
-const transitionConf = {
-  from: {transform: "translateX(100px)", opacity: 0},
-  enter: {transform: "translateX(0)", opacity: 1},
-  leave: {transform: "translateX(-500px)", opacity: 0},
-  config: {
-    mass: 1,
-    tension: 130,
-    friction: 25,
-  },
 }
 
 const Login: FC<RouteComponentProps> = props => {
   const [email, setEmail] = useState("")
   const [step, setStep] = useState<Step>("get-email")
   const auth = useAuth()
-
-  const [style, updateSpring] = useSpring(() => ({
-    xy: [0, 0],
-    config: {mass: 5, tension: 350, friction: 40},
-  }))
+  const perspective = usePerspective()
 
   useEffect(() => {
     if (auth.state.authenticated) {
@@ -50,23 +37,12 @@ const Login: FC<RouteComponentProps> = props => {
     return null
   }
 
-  const trans = (x: number, y: number) => `perspective(600px) rotateX(${x}deg) rotateY(${y}deg)`
-  const calc = (x: number, y: number) => [
-    -(y - window.innerHeight / 2) / 300,
-    (x - window.innerWidth / 2) / 500,
-  ]
-
   return (
-    <div
-      onMouseMove={({clientX: x, clientY: y}) => updateSpring({xy: calc(x, y)})}
-      className={classes.container}
-    >
+    <div onMouseMove={perspective.handleMouseMove} className={classes.container}>
       <img className={classes.logo} src="/images/logo.svg" alt="" />
-      <animated.div
-        className={classes.content}
-        style={{transform: style.xy.interpolate(trans as any)}}
-      >
+      <animated.div className={classes.content} style={perspective.style}>
         <EmailStep
+          email={email}
           step={step}
           nextStep={async data => {
             setEmail(data)
@@ -75,6 +51,7 @@ const Login: FC<RouteComponentProps> = props => {
         />
 
         <PasswordStep
+          email={email}
           step={step}
           nextStep={async password => {
             await $auth.loginWithCredentials({email, password})
@@ -88,7 +65,7 @@ const Login: FC<RouteComponentProps> = props => {
 const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
   const [email, setEmail] = useState("")
   const {loading, setLoading} = useAsync()
-  const transitions = useTransition(step === "get-email", null, transitionConf)
+  const {transitions} = useStepTranslation(step === "get-email")
   const {t} = useTranslation("auth")
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
@@ -138,7 +115,7 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
             />
           </div>
 
-          <button className={classes.continue} type="submit" disabled={!email || loading}>
+          <button className={classes.buttonSuccess} type="submit" disabled={!email || loading}>
             <span>{t("continue")}</span>
             <Loader className={classes.loader} />
           </button>
@@ -154,11 +131,11 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
           </div>
 
           <div className={classes.otherContinues}>
-            <button className={classes.continueWithGoogle} type="button" onClick={loginWithGoogle}>
+            <button className={classes.buttonSuccessGoogle} type="button" onClick={loginWithGoogle}>
               {t("continue-with-google")}
             </button>
             <button
-              className={classes.continueWithFacebook}
+              className={classes.buttonSuccessFacebook}
               type="button"
               onClick={loginWithFacebook}
             >
@@ -173,10 +150,10 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
   return <>{render}</>
 }
 
-const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
+const PasswordStep: FC<LoginFormProps> = ({email, step, nextStep}) => {
   const [password, setPassword] = useState("")
   const {loading, setLoading} = useAsync()
-  const transitions = useTransition(step === "get-password", null, transitionConf)
+  const {transitions} = useStepTranslation(step === "get-password")
   const {t} = useTranslation("auth")
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
@@ -213,13 +190,13 @@ const PasswordStep: FC<LoginFormProps> = ({step, nextStep}) => {
             />
           </div>
 
-          <button className={classes.continue} type="submit" disabled={!password || loading}>
+          <button className={classes.buttonSuccess} type="submit" disabled={!password || loading}>
             <span>{t("continue")}</span>
             <Loader className={classes.loader} />
           </button>
 
           <div>
-            <Link className={classes.link} to="/forgotten-password">
+            <Link className={classes.link} to={{pathname: "/reset-password", state: {email}}}>
               {t("forgotten-password")}
             </Link>
           </div>

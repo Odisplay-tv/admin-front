@@ -1,9 +1,10 @@
-import {useSpring} from "react-spring"
+import {useTransition, useSpring} from "react-spring"
 
-export function useEnteringTranslation() {
-  const style = useSpring({
+export function useStepTranslation(visible = true) {
+  const transitions = useTransition(visible, null, {
     from: {transform: "translateX(100px)", opacity: 0},
-    to: {transform: "translateX(0)", opacity: 1},
+    enter: {transform: "translateX(0)", opacity: 1},
+    leave: {transform: "translateX(-500px)", opacity: 0},
     config: {
       mass: 1,
       tension: 130,
@@ -11,7 +12,7 @@ export function useEnteringTranslation() {
     },
   })
 
-  return {style}
+  return {transitions}
 }
 
 export function usePerspective() {
@@ -34,4 +35,4 @@ export function usePerspective() {
   return {style, handleMouseMove}
 }
 
-export default {useEnteringTranslation, usePerspective}
+export default {useStepTranslation, usePerspective}
