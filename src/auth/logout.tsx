@@ -9,7 +9,7 @@ const Logout: FC<RouteComponentProps> = props => {
 
   const logout = useCallback(async () => {
     await $auth.logout()
-    dispatch({type: "auth", user: null})
+    dispatch({type: "logout"})
     props.history.push("/login")
   }, [dispatch, props.history])
 

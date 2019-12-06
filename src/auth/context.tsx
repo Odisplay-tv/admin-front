@@ -9,11 +9,11 @@ export type AuthCredentials = {
 
 type AuthAction =
   | {
-      type: "init"
+      type: "login"
+      user: firebase.auth.Auth["currentUser"]
     }
   | {
-      type: "auth"
-      user: firebase.auth.Auth["currentUser"]
+      type: "logout"
     }
 
 type AuthState = {
@@ -40,14 +40,12 @@ const AuthContextState = createContext<AuthState>(defaultState)
 const AuthContextDispatch = createContext<AuthDispatch>(defaultDispatch)
 
 const reducer: Reducer<AuthState, AuthAction> = (state, action) => {
-  console.debug("[auth] action received", action)
-
   switch (action.type) {
-    case "init":
-      return {...defaultState, initialized: true}
-
-    case "auth":
+    case "login":
       return {initialized: true, authenticated: Boolean(action.user), user: action.user}
+
+    case "logout":
+      return {...state, initialized: false, user: null}
 
     default:
       return state
@@ -66,16 +64,7 @@ export const AuthContextProvider: FC = ({children}) => {
   const [state, dispatch] = useReducer(reducer, defaultState)
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (!state.initialized) {
-        dispatch({type: "init"})
-      }
-
-      if (user) {
-        dispatch({type: "auth", user})
-      }
-    })
-
+    const unsubscribe = auth.onAuthStateChanged(user => dispatch({type: "login", user}))
     return () => unsubscribe()
   }, [dispatch, state.initialized])
 
