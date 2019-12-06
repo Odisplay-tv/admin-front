@@ -27,9 +27,7 @@ const Aside: FC<AsideProps> = props => {
         </a>
       </div>
       <Link className={classes.account} to="/account">
-        <div className={classes.accountIcon}>
-          <img src="#" alt="" />
-        </div>
+        <img src="/images/icon-account.svg" alt="" />
         <div className={classes.accountLabel}>{t("my-account")}</div>
       </Link>
       <div className={classes.info}>
@@ -41,15 +39,15 @@ const Aside: FC<AsideProps> = props => {
       </div>
       <div />
       <Link className={classes.navItem} to="/help">
-        <img src="#" alt="" />
+        <img src="/images/icon-help.svg" alt="" />
         <div>{t("need-help")}</div>
       </Link>
       <Link className={classes.navItem} to="/logout">
-        <img src="#" alt="" />
+        <img src="/images/icon-logout.svg" alt="" />
         <div>{t("auth:logout")}</div>
       </Link>
       <Link className={classes.navItem} to="/">
-        <img src="#" alt="" />
+        <img src="/images/icon-fr.svg" alt="" />
       </Link>
     </aside>
   )

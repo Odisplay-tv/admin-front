@@ -46,32 +46,18 @@
   @include hoverable;
   display: grid;
   grid-column-gap: 15px;
-  grid-template-columns: 50px 1fr;
+  grid-template-columns: 40px 1fr;
   padding-left: 15px;
 
   @include media(sm) {
     grid-template-columns: 1fr;
     padding: 0 15px;
   }
-}
-
-.accountIcon {
-  align-self: end;
-  grid-column: 1;
-  justify-self: center;
 
   img {
+    align-self: end;
     height: 35px;
     width: 35px;
-
-    @include media(sm) {
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  @include media(sm) {
-    align-self: center;
   }
 }
 
@@ -137,5 +123,10 @@
     div {
       display: none;
     }
+  }
+
+  img {
+    height: 24px;
+    width: 24px;
   }
 }
