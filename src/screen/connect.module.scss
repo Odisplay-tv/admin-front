@@ -1,0 +1,17 @@
+@import "../shared/theme.scss";
+@import "../shared/media.scss";
+
+.container {
+  padding: 40px 50px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: normal;
+  margin: 0 0 60px 0;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+}

@@ -11,18 +11,24 @@ type NavProps = {
   close: () => void
 }
 
-const Nav: FC<NavProps> = ({isVisible, close}) => {
+const Nav: FC<NavProps> = props => {
+  const {isVisible} = props
   const {t} = useTranslation()
   const dataVisible = isVisible ? {"data-visible": ""} : {}
 
+  function handleBurgerClick(evt: React.MouseEvent) {
+    evt.preventDefault()
+    props.close()
+  }
+
   return (
     <nav className={classes.nav} {...dataVisible}>
-      <header className={classes.logo}>
+      <Link className={classes.logo} to="/">
         <img src="/images/logo.svg" alt="" />
-        <button className={classes.burger} type="button" onClick={close}>
+        <button className={classes.burger} type="button" onClick={handleBurgerClick}>
           <img src="/images/icon-close.svg" alt="" />
         </button>
-      </header>
+      </Link>
 
       <Link className={classNames(classes.item, {[classes.active]: true})} to="/screens">
         <img className={classes.itemIcon} src="/images/icon-screen.svg" alt="" />
