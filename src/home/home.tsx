@@ -11,7 +11,7 @@ const Home: FC = () => {
   return (
     <div className={classes.container}>
       <Link className={classes.cardConnectScreen} to="/screens/connect">
-        <img src="/images/screen.svg" alt="" />
+        <img src="/images/playlist.svg" alt="" />
         <h2 dangerouslySetInnerHTML={{__html: t("connect-screen-title")}} />
         <p>{t("connect-screen-desc")}</p>
       </Link>
@@ -23,23 +23,23 @@ const Home: FC = () => {
       </Link>
 
       <Link className={classes.cardPlanning} to="/plannings">
-        <img src="/images/planning.svg" alt="" />
+        <img src="/images/playlist.svg" alt="" />
         <h2 dangerouslySetInnerHTML={{__html: t("create-planning-title")}} />
         <p>{t("create-planning-desc")}</p>
       </Link>
 
       <Link className={classes.cardScreens} to="/screens">
-        <strong>1</strong>
+        <strong>199</strong>
         <h3 dangerouslySetInnerHTML={{__html: t("screen(s)")}} />
       </Link>
 
       <Link className={classes.cardGuide} to="/guide">
-        <img src="" alt="" />
-        <h3>{t("video-start-guide-title")}</h3>
+        <img src="/images/starter-guide.svg" alt="" />
+        <h3>{t("starter-guide-title")}</h3>
       </Link>
 
       <Link className={classes.cardSupport} to="/help">
-        <img src="" alt="" />
+        <img src="/images/support.svg" alt="" />
         <h3>{t("contact-support-title")}</h3>
       </Link>
     </div>

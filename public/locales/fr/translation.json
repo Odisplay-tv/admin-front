@@ -12,6 +12,6 @@
   "playlists": "Playlists",
   "screen(s)": "Écran<em>(s)</em>",
   "screens": "Écrans",
-  "trial-days-left": "Il vous reste <strong>{{days}}</strong> jours d'évaluation. <strong>Passez au premium</strong>",
-  "video-start-guide-title": "Video guide de démarrage"
+  "starter-guide-title": "Video guide de démarrage",
+  "trial-days-left": "Il vous reste <strong>{{days}}</strong> jours d'évaluation. <strong>Passez au premium</strong>"
 }

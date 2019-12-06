@@ -21,13 +21,13 @@ const Nav: FC<NavProps> = ({visible}) => {
       </header>
 
       <Link className={classNames(classes.item, {[classes.active]: true})} to="/screens">
-        <img src="/images/icon-screen.svg" alt="" />
+        <img className={classes.itemIcon} src="/images/icon-screen.svg" alt="" />
         <span className={classes.itemText}>{t("screens")}</span>
         <span className={classes.itemCount}>1</span>
       </Link>
 
       <Link className={classes.item} to="/playlists">
-        <img src="/images/icon-playlist.svg" alt="" />
+        <img className={classes.itemIcon} src="/images/icon-playlist.svg" alt="" />
         <span className={classes.itemText}>{t("playlists")}</span>
       </Link>
 
@@ -39,9 +39,7 @@ const Nav: FC<NavProps> = ({visible}) => {
       </Link>
 
       <Link className={classes.item} to="/plannings">
-        <span className={classes.itemIcon}>
-          <img src="/images/icon-planning.svg" alt="" />
-        </span>
+        <img className={classes.itemIcon} src="/images/icon-planning.svg" alt="" />
         <span className={classes.itemText}>{t("plannings")}</span>
       </Link>
 
