@@ -6,7 +6,7 @@ import Link from "./link"
 import classes from "./aside.module.scss"
 
 type AsideProps = {
-  onBurgerClick: () => void
+  openNav: () => void
 }
 
 const Aside: FC<AsideProps> = props => {
@@ -15,16 +15,15 @@ const Aside: FC<AsideProps> = props => {
   function handleBurgerClick(evt: MouseEvent) {
     evt.preventDefault()
     console.log("coucou")
-    props.onBurgerClick()
+    props.openNav()
   }
 
   return (
     <aside className={classes.aside}>
       <div className={classes.burger}>
-        <a href="/" onClick={handleBurgerClick}>
-          <img src="#" alt="" />
-          burger
-        </a>
+        <button onClick={handleBurgerClick} type="button">
+          <img src="/images/icon-burger.svg" alt="" />
+        </button>
       </div>
       <Link className={classes.account} to="/account">
         <img src="/images/icon-account.svg" alt="" />

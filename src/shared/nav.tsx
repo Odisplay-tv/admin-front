@@ -7,17 +7,21 @@ import Link from "./link"
 import classes from "./nav.module.scss"
 
 type NavProps = {
-  visible: boolean
+  isVisible: boolean
+  close: () => void
 }
 
-const Nav: FC<NavProps> = ({visible}) => {
+const Nav: FC<NavProps> = ({isVisible, close}) => {
   const {t} = useTranslation()
-  const dataVisible = visible ? {"data-visible": ""} : {}
+  const dataVisible = isVisible ? {"data-visible": ""} : {}
 
   return (
     <nav className={classes.nav} {...dataVisible}>
       <header className={classes.logo}>
         <img src="/images/logo.svg" alt="" />
+        <button className={classes.burger} type="button" onClick={close}>
+          <img src="/images/icon-close.svg" alt="" />
+        </button>
       </header>
 
       <Link className={classNames(classes.item, {[classes.active]: true})} to="/screens">

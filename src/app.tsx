@@ -29,12 +29,12 @@ const App: FC = () => {
 }
 
 const withLayout = (Component: ComponentType): FC => props => {
-  const [visible, setVisible] = useState(false)
+  const [isNavVisible, setNavVisibility] = useState(false)
 
   return (
     <>
-      <Nav visible={visible} />
-      <Aside onBurgerClick={() => setVisible(!visible)} />
+      <Nav isVisible={isNavVisible} close={() => setNavVisibility(false)} />
+      <Aside openNav={() => setNavVisibility(true)} />
       <Main>
         <Component {...props} />
       </Main>

@@ -14,6 +14,7 @@
   transition-duration: 250ms;
   transition-property: left, box-shadow;
   transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+  z-index: 1;
 
   @include media(md) {
     grid-template-rows: 50px;
@@ -42,9 +43,22 @@
   padding: 10px;
 
   @include media(sm) {
-    img {
+    > img {
       display: none;
     }
+  }
+}
+
+.burger {
+  display: none;
+
+  img {
+    height: 25px;
+    width: 25px;
+  }
+
+  @include media(sm) {
+    display: inline-flex;
   }
 }
 

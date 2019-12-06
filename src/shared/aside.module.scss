@@ -35,10 +35,14 @@
   align-self: center;
   display: none;
   padding: 0 15px;
-  z-index: 1;
+
+  img {
+    height: 32px;
+    width: 32px;
+  }
 
   @include media(sm) {
-    display: block;
+    display: flex;
   }
 }
 
@@ -49,15 +53,21 @@
   grid-template-columns: 40px 1fr;
   padding-left: 15px;
 
-  @include media(sm) {
-    grid-template-columns: 1fr;
-    padding: 0 15px;
-  }
-
   img {
     align-self: end;
     height: 35px;
     width: 35px;
+  }
+
+  @include media(sm) {
+    grid-template-columns: 1fr;
+    padding: 0 15px;
+
+    img {
+      align-self: center;
+      height: 24px;
+      width: 24px;
+    }
   }
 }
 
