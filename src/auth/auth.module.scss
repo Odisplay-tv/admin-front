@@ -94,7 +94,7 @@
 }
 
 .link {
-  @include link($grayA3);
+  @include link($black);
   font-size: 14px;
 }
 
@@ -144,6 +144,7 @@
 .buttonDanger {
   @include button($red, $white);
   display: flex;
+  font-size: 14px;
   position: relative;
 }
 

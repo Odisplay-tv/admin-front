@@ -7,23 +7,24 @@ import {toast} from "react-toastify"
 import Loader from "../async/loader"
 import useAsync from "../async/context"
 import Link from "../shared/link"
-import useAuth from "./context"
+import useAuth, {AuthCredentials, defaultCredentials} from "./context"
 import $auth from "./service"
 import {useStepTranslation, usePerspective} from "./animations"
 
 import classes from "./auth.module.scss"
 
-type Step = "get-email" | "get-password"
+type Step = "email" | "password"
 
-type LoginFormProps = {
-  email: string
+type StepFormProps = {
   step: Step
+  prevStep: () => void
   nextStep: (field: string) => Promise<void>
+  creds: AuthCredentials
 }
 
 const Login: FC<RouteComponentProps> = props => {
-  const [email, setEmail] = useState("")
-  const [step, setStep] = useState<Step>("get-email")
+  const [creds, setCreds] = useState(defaultCredentials)
+  const [step, setStep] = useState<Step>("email")
   const auth = useAuth()
   const perspective = usePerspective()
 
@@ -37,24 +38,31 @@ const Login: FC<RouteComponentProps> = props => {
     return null
   }
 
+  function patchCreds(patch: Partial<AuthCredentials>) {
+    const nextCreds = {...creds, ...patch}
+    setCreds(nextCreds)
+    return nextCreds
+  }
+
   return (
     <div onMouseMove={perspective.handleMouseMove} className={classes.container}>
       <img className={classes.logo} src="/images/logo.svg" alt="" />
       <animated.div className={classes.content} style={perspective.style}>
         <EmailStep
-          email={email}
+          creds={creds}
           step={step}
-          nextStep={async data => {
-            setEmail(data)
-            setStep("get-password")
+          prevStep={() => setStep("email")}
+          nextStep={async email => {
+            patchCreds({email})
+            setStep("password")
           }}
         />
-
         <PasswordStep
-          email={email}
+          creds={creds}
           step={step}
+          prevStep={() => setStep("email")}
           nextStep={async password => {
-            await $auth.loginWithCredentials({email, password})
+            await $auth.loginWithCredentials(patchCreds({password}))
           }}
         />
       </animated.div>
@@ -62,15 +70,15 @@ const Login: FC<RouteComponentProps> = props => {
   )
 }
 
-const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
-  const [email, setEmail] = useState("")
+const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
+  const [email, setEmail] = useState(creds.email)
   const {loading, setLoading} = useAsync()
-  const {transitions} = useStepTranslation(step === "get-email")
+  const {transitions} = useStepTranslation(step === "email")
   const {t} = useTranslation("auth")
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     if (loading) return
-    setEmail(evt.target.value)
+    setEmail(evt.target.value.trim())
   }
 
   function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
@@ -84,9 +92,10 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
       setLoading(true)
       await $auth.loginWithGoogle()
     } catch (err) {
-      setLoading(false)
       toast.error(t(err.code))
     }
+
+    setLoading(false)
   }
 
   async function loginWithFacebook() {
@@ -94,12 +103,13 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
       setLoading(true)
       await $auth.loginWithFacebook()
     } catch (err) {
-      setLoading(false)
       toast.error(t(err.code))
     }
+
+    setLoading(false)
   }
 
-  const render = transitions.map(
+  const view = transitions.map(
     ({key, item, props}) =>
       item && (
         <animated.form key={key} className={classes.form} onSubmit={handleSubmit} style={props}>
@@ -110,8 +120,9 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
               type="email"
               name="email"
               autoComplete="email"
-              onChange={handleChange}
               autoFocus
+              value={email}
+              onChange={handleChange}
             />
           </div>
 
@@ -147,13 +158,13 @@ const EmailStep: FC<LoginFormProps> = ({step, nextStep}) => {
   )
 
   // TypeScript doesn't like <animated> element
-  return <>{render}</>
+  return <>{view}</>
 }
 
-const PasswordStep: FC<LoginFormProps> = ({email, step, nextStep}) => {
-  const [password, setPassword] = useState("")
+const PasswordStep: FC<StepFormProps> = ({creds, step, prevStep, nextStep}) => {
+  const [password, setPassword] = useState(creds.password)
   const {loading, setLoading} = useAsync()
-  const {transitions} = useStepTranslation(step === "get-password")
+  const {transitions} = useStepTranslation(step === "password")
   const {t} = useTranslation("auth")
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
@@ -170,11 +181,15 @@ const PasswordStep: FC<LoginFormProps> = ({email, step, nextStep}) => {
       await nextStep(password)
     } catch (err) {
       toast.error(t(err.code))
-      setLoading(false)
+      if (err.code === "auth/user-not-found") {
+        prevStep()
+      }
     }
+
+    setLoading(false)
   }
 
-  const render = transitions.map(
+  const view = transitions.map(
     ({key, item, props}) =>
       item && (
         <animated.form key={key} className={classes.form} onSubmit={handleSubmit} style={props}>
@@ -185,8 +200,9 @@ const PasswordStep: FC<LoginFormProps> = ({email, step, nextStep}) => {
               type="password"
               name="password"
               autoComplete="current-password"
-              onChange={handleChange}
               autoFocus
+              onChange={handleChange}
+              value={password}
             />
           </div>
 
@@ -196,7 +212,10 @@ const PasswordStep: FC<LoginFormProps> = ({email, step, nextStep}) => {
           </button>
 
           <div>
-            <Link className={classes.link} to={{pathname: "/reset-password", state: {email}}}>
+            <Link
+              className={classes.link}
+              to={{pathname: "/reset-password", state: {email: creds.email}}}
+            >
               {t("forgotten-password")}
             </Link>
           </div>
@@ -205,7 +224,7 @@ const PasswordStep: FC<LoginFormProps> = ({email, step, nextStep}) => {
   )
 
   // TypeScript doesn't like <animated> element
-  return <>{render}</>
+  return <>{view}</>
 }
 
 export default Login

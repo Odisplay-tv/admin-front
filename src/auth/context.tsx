@@ -24,6 +24,8 @@ type AuthState = {
 
 type AuthDispatch = Dispatch<AuthAction>
 
+export const defaultCredentials: AuthCredentials = {email: "", password: ""}
+
 const defaultState: AuthState = {
   initialized: false,
   authenticated: false,

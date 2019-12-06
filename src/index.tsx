@@ -11,7 +11,7 @@ import App from "./app"
 import "./shared/i18n"
 import "./shared/base.scss"
 
-toast.configure()
+toast.configure({position: "bottom-right"})
 
 ReactDOM.render(
   <Suspense fallback={<Loader />}>
