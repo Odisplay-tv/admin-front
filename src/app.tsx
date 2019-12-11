@@ -12,6 +12,7 @@ import Nav from "./shared/nav"
 import Aside from "./shared/aside"
 import Main from "./shared/main"
 import Home from "./home/home"
+import ScreenPairing from "./screen/pairing"
 import ConnectScreen from "./screen/connect"
 
 const App: FC = () => {
@@ -22,6 +23,7 @@ const App: FC = () => {
         <Route path="/register" component={Register} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/logout" component={Logout} />
+        <Route path="/screens/pairing" component={ScreenPairing} />
         <PrivateRoute path="/screens/connect" component={withLayout(ConnectScreen)} />
         <PrivateRoute path="/" component={withLayout(Home)} />
         <Redirect to="/login" />

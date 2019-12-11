@@ -1,13 +1,12 @@
 import React, {Suspense} from "react"
 import ReactDOM from "react-dom"
 import {toast} from "react-toastify"
-
+import "whatwg-fetch"
 import "react-toastify/dist/ReactToastify.css"
 
 import serviceWorker from "./shared/service-worker"
 import Loader from "./async/loader"
 import App from "./app"
-
 import "./shared/i18n"
 import "./shared/base.scss"
 

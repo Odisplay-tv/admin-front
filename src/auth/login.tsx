@@ -180,7 +180,7 @@ const PasswordStep: FC<StepFormProps> = ({creds, step, prevStep, nextStep}) => {
       setLoading(true)
       await nextStep(password)
     } catch (err) {
-      toast.error(t(err.code))
+      toast.error(t(err.code || err.message))
       if (err.code === "auth/user-not-found") {
         prevStep()
       }

@@ -1,6 +1,7 @@
 import firebase from "firebase/app"
 
 import "firebase/auth"
+import "firebase/functions"
 import "firebase/analytics"
 
 firebase.initializeApp({
@@ -15,6 +16,7 @@ firebase.initializeApp({
 })
 
 export const auth = firebase.auth()
+export const functions = firebase.app().functions("europe-west1")
 export const analytics = firebase.analytics()
 
 export default firebase

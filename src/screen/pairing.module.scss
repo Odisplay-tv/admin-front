@@ -1,0 +1,22 @@
+@import "../shared/theme.scss";
+
+.container {
+  align-items: center;
+  background: $yellow-gradient;
+  display: grid;
+  font-size: 60px;
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
+  justify-items: center;
+  letter-spacing: 10px;
+
+  > div {
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+  }
+}
+
+.loader {
+  height: 100px;
+  width: 100px;
+}

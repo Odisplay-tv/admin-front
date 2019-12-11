@@ -1,5 +1,7 @@
-import firebase, {auth} from "../shared/firebase"
+import firebase, {auth, functions} from "../shared/firebase"
 import {AuthCredentials} from "./context"
+
+const generateToken = functions.httpsCallable("generateToken")
 
 export function register({email, password}: AuthCredentials) {
   return auth.createUserWithEmailAndPassword(email, password)
@@ -10,7 +12,12 @@ export function resetPassword(email: AuthCredentials["email"]) {
 }
 
 export async function loginWithCredentials({email, password}: AuthCredentials) {
-  return auth.signInWithEmailAndPassword(email, password).then(res => res.user)
+  const creds = await auth.signInWithEmailAndPassword(email, password)
+  if (!creds.user) throw new Error("auth/user-not-found")
+  const {data: res} = await generateToken({token: await creds.user.getIdToken()})
+  if (!res.ok) throw new Error(res.message)
+  localStorage.setItem("token", res.token)
+  return creds.user
 }
 
 export function loginWithGoogle() {

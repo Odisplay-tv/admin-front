@@ -95,7 +95,7 @@ const Register: FC<RouteComponentProps> = props => {
 
             <div>
               <Link className={classes.link} to="/login">
-                {t("login")}
+                {t("back")}
               </Link>
             </div>
           </animated.form>

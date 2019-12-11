@@ -46,7 +46,8 @@
     "react-i18next": "^11.2.5",
     "react-router-dom": "^5.1.2",
     "react-spring": "^8.0.27",
-    "react-toastify": "^5.4.1"
+    "react-toastify": "^5.4.1",
+    "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
