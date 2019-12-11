@@ -1,4 +1,4 @@
-import React, {FC, createContext, useCallback, useContext, useMemo, useState} from "react"
+import React, {FC, createContext, useContext, useState} from "react"
 
 type AsyncState = boolean
 type AsyncDispatch = (loading?: boolean) => void
@@ -16,18 +16,15 @@ export const useAsyncDispatch = () => useContext(AsyncContextDispatch)
 export const useAsync = () => {
   const loading = useAsyncState()
   const setLoading = useAsyncDispatch()
-  return useMemo(() => ({loading, setLoading}), [loading, setLoading])
+  return {loading, setLoading}
 }
 
 export const AsyncContextProvider: FC = ({children}) => {
   const [loading, setLoading] = useState(false)
 
-  const toggleLoading = useCallback(
-    (nextLoading?: boolean) => {
-      setLoading(nextLoading === undefined ? !loading : Boolean(nextLoading))
-    },
-    [loading],
-  )
+  function toggleLoading(nextLoading?: boolean) {
+    setLoading(nextLoading === undefined ? !loading : Boolean(nextLoading))
+  }
 
   return (
     <AsyncContextDispatch.Provider value={toggleLoading}>

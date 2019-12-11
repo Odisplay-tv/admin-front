@@ -3,13 +3,15 @@ import {animated, useTransition} from "react-spring"
 import {toast} from "react-toastify"
 
 import Loader from "../async/loader"
-import $api from "../shared/api"
+import useApi from "../shared/api"
 import useAsync from "../async/context"
 
 import classes from "./pairing.module.scss"
 
 const ScreenPairing: FC = () => {
+  const $api = useApi()
   const {loading, setLoading} = useAsync()
+  const [id, setId] = useState(null)
   const [code, setCode] = useState(null)
   const [ready, setReady] = useState(false)
   const transitions = useTransition(loading, null, {
@@ -22,13 +24,15 @@ const ScreenPairing: FC = () => {
     setLoading(true)
 
     try {
-      await $api.generatePairingCode().then(setCode)
+      const {id, code} = await $api.generatePairingCode()
+      setId(id)
+      setCode(code)
     } catch (err) {
       toast.error(err.message)
     }
 
     setLoading(false)
-  }, [setLoading])
+  }, [$api, setLoading])
 
   useEffect(() => {
     if (!ready) {
