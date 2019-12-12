@@ -2,16 +2,15 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
 
-import useApi from "../shared/api"
 import useAsync from "../async/context"
 import {useAuthState} from "../auth/context"
+import $screen from "./service"
 
 import classes from "./connect.module.scss"
 
 const ConnectScreen: FC = () => {
-  const $api = useApi()
   const [code, setCode] = useState("")
-  const {loading} = useAsync()
+  const {loading, setLoading} = useAsync()
   const {user} = useAuthState()
   const {t} = useTranslation()
 
@@ -24,13 +23,15 @@ const ConnectScreen: FC = () => {
     evt.preventDefault()
     if (loading) return
     if (!user) return
+    setLoading(true)
+
     try {
-      const screens = await $api.findScreensByCode(code)
-      if (screens.length === 0) throw new Error("pairing-failed")
-      await $api.pairScreen(screens[0].id, user.uid)
+      await $screen.connectScreen(await user.getIdToken(), code)
     } catch (err) {
       toast.error(t(err.message))
     }
+
+    setLoading(false)
   }
 
   return (

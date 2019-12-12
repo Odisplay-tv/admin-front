@@ -1,19 +1,19 @@
 import React, {FC, ComponentType, useState} from "react"
 import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom"
 
-import {AuthContextProvider} from "./auth/context"
-import {AsyncContextProvider} from "./async/context"
-import Register from "./auth/register"
-import ResetPassword from "./auth/reset-password"
-import Login from "./auth/login"
-import Logout from "./auth/logout"
-import PrivateRoute from "./auth/private-route"
-import Nav from "./shared/nav"
-import Aside from "./shared/aside"
-import Main from "./shared/main"
-import Home from "./home/home"
-import ScreenPairing from "./screen/pairing"
-import ConnectScreen from "./screen/connect"
+import {AuthContextProvider} from "../auth/context"
+import {AsyncContextProvider} from "../async/context"
+import Register from "../auth/register"
+import ResetPassword from "../auth/reset-password"
+import Login from "../auth/login"
+import Logout from "../auth/logout"
+import PrivateRoute from "../auth/private-route"
+import Home from "../home/home"
+import Viewer from "../screen/viewer"
+import ConnectScreen from "../screen/connect"
+import Nav from "./nav"
+import Aside from "./aside"
+import Main from "./main"
 
 const App: FC = () => {
   return (
@@ -23,7 +23,7 @@ const App: FC = () => {
         <Route path="/register" component={Register} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/logout" component={Logout} />
-        <Route path="/screens/pairing" component={ScreenPairing} />
+        <Route path="/viewer" component={Viewer} />
         <PrivateRoute path="/screens/connect" component={withLayout(ConnectScreen)} />
         <PrivateRoute path="/" component={withLayout(Home)} />
         <Redirect to="/login" />

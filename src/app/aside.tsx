@@ -14,7 +14,6 @@ const Aside: FC<AsideProps> = props => {
 
   function handleBurgerClick(evt: MouseEvent) {
     evt.preventDefault()
-    console.log("coucou")
     props.openNav()
   }
 

@@ -1,6 +1,6 @@
 import React, {FC, Reducer, Dispatch, createContext, useContext, useEffect, useReducer} from "react"
 
-import firebase, {auth} from "../shared/firebase"
+import firebase, {auth} from "../app/firebase"
 
 export type AuthCredentials = {
   email: string
@@ -19,7 +19,7 @@ type AuthAction =
 type AuthState = {
   initialized: boolean
   authenticated: boolean
-  user: firebase.auth.Auth["currentUser"]
+  user: firebase.User | null
 }
 
 type AuthDispatch = Dispatch<AuthAction>

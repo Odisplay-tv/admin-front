@@ -4,11 +4,11 @@ import {toast} from "react-toastify"
 import "whatwg-fetch"
 import "react-toastify/dist/ReactToastify.css"
 
-import serviceWorker from "./shared/service-worker"
+import serviceWorker from "./app/service-worker"
 import Loader from "./async/loader"
-import App from "./app"
-import "./shared/i18n"
-import "./shared/base.scss"
+import App from "./app/app"
+import "./app/i18n"
+import "./app/base.scss"
 
 toast.configure({position: "bottom-right"})
 

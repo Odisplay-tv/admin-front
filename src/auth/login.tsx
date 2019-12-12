@@ -6,7 +6,7 @@ import {toast} from "react-toastify"
 
 import Loader from "../async/loader"
 import useAsync from "../async/context"
-import Link from "../shared/link"
+import Link from "../app/link"
 import useAuth, {AuthCredentials, defaultCredentials} from "./context"
 import $auth from "./service"
 import {useStepTranslation, usePerspective} from "./animations"

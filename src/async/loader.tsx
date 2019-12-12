@@ -7,11 +7,12 @@ import classes from "./loader.module.scss"
 
 type LoaderProps = {
   className?: string
+  visible?: boolean
 }
 
-const Loader: FC<LoaderProps> = ({className}) => {
+const Loader: FC<LoaderProps> = ({className, visible}) => {
   const loading = useAsyncState()
-  const style = useSpring({opacity: loading ? 1 : 0, config: config.gentle})
+  const style = useSpring({opacity: visible || loading ? 1 : 0, config: config.gentle})
 
   return (
     <animated.img

@@ -6,7 +6,7 @@ import {toast} from "react-toastify"
 
 import Loader from "../async/loader"
 import useAsync from "../async/context"
-import Link from "../shared/link"
+import Link from "../app/link"
 import useAuth from "./context"
 import $auth from "./service"
 import {useStepTranslation, usePerspective} from "./animations"
@@ -42,7 +42,7 @@ const Register: FC<RouteComponentProps> = props => {
       toast.success(t("auth/successfully-registered"))
     } catch (err) {
       setLoading(false)
-      toast.error(t(err.code))
+      toast.error(t(err.code || err.message))
     }
   }
 

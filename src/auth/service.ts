@@ -1,8 +1,18 @@
-import firebase, {auth} from "../shared/firebase"
+import firebase, {auth, firestore} from "../app/firebase"
 import {AuthCredentials} from "./context"
 
-export function register({email, password}: AuthCredentials) {
-  return auth.createUserWithEmailAndPassword(email, password)
+function _register(user: firebase.User) {
+  return firestore("users", user.uid).set({
+    id: user.uid,
+    email: user.email,
+    createdAt: new Date(),
+  })
+}
+
+export async function register({email, password}: AuthCredentials) {
+  const {user} = await auth.createUserWithEmailAndPassword(email, password)
+  if (!user) throw new Error("auth/user-not-found")
+  await _register(user)
 }
 
 export function resetPassword(email: AuthCredentials["email"]) {
@@ -14,14 +24,20 @@ export async function loginWithCredentials({email, password}: AuthCredentials) {
   return creds.user
 }
 
-export function loginWithGoogle() {
+export async function loginWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider()
-  return auth.signInWithPopup(provider)
+  const {user} = await auth.signInWithPopup(provider)
+  if (!user) throw new Error("auth/user-not-found")
+  const firestoreUser = await firestore("users", user.uid).get()
+  if (!firestoreUser.exists) await _register(user)
 }
 
-export function loginWithFacebook() {
+export async function loginWithFacebook() {
   const provider = new firebase.auth.FacebookAuthProvider()
-  return auth.signInWithPopup(provider)
+  const {user} = await auth.signInWithPopup(provider)
+  if (!user) throw new Error("auth/user-not-found")
+  const firestoreUser = await firestore("users", user.uid).get()
+  if (!firestoreUser.exists) await _register(user)
 }
 
 export function logout() {
