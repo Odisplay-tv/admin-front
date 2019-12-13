@@ -1,0 +1,13 @@
+{
+  "title": "Connecter un écran",
+  "help-title": "Comment ça marche ?",
+  "help-available-on": "Disponible sur :",
+  "help-step-1": "<strong>1 - Téléchargez l'application Odisplay sur votre écran TV</strong>, tablette ou appareil directement depuis son catalogue d'application (Store).",
+  "help-step-2": "<strong>2 - Ouvrez l'application sur votre écran TV</strong>, une clé secrete s'affiche sur l'écran :",
+  "help-step-3": "<strong>3 - Saisissez la clé secrète sur notre interface</strong> puis donnez un nom à votre écran.",
+  "help-link": "Voir la vidéo de présentation",
+  "code-title": "Tapez votre clé secrète",
+  "code-screen-name": "Nom de votre écran :",
+  "code-screen-name-eg": "Par exemple : donnez-lui le nom de la salle où il se trouve.",
+  "successfully-paired": "Appairage réussi !"
+}

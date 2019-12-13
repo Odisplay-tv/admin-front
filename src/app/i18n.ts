@@ -12,6 +12,8 @@ i18n
     whitelist: ["fr"],
     fallbackLng: "fr",
     debug: process.env.NODE_ENV === "development",
+    defaultNS: "global",
+    ns: "global",
     interpolation: {
       escapeValue: false,
     },

@@ -10,7 +10,7 @@ type AsideProps = {
 }
 
 const Aside: FC<AsideProps> = props => {
-  const {t} = useTranslation(["translation", "auth"])
+  const {t} = useTranslation(["global", "auth"])
 
   function handleBurgerClick(evt: MouseEvent) {
     evt.preventDefault()

@@ -2,9 +2,12 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
 
+import Link from "../app/link"
 import useAsync from "../async/context"
+import Loader from "../async/loader"
 import {useAuthState} from "../auth/context"
 import $screen from "./service"
+import CodeInput from "./code-input"
 
 import classes from "./connect.module.scss"
 
@@ -12,12 +15,7 @@ const ConnectScreen: FC = () => {
   const [code, setCode] = useState("")
   const {loading, setLoading} = useAsync()
   const {user} = useAuthState()
-  const {t} = useTranslation()
-
-  function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
-    if (loading) return
-    setCode(evt.target.value.trim())
-  }
+  const {t} = useTranslation(["connect-screen", "global"])
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()
@@ -27,6 +25,7 @@ const ConnectScreen: FC = () => {
 
     try {
       await $screen.connectScreen(await user.getIdToken(), code)
+      toast.success("successfully-paired")
     } catch (err) {
       toast.error(t(err.message))
     }
@@ -36,12 +35,54 @@ const ConnectScreen: FC = () => {
 
   return (
     <form className={classes.container} onSubmit={handleSubmit}>
-      <h1 className={classes.title}>{t("connect-a-screen")}</h1>
-      <input type="text" onChange={handleChange} value={code} />
-      <button type="submit">pair</button>
+      <h1 className={classes.title}>{t("title")}</h1>
       <div className={classes.content}>
-        <div>left</div>
-        <div>right</div>
+        <div className={classes.help}>
+          <h2>{t("help-title")}</h2>
+          <p dangerouslySetInnerHTML={{__html: t("help-step-1")}} />
+          <div>{t("available-on")}</div>
+          <div className={classes.platforms}>
+            <Link to="/">
+              <img src="" alt="" />
+            </Link>
+            <Link to="/">
+              <img src="" alt="" />
+            </Link>
+            <Link to="/">
+              <img src="" alt="" />
+            </Link>
+            <Link to="/">
+              <img src="" alt="" />
+            </Link>
+          </div>
+          <p dangerouslySetInnerHTML={{__html: t("help-step-2")}} />
+          <img src="" alt="" />
+          <p dangerouslySetInnerHTML={{__html: t("help-step-3")}} />
+          <div>
+            <Link className={classes.link} to="/">
+              {t("help-link")}
+            </Link>
+          </div>
+        </div>
+        <div className={classes.code}>
+          <h2>{t("code-title")}</h2>
+          <div className={classes.codeInput}>
+            <CodeInput onChange={setCode} />
+          </div>
+          <div className={classes.screenNameLabel}>
+            <h3>{t("code-screen-name")}</h3>
+            <div>{t("code-screen-name-eg")}</div>
+          </div>
+          <div className={classes.screenNameInput}>
+            <input type="text" />
+          </div>
+          <div>
+            <button className={classes.submit} type="submit" disabled={loading}>
+              {loading ? <Loader /> : <img src="" alt="" />}
+              {t("global:connect")}
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   )

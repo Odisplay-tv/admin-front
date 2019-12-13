@@ -3,6 +3,10 @@
 
 .container {
   padding: 40px 50px;
+
+  @include media(md) {
+    padding: 15px;
+  }
 }
 
 .title {
@@ -13,5 +17,102 @@
 
 .content {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-gap: 20px;
+  grid-template-columns: 40% 50%;
+
+  @include media(lg) {
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: max-content;
+  }
+}
+
+.help {
+  background: $white;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  font-size: 16px;
+  padding: 25px 30px;
+
+  h2 {
+    font-size: 19px;
+    margin: 0 0 30px 0;
+  }
+
+  p {
+    margin: 30px 0;
+  }
+
+  strong {
+    color: $orange;
+  }
+}
+
+.code {
+  align-self: start;
+  background: $gray51;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  color: $white;
+  display: grid;
+  grid: repeat(4, max-content) / 45% 55%;
+  grid-auto-flow: column;
+  grid-row-gap: 50px;
+  justify-items: center;
+  padding: 30px;
+
+  > * {
+    grid-column: 1 / span 2;
+  }
+
+  h2 {
+    font-size: 19px;
+    font-weight: normal;
+    margin: 0;
+  }
+}
+
+.screenNameLabel {
+  grid-column: 1;
+  justify-self: end;
+  max-width: 200px;
+
+  h3 {
+    font-size: 19px;
+    font-weight: normal;
+    margin: 5px 0 15px 0;
+  }
+
+  div {
+    color: $grayC2;
+    font-size: 12px;
+  }
+}
+
+.screenNameInput {
+  grid-column: 2;
+  justify-self: start;
+
+  input {
+    border: 2px solid transparent;
+    border-radius: 25px;
+    font-size: 16px;
+    min-width: 300px;
+    padding: 4px 12px;
+    transition: 250ms border;
+
+    &:hover {
+      border-color: $yellow;
+    }
+
+    &:focus {
+      border-color: darken($yellow, 10%);
+    }
+  }
+}
+
+.submit {
+  @include button($green, $white);
+}
+
+.link {
+  @include link($blue);
 }
