@@ -143,6 +143,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
 
           <div className={classes.otherContinues}>
             <button className={classes.buttonSuccessGoogle} type="button" onClick={loginWithGoogle}>
+              <img src="/images/icon-google.svg" alt="" />
               {t("continue-with-google")}
             </button>
             <button
@@ -150,6 +151,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
               type="button"
               onClick={loginWithFacebook}
             >
+              <img src="/images/icon-facebook.svg" alt="" />
               {t("continue-with-facebook")}
             </button>
           </div>
