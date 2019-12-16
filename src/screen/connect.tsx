@@ -1,13 +1,13 @@
 import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
+import PinField from "react-pin-field"
 
 import Link from "../app/link"
 import useAsync from "../async/context"
 import Loader from "../async/loader"
 import {useAuthState} from "../auth/context"
 import $screen from "./service"
-import CodeInput from "./code-input"
 
 import classes from "./connect.module.scss"
 
@@ -66,8 +66,12 @@ const ConnectScreen: FC = () => {
         </div>
         <div className={classes.code}>
           <h2>{t("code-title")}</h2>
-          <div className={classes.codeInput}>
-            <CodeInput onChange={setCode} />
+          <div className={classes.pinFieldContainer}>
+            <PinField
+              className={classes.pinField}
+              allowedChars="ABCDEFGHJKMNPQRSTUVWXYZ123456789"
+              onChange={setCode}
+            />
           </div>
           <div className={classes.screenNameLabel}>
             <h3>{t("code-screen-name")}</h3>

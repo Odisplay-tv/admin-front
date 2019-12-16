@@ -109,6 +109,30 @@
   }
 }
 
+.pinFieldContainer {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  grid-column-gap: 25px;
+}
+
+.pinField {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: $black;
+  font-size: 115px;
+  max-height: 185px;
+  max-width: 115px;
+  text-align: center;
+  text-transform: uppercase;
+  transition-duration: 250ms;
+  transition-property: border;
+
+  &:focus {
+    border: 2px solid $yellow;
+  }
+}
+
 .submit {
   @include button($green, $white);
 }
