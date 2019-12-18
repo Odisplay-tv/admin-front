@@ -69,7 +69,7 @@
   @include head;
 }
 
-@mixin row {
+@mixin col {
   font-size: 13px;
   font-weight: normal;
   padding: 20px 15px;
@@ -82,33 +82,46 @@
   background: $grayE8;
 }
 
-.selectRow {
-  @include row;
+.emptyRow {
+  color: rgba($gray9A, 0.4);
+  font-size: 21px;
 }
 
-.statusRow {
-  @include row;
+.emptyCol > div {
+  color: rgba($gray9A, 0.4);
+  font-size: 21px;
+  margin: 60px auto;
+  max-width: 250px;
+  text-align: center;
 }
 
-.nameRow {
-  @include row;
+.selectCol {
+  @include col;
+}
+
+.statusCol {
+  @include col;
+}
+
+.nameCol {
+  @include col;
   font-size: 17px;
   font-weight: bold;
   text-align: left;
   width: auto;
 }
 
-.layoutRow {
-  @include row;
+.layoutCol {
+  @include col;
   width: auto;
 }
 
-.settingsRow {
-  @include row;
+.settingsCol {
+  @include col;
 }
 
-.deleteRow {
-  @include row;
+.deleteCol {
+  @include col;
 }
 
 @mixin status {
@@ -124,4 +137,36 @@
 .disconnected {
   @include status;
   fill: $red;
+}
+
+.aside {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-rows: max-content;
+  grid-row-gap: 30px;
+}
+
+.connectScreen {
+  @include card-base;
+  align-items: center;
+  display: grid;
+  font-size: 18px;
+  grid: max-content / repeat(2, minmax(50px, 1fr));
+  padding: 20px 10px;
+  text-align: center;
+
+  img {
+    max-height: 100px;
+  }
+
+  strong {
+    font-size: 26px;
+  }
+}
+
+.createGroup {
+  @include card-base;
+  background: $gray6A;
+  color: $white;
+  padding: 15px;
 }

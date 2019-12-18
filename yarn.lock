@@ -10090,10 +10090,10 @@ react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
-react-pin-field@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/react-pin-field/-/react-pin-field-0.2.0.tgz#a7027a3df7822232c3a720353095860b5e718439"
-  integrity sha512-7vbVJZWKj+ena/1K2giK90XI9NwgASg3n/jAXoKdxqpNrRff0qQZVKGkTpGa5yzj2dcUJQ65HGRjpCe4ntoYgw==
+react-pin-field@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/react-pin-field/-/react-pin-field-0.2.2.tgz#4905d6ee2e5c8ec498b7ae182c410b58dfff1976"
+  integrity sha512-anksqZ7z0g2Ph8YTytmvBjOi0VKexNbpDQDh1l5+A0fuMJyebcB96+MG66SdV1DvCsF5cSEpqsP1maFntmfWMQ==
   dependencies:
     classnames "^2.2.6"
 

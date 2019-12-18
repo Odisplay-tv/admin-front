@@ -1,4 +1,6 @@
 {
   "confirm-deletion": "Êtes-vous sûr de vouloir supprimer cet écran ?",
+  "connect-title": "Connecter un <strong>Écran</strong>",
+  "empty-list": "Vous n'avez pas encore ajouté un écran",
   "title": "Écrans"
 }

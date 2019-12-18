@@ -2,6 +2,7 @@ $black: #20222d;
 $blue: #4fadff;
 $gray51: #515960;
 $gray6A: #6a7176;
+$gray9A: #9a9a9a;
 $gray9B: #9b9b9b;
 $grayA3: #a3a3a3;
 $grayC2: #c2c2c2;
@@ -47,5 +48,20 @@ $yellow: #fbd52f;
   img {
     margin-right: 10px;
     width: 20px;
+  }
+}
+
+@mixin card-base {
+  background: $white;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  transition-duration: 250ms;
+  transition-property: color, background, box-shadow, transform;
+
+  &:hover,
+  &:focus {
+    background: $gray6A;
+    box-shadow: 0 0 32px rgba($black, 0.3);
+    color: $white;
+    transform: scale(1.03);
   }
 }
