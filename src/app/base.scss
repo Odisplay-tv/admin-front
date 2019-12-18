@@ -67,8 +67,14 @@ a {
   }
 }
 
-input:focus {
-  outline: none;
+input {
+  max-width: 100%;
+  min-width: 100%;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 button {

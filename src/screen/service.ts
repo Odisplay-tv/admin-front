@@ -12,8 +12,8 @@ export async function generatePairingCode() {
   return {pairingId: data.id, code: data.code}
 }
 
-export async function connectScreen(idToken: string, code: string) {
-  const {data} = await linkScreenToUser({idToken, code})
+export async function connectScreen(idToken: string, screen: Partial<Screen>) {
+  const {data} = await linkScreenToUser({idToken, ...screen})
   if (!data.ok) throw new Error(data.message)
 }
 

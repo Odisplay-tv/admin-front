@@ -13,6 +13,7 @@ import classes from "./connect.module.scss"
 
 const ConnectScreen: FC = () => {
   const [code, setCode] = useState("")
+  const [name, setName] = useState("")
   const {loading, setLoading} = useAsync()
   const {user} = useAuthState()
   const {t} = useTranslation(["connect-screen", "global"])
@@ -24,7 +25,7 @@ const ConnectScreen: FC = () => {
     setLoading(true)
 
     try {
-      await $screen.connectScreen(await user.getIdToken(), code)
+      await $screen.connectScreen(await user.getIdToken(), {code, name})
       toast.success("successfully-paired")
     } catch (err) {
       toast.error(t(err.message))
@@ -79,10 +80,10 @@ const ConnectScreen: FC = () => {
             <div>{t("code-screen-name-eg")}</div>
           </div>
           <div className={classes.screenNameInput}>
-            <input type="text" />
+            <input type="text" onChange={evt => setName(evt.target.value.trim())} />
           </div>
           <div>
-            <button className={classes.submit} type="submit" disabled={loading}>
+            <button className={classes.submit} type="submit" disabled={!code || !name || loading}>
               {loading ? <Loader /> : <img src="" alt="" />}
               {t("global:connect")}
             </button>
