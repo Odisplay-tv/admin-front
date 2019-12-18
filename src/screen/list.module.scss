@@ -1,0 +1,127 @@
+@import "../app/theme.scss";
+@import "../app/media.scss";
+
+.container {
+  padding: 40px 50px;
+
+  @include media(md) {
+    padding: 15px;
+  }
+}
+
+.title {
+  font-size: 26px;
+  font-weight: normal;
+  margin: 0 0 60px 0;
+}
+
+.content {
+  display: grid;
+  grid-gap: 30px;
+  grid-template-columns: minmax(0, 1fr) 275px;
+
+  @include media(lg) {
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: max-content;
+  }
+}
+
+.table {
+  background: $white;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  width: 100%;
+}
+
+@mixin head {
+  border-bottom: 1px solid rgba($gray51, 0.15);
+  color: $gray6A;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 20px 15px;
+  width: 50px;
+}
+
+.selectHead {
+  @include head;
+}
+
+.statusHead {
+  @include head;
+}
+
+.nameHead {
+  @include head;
+  text-align: left;
+  width: auto;
+}
+
+.layoutHead {
+  @include head;
+  width: auto;
+}
+
+.settingsHead {
+  @include head;
+}
+
+.deleteHead {
+  @include head;
+}
+
+@mixin row {
+  font-size: 13px;
+  font-weight: normal;
+  padding: 20px 15px;
+  text-align: center;
+  transition-duration: 250ms;
+  transition-property: background;
+}
+
+.row:hover > * {
+  background: $grayE8;
+}
+
+.selectRow {
+  @include row;
+}
+
+.statusRow {
+  @include row;
+}
+
+.nameRow {
+  @include row;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: left;
+  width: auto;
+}
+
+.layoutRow {
+  @include row;
+  width: auto;
+}
+
+.settingsRow {
+  @include row;
+}
+
+.deleteRow {
+  @include row;
+}
+
+@mixin status {
+  height: 15px;
+  width: 15px;
+}
+
+.connected {
+  @include status;
+  fill: $green;
+}
+
+.disconnected {
+  @include status;
+  fill: $red;
+}

@@ -69,7 +69,8 @@ const ConnectScreen: FC = () => {
           <div className={classes.pinFieldContainer}>
             <PinField
               className={classes.pinField}
-              allowedChars="ABCDEFGHJKMNPQRSTUVWXYZ123456789"
+              validate="abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789"
+              format={k => k.toUpperCase()}
               onChange={setCode}
             />
           </div>

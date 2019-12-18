@@ -1,4 +1,7 @@
 import firebase, {functions, firestore} from "../app/firebase"
+import {Screen} from "./model"
+
+type ChangeHandler = (doc?: firebase.firestore.DocumentData) => void
 
 const requestPairingCode = functions.httpsCallable("requestPairingCode")
 const linkScreenToUser = functions.httpsCallable("linkScreenToUser")
@@ -6,7 +9,7 @@ const linkScreenToUser = functions.httpsCallable("linkScreenToUser")
 export async function generatePairingCode() {
   const {data} = await requestPairingCode()
   if (!data.ok) throw new Error(data.message)
-  return {screenId: data.id, code: data.code}
+  return {pairingId: data.id, code: data.code}
 }
 
 export async function connectScreen(idToken: string, code: string) {
@@ -14,25 +17,37 @@ export async function connectScreen(idToken: string, code: string) {
   if (!data.ok) throw new Error(data.message)
 }
 
-type ChangeHandler = (doc: firebase.firestore.DocumentData) => void
 export function onPairingChange(code: string, handler: ChangeHandler) {
-  return firestore("screens", code).onSnapshot(doc => {
+  return firestore("pairings", code).onSnapshot(doc => {
     const screen = doc.data()
     if (screen) handler(screen)
   })
 }
 
-export function onConfigChange(screenId: string, userId: string, handler: ChangeHandler) {
-  return firestore(`users/${userId}/screens`, screenId).onSnapshot(async doc => {
-    const screen = doc.data()
-    console.debug("screen changed", screen)
-    if (!screen || !screen.configId) {
-      return handler({})
-    }
-
-    const configRef = await firestore(`users/${userId}/screens`, screen.configId).get()
-    handler(configRef.data() || {})
+export function onConfigChange(userId: string, screenId: string, handler: ChangeHandler) {
+  return firestore(`users/${userId}/screens`, screenId).onSnapshot(async snap => {
+    const screen = snap.data()
+    if (!screen) return handler()
+    if (!screen.layoutId) return handler({})
+    const layoutRef = await firestore(`users/${userId}/layouts`, screen.layoutId).get()
+    handler(layoutRef.data() || {})
   })
 }
 
-export default {generatePairingCode, connectScreen, onPairingChange, onConfigChange}
+export function update(userId: string, screen: Screen) {
+  return firestore(`users/${userId}/screens`, screen.id).set(screen, {merge: true})
+}
+
+export {_delete as delete}
+function _delete(userId: string, screenId: string) {
+  return firestore(`users/${userId}/screens`, screenId).delete()
+}
+
+export default {
+  generatePairingCode,
+  connectScreen,
+  onPairingChange,
+  onConfigChange,
+  update,
+  delete: _delete,
+}

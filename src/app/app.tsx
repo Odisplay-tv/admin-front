@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom
 
 import {AuthContextProvider} from "../auth/context"
 import {AsyncContextProvider} from "../async/context"
+import {ScreenContextProvider} from "../screen/context"
 import Register from "../auth/register"
 import ResetPassword from "../auth/reset-password"
 import Login from "../auth/login"
@@ -11,6 +12,7 @@ import PrivateRoute from "../auth/private-route"
 import Home from "../home/home"
 import Viewer from "../screen/viewer"
 import ConnectScreen from "../screen/connect"
+import ScreenList from "../screen/list"
 import Nav from "./nav"
 import Aside from "./aside"
 import Main from "./main"
@@ -25,6 +27,7 @@ const App: FC = () => {
         <Route path="/logout" component={Logout} />
         <Route path="/viewer" component={Viewer} />
         <PrivateRoute path="/screens/connect" component={withLayout(ConnectScreen)} />
+        <PrivateRoute path="/screens" component={withLayout(ScreenList)} />
         <PrivateRoute path="/" component={withLayout(Home)} />
         <Redirect to="/login" />
       </Switch>
@@ -49,7 +52,9 @@ const withLayout = (Component: ComponentType): FC => props => {
 const withContexts = (Component: ComponentType) => () => (
   <AuthContextProvider>
     <AsyncContextProvider>
-      <Component />
+      <ScreenContextProvider>
+        <Component />
+      </ScreenContextProvider>
     </AsyncContextProvider>
   </AuthContextProvider>
 )

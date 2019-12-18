@@ -13,7 +13,7 @@ const Viewer: FC = () => {
   const code = localStorage.getItem("code") || null
   const userId = localStorage.getItem("userId") || null
   const screenId = localStorage.getItem("screenId") || null
-  const layout = JSON.parse(localStorage.getItem("layout") || "{}")
+  const layout = JSON.parse(localStorage.getItem("layout") || "null")
   const [step, setStep] = useState<Step>("loading")
   const transitions = useTransition(step, s => s, {
     from: {opacity: 0},
@@ -21,14 +21,21 @@ const Viewer: FC = () => {
     leave: {opacity: 0},
   })
 
+  function resetPairing() {
+    localStorage.removeItem("code")
+    localStorage.removeItem("userId")
+    localStorage.removeItem("screenId")
+    localStorage.removeItem("layout")
+    setStep("loading")
+  }
+
   useEffect(() => {
     switch (step) {
       case "loading": {
         $screen
           .generatePairingCode()
-          .then(({screenId, code}) => {
+          .then(({code}) => {
             localStorage.setItem("code", code)
-            localStorage.setItem("screenId", screenId)
             setStep("pairing")
           })
           .catch(err => {
@@ -38,12 +45,14 @@ const Viewer: FC = () => {
       }
 
       case "pairing": {
-        if (screenId && userId) {
+        if (code && userId) {
           setStep("rendering")
         } else if (code) {
-          const unsubscribe = $screen.onPairingChange(code, screen => {
-            if (screen.userId) {
-              localStorage.setItem("userId", screen.userId)
+          const unsubscribe = $screen.onPairingChange(code, pairing => {
+            if (!pairing) return resetPairing()
+            if (pairing.userId) {
+              localStorage.setItem("userId", pairing.userId)
+              localStorage.setItem("screenId", pairing.screenId)
               setStep("rendering")
             }
           })
@@ -55,9 +64,11 @@ const Viewer: FC = () => {
 
       case "rendering": {
         if (screenId && userId) {
-          const unsubscribe = $screen.onConfigChange(screenId, userId, layout => {
+          const unsubscribe = $screen.onConfigChange(userId, screenId, layout => {
+            if (!layout) return resetPairing()
             localStorage.setItem("layout", JSON.stringify(layout))
           })
+
           return () => unsubscribe()
         }
         break
