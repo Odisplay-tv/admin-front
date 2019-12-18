@@ -22,7 +22,7 @@
 .content {
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: minmax(0, 1fr) 575px;
+  grid-template-columns: 400px minmax(0, 1fr);
 
   @include media(lg) {
     grid-auto-flow: row;
@@ -48,6 +48,10 @@
 
   strong {
     color: $orange;
+  }
+
+  @include media(lg) {
+    order: 2;
   }
 
   @include media(sm) {
@@ -148,7 +152,7 @@
 }
 
 .pinField {
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   border-radius: 10px;
   color: $black;
   font-size: 100px;
@@ -158,10 +162,11 @@
   text-align: center;
   text-transform: uppercase;
   transition-duration: 250ms;
-  transition-property: border;
+  transition-property: border, box-shadow;
 
   &:focus {
-    border: 2px solid $yellow;
+    border: 3px solid $yellow;
+    box-shadow: 0 0 7px rgba($white, 0.5);
   }
 
   @include media(md) {
@@ -179,4 +184,20 @@
 
 .link {
   @include link($blue);
+}
+
+.platforms {
+  display: grid;
+  grid-auto-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  justify-items: center;
+  text-align: center;
+
+  img {
+    height: 30px;
+  }
+}
+
+.pairingImg {
+  max-width: 300px;
 }

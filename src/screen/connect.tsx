@@ -1,4 +1,5 @@
 import React, {FC, useState} from "react"
+import {useHistory} from "react-router-dom"
 import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
 import PinField from "react-pin-field"
@@ -16,6 +17,7 @@ const ConnectScreen: FC = () => {
   const [name, setName] = useState("")
   const {loading, setLoading} = useAsync()
   const {user} = useAuthState()
+  const history = useHistory()
   const {t} = useTranslation(["connect-screen", "global"])
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
@@ -27,6 +29,7 @@ const ConnectScreen: FC = () => {
     try {
       await $screen.connectScreen(await user.getIdToken(), {code, name})
       toast.success(t("successfully-paired"))
+      history.push("/screens")
     } catch (err) {
       toast.error(t(err.message))
     }
@@ -44,20 +47,23 @@ const ConnectScreen: FC = () => {
           <div>{t("available-on")}</div>
           <div className={classes.platforms}>
             <Link to="/">
-              <img src="" alt="" />
+              <img src="/images/icon-android.svg" alt="" />
             </Link>
             <Link to="/">
-              <img src="" alt="" />
+              <img src="/images/icon-samsung.svg" alt="" />
             </Link>
             <Link to="/">
-              <img src="" alt="" />
+              <img src="/images/icon-amazon.svg" alt="" />
             </Link>
             <Link to="/">
-              <img src="" alt="" />
+              <img src="/images/icon-amazon.svg" alt="" />
+            </Link>
+            <Link to="/">
+              <img src="/images/icon-chrome.svg" alt="" />
             </Link>
           </div>
           <p dangerouslySetInnerHTML={{__html: t("help-step-2")}} />
-          <img src="" alt="" />
+          <img className={classes.pairingImg} src="/images/pairing.svg" alt="" />
           <p dangerouslySetInnerHTML={{__html: t("help-step-3")}} />
           <div>
             <Link className={classes.link} to="/">
