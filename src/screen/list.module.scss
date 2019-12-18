@@ -13,6 +13,10 @@
   font-size: 26px;
   font-weight: normal;
   margin: 0 0 60px 0;
+
+  @include media(md) {
+    margin-bottom: 15px;
+  }
 }
 
 .content {

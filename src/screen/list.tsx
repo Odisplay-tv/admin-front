@@ -18,7 +18,7 @@ const ScreenList: FC = () => {
 
   return (
     <div className={classes.container}>
-      <h1 className={classes.title}>{t("screen-list:title")}</h1>
+      <h1 className={classes.title}>{t("screen:list-title")}</h1>
       <div className={classes.content}>
         <table cellSpacing={0} className={classes.table}>
           <thead>
@@ -35,7 +35,7 @@ const ScreenList: FC = () => {
             {screens.length === 0 && (
               <tr className={classes.emptyRow}>
                 <td className={classes.emptyCol} colSpan={6}>
-                  <div>{t("screen:empty-list")}</div>
+                  <div>{t("screen:list-empty")}</div>
                 </td>
               </tr>
             )}

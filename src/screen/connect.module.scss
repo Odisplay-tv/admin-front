@@ -13,12 +13,16 @@
   font-size: 26px;
   font-weight: normal;
   margin: 0 0 60px 0;
+
+  @include media(md) {
+    margin-bottom: 15px;
+  }
 }
 
 .content {
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 40% 50%;
+  grid-template-columns: minmax(0, 1fr) 575px;
 
   @include media(lg) {
     grid-auto-flow: row;
@@ -45,6 +49,14 @@
   strong {
     color: $orange;
   }
+
+  @include media(sm) {
+    padding: 15px;
+
+    p {
+      margin: 15px 0;
+    }
+  }
 }
 
 .code {
@@ -68,6 +80,11 @@
     font-weight: normal;
     margin: 0;
   }
+
+  @include media(sm) {
+    grid-row-gap: 15px;
+    padding: 15px;
+  }
 }
 
 .screenNameLabel {
@@ -84,6 +101,12 @@
   div {
     color: $grayC2;
     font-size: 12px;
+  }
+
+  @include media(md) {
+    grid-column: 1 / span 2;
+    justify-self: center;
+    text-align: center;
   }
 }
 
@@ -106,6 +129,11 @@
       border-color: darken($yellow, 10%);
     }
   }
+
+  @include media(md) {
+    grid-column: 1 / span 2;
+    justify-self: center;
+  }
 }
 
 .pinFieldContainer {
@@ -113,15 +141,20 @@
   grid-auto-columns: minmax(0, 1fr);
   grid-auto-flow: column;
   grid-column-gap: 25px;
+
+  @include media(sm) {
+    grid-column-gap: 5px;
+  }
 }
 
 .pinField {
   border: 2px solid transparent;
   border-radius: 10px;
   color: $black;
-  font-size: 115px;
+  font-size: 100px;
   max-height: 185px;
   max-width: 115px;
+  padding: 5px 0;
   text-align: center;
   text-transform: uppercase;
   transition-duration: 250ms;
@@ -129,6 +162,14 @@
 
   &:focus {
     border: 2px solid $yellow;
+  }
+
+  @include media(md) {
+    font-size: 70px;
+  }
+
+  @include media(sm) {
+    font-size: 50px;
   }
 }
 
