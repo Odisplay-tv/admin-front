@@ -16,8 +16,8 @@ const Fade: FC<FadeProps> = ({watch: value, onTrue: elemA, onFalse: elemB}) => {
     leave: {opacity: 0},
   })
 
-  const view = transitions.map(({item: value, props: style}) => (
-    <animated.div className={classes.fade} style={style}>
+  const view = transitions.map(({key, item: value, props: style}) => (
+    <animated.div key={key} className={classes.fade} style={style}>
       {value ? elemA : elemB}
     </animated.div>
   ))

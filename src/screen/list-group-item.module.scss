@@ -1,0 +1,45 @@
+@import "../app/theme.scss";
+@import "../app/media.scss";
+
+.row {
+  background: $gray6A;
+  color: $white;
+
+  > * {
+    padding: 10px 15px;
+  }
+}
+
+.draggedOver {
+  background: $blue;
+  transition-duration: 150ms;
+  transition-property: background;
+}
+
+@mixin col {
+  border-bottom: 1px solid $white;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 20px 15px;
+  text-align: center;
+}
+
+.nameCol,
+.layoutCol,
+.settingsCol,
+.deleteCol {
+  @include col;
+}
+
+.selectCol,
+.statusCol {
+  @include col;
+  text-align: center;
+
+  img {
+    display: inherit;
+    height: 30px;
+    margin: 0 auto;
+    width: 30px;
+  }
+}

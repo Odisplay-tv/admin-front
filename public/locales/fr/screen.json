@@ -10,10 +10,16 @@
   "connect-help-step-2": "<strong>2 - Ouvrez l'application sur votre écran TV</strong>, une clé secrete s'affiche sur l'écran :",
   "connect-help-step-3": "<strong>3 - Saisissez la clé secrète sur notre interface</strong> puis donnez un nom à votre écran.",
   "connect-help-title": "Comment ça marche ?",
-  "connect-successfully-paired": "Appairage réussi !",
   "connect-title": "Connecter un écran",
+  "group-successfully-added": "Groupe ajouté avec succès !",
+  "group-successfully-deleted": "Groupe supprimé avec succès !",
   "list-connect-title": "Connecter un <strong>Écran</strong>",
   "list-create-group": "Créer un groupe",
   "list-empty": "Vous n'avez pas encore ajouté un écran",
-  "list-title": "Écrans"
+  "list-title": "Écrans",
+  "move-at": "Déplacer vers",
+  "prompt-add-group": "Saisissez le nom du groupe :",
+  "successfully-deleted": "Écran supprimé avec succès !",
+  "successfully-paired": "Appairage réussi !",
+  "successfully-updated": "Écran mise à jour avec succès !"
 }

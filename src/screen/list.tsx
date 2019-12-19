@@ -1,24 +1,49 @@
-import React, {FC} from "react"
+import React, {FC, useRef, useState} from "react"
 import {useTranslation} from "react-i18next"
 
 import Link from "../app/link"
+import {Screen, Group} from "./model"
 import useScreens from "./context"
+import ScreenListItem from "./list-screen-item"
+import GroupListItem from "./list-group-item"
 
 import classes from "./list.module.scss"
 
 const ScreenList: FC = () => {
-  const {screens, ...$screen} = useScreens()
+  const {screens, groups, ...$screen} = useScreens()
+  const dragPreviewRef = useRef<HTMLDivElement>(null)
+  const [draggedScreen, setDraggedScreen] = useState<Screen | null>(null)
   const {t} = useTranslation(["global", "screen"])
 
-  const handleDelete = (screenId: string) => async () => {
-    if (window.confirm(t("screen:confirm-deletion"))) {
-      await $screen.delete(screenId)
+  async function addGroup() {
+    const name = window.prompt(t("screen:prompt-add-group"))
+    if (name) await $screen.addGroup(name)
+  }
+
+  function handleDragStart(screen: Screen) {
+    setDraggedScreen(screen)
+  }
+
+  function handleDragEnd() {
+    setDraggedScreen(null)
+  }
+
+  async function handleDrop(group: Group) {
+    if (draggedScreen) {
+      console.log(draggedScreen)
+
+      await $screen.update({...draggedScreen, groupId: group.id})
+      setDraggedScreen(null)
     }
   }
 
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>{t("screen:list-title")}</h1>
+      <div ref={dragPreviewRef} className={classes.dragPreview}>
+        <img src="/images/screen.svg" alt="" />
+        <div>{t("screen:move-at")}</div>
+      </div>
       <div className={classes.content}>
         <table cellSpacing={0} className={classes.table}>
           <thead>
@@ -32,6 +57,9 @@ const ScreenList: FC = () => {
             </tr>
           </thead>
           <tbody>
+            {groups.map(group => (
+              <GroupListItem key={group.id} group={group} onDrop={handleDrop} />
+            ))}
             {screens.length === 0 && (
               <tr className={classes.emptyRow}>
                 <td className={classes.emptyCol} colSpan={6}>
@@ -39,31 +67,14 @@ const ScreenList: FC = () => {
                 </td>
               </tr>
             )}
-            {screens.map(s => (
-              <tr key={s.id} className={classes.row}>
-                <td className={classes.selectCol}>
-                  <input type="checkbox" />
-                </td>
-                <td className={classes.statusCol}>
-                  <svg
-                    className={classes.connected}
-                    viewBox="0 0 2 2"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="1" cy="1" r="1" />
-                  </svg>
-                </td>
-                <td className={classes.nameCol}>{s.name}</td>
-                <td className={classes.layoutCol}>{null}</td>
-                <td className={classes.settingsCol}>
-                  <button type="button">settings</button>
-                </td>
-                <td className={classes.deleteCol}>
-                  <button type="button" onClick={handleDelete(s.id)}>
-                    delete
-                  </button>
-                </td>
-              </tr>
+            {screens.map(screen => (
+              <ScreenListItem
+                key={screen.id}
+                screen={screen}
+                preview={dragPreviewRef}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              />
             ))}
           </tbody>
         </table>
@@ -72,7 +83,7 @@ const ScreenList: FC = () => {
             <img src="/images/screen.svg" alt="" />
             <span dangerouslySetInnerHTML={{__html: t("screen:list-connect-title")}} />
           </Link>
-          <button className={classes.createGroup} type="button">
+          <button className={classes.createGroup} type="button" onClick={addGroup}>
             <img src="/images/icon-folder.svg" alt="" />
             <span>{t("screen:list-create-group")}</span>
           </button>

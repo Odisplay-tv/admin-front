@@ -29,7 +29,7 @@ const ConnectScreen: FC = () => {
 
     try {
       await $screen.connectScreen(await user.getIdToken(), {code, name})
-      toast.success(t("successfully-paired"))
+      toast.success(t("screen:successfully-paired"))
       history.push("/screens")
     } catch (err) {
       toast.error(t(err.message))

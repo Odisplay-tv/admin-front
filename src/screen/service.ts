@@ -1,5 +1,7 @@
+import omit from "lodash/fp/omit"
+
 import firebase, {functions, firestore} from "../app/firebase"
-import {Screen} from "./model"
+import {Screen, PartialScreen} from "./model"
 
 type ChangeHandler = (doc?: firebase.firestore.DocumentData) => void
 
@@ -34,13 +36,24 @@ export function onConfigChange(userId: string, screenId: string, handler: Change
   })
 }
 
-export function update(userId: string, screen: Screen) {
-  return firestore(`users/${userId}/screens`, screen.id).set(screen, {merge: true})
+export function update(userId: string, screen: PartialScreen) {
+  return firestore(`users/${userId}/screens`, screen.id).set(omit(["layout", "code"], screen), {
+    merge: true,
+  })
 }
 
 export {_delete as delete}
-function _delete(userId: string, screenId: string) {
-  return firestore(`users/${userId}/screens`, screenId).delete()
+function _delete(userId: string, id: string) {
+  return firestore(`users/${userId}/screens`, id).delete()
+}
+
+export function addGroup(userId: string, name: string) {
+  const {id} = firestore(`users/${userId}/groups`).doc()
+  return firestore(`users/${userId}/groups`, id).set({id, name})
+}
+
+export function deleteGroup(userId: string, id: string) {
+  return firestore(`users/${userId}/groups`, id).delete()
 }
 
 export default {
@@ -50,4 +63,6 @@ export default {
   onConfigChange,
   update,
   delete: _delete,
+  addGroup,
+  deleteGroup,
 }

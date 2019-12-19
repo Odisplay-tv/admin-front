@@ -1,0 +1,76 @@
+@import "../app/theme.scss";
+@import "../app/media.scss";
+
+.row {
+  cursor: pointer;
+  opacity: 1;
+  transition-duration: 150ms;
+  transition-property: opacity;
+  user-select: none;
+}
+
+.dragging {
+  opacity: 0.25;
+}
+
+@mixin col {
+  font-size: 13px;
+  font-weight: normal;
+  padding: 20px 15px;
+  text-align: center;
+  transition-duration: 250ms;
+  transition-property: background;
+}
+
+.selectCol {
+  @include col;
+}
+
+.statusCol {
+  @include col;
+}
+
+.nameCol {
+  @include col;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: left;
+  width: auto;
+}
+
+.layoutCol {
+  @include col;
+  width: auto;
+}
+
+.settingsCol {
+  @include col;
+}
+
+.deleteCol {
+  @include col;
+}
+
+@mixin status {
+  height: 15px;
+  width: 15px;
+}
+
+.connected {
+  @include status;
+  fill: $green;
+}
+
+.disconnected {
+  @include status;
+  fill: $red;
+}
+
+.dragLayout {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
