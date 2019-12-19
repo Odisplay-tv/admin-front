@@ -70,11 +70,11 @@ const ScreenList: FC = () => {
         <aside className={classes.aside}>
           <Link className={classes.connectScreen} to="/screens/connect">
             <img src="/images/screen.svg" alt="" />
-            <span dangerouslySetInnerHTML={{__html: t("screen:connect-title")}} />
+            <span dangerouslySetInnerHTML={{__html: t("screen:list-connect-title")}} />
           </Link>
           <button className={classes.createGroup} type="button">
-            <img src="" alt="" />
-            <span>{t("screen:create-group")}</span>
+            <img src="/images/icon-folder.svg" alt="" />
+            <span>{t("screen:list-create-group")}</span>
           </button>
         </aside>
       </div>

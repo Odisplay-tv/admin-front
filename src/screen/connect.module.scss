@@ -162,7 +162,7 @@
   text-align: center;
   text-transform: uppercase;
   transition-duration: 250ms;
-  transition-property: border, box-shadow;
+  transition-property: background, border, box-shadow;
 
   &:focus {
     border: 3px solid $yellow;
@@ -180,21 +180,37 @@
 
 .submit {
   @include button($green, $white);
+  padding: 10px 30px;
+
+  img {
+    margin-right: 20px;
+  }
 }
 
 .link {
   @include link($blue);
 }
 
+.platformsTitle {
+  color: $gray51;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
 .platforms {
   display: grid;
-  grid-auto-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-flow: column;
+  grid-row-gap: 15px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 40px;
   justify-items: center;
   text-align: center;
 
   img {
-    height: 30px;
+    height: 40px;
+  }
+
+  @include media(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

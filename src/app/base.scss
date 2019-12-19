@@ -106,3 +106,13 @@ hr {
 img {
   display: inline-block;
 }
+
+.react-pin-field__input--success {
+  border: 3px solid $green !important;
+  box-shadow: 0 0 7px rgba($green, 0.5) !important;
+}
+
+.react-pin-field__input--error {
+  border: 3px solid $red !important;
+  box-shadow: 0 0 7px rgba($red, 0.5) !important;
+}

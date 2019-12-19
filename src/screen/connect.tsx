@@ -4,6 +4,7 @@ import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
 import PinField from "react-pin-field"
 
+import Fade from "../app/fade"
 import Link from "../app/link"
 import useAsync from "../async/context"
 import Loader from "../async/loader"
@@ -18,7 +19,7 @@ const ConnectScreen: FC = () => {
   const {loading, setLoading} = useAsync()
   const {user} = useAuthState()
   const history = useHistory()
-  const {t} = useTranslation(["connect-screen", "global"])
+  const {t} = useTranslation(["global", "screen"])
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()
@@ -39,21 +40,15 @@ const ConnectScreen: FC = () => {
 
   return (
     <form className={classes.container} onSubmit={handleSubmit}>
-      <h1 className={classes.title}>{t("title")}</h1>
+      <h1 className={classes.title}>{t("screen:connect-title")}</h1>
       <div className={classes.content}>
         <div className={classes.help}>
-          <h2>{t("help-title")}</h2>
-          <p dangerouslySetInnerHTML={{__html: t("help-step-1")}} />
-          <div>{t("available-on")}</div>
+          <h2>{t("screen:connect-help-title")}</h2>
+          <p dangerouslySetInnerHTML={{__html: t("screen:connect-help-step-1")}} />
+          <div className={classes.platformsTitle}>{t("screen:connect-available-on")}</div>
           <div className={classes.platforms}>
             <Link to="/">
               <img src="/images/icon-android.svg" alt="" />
-            </Link>
-            <Link to="/">
-              <img src="/images/icon-samsung.svg" alt="" />
-            </Link>
-            <Link to="/">
-              <img src="/images/icon-amazon.svg" alt="" />
             </Link>
             <Link to="/">
               <img src="/images/icon-amazon.svg" alt="" />
@@ -61,18 +56,24 @@ const ConnectScreen: FC = () => {
             <Link to="/">
               <img src="/images/icon-chrome.svg" alt="" />
             </Link>
+            <Link to="/">
+              <img src="/images/icon-amazon.svg" alt="" />
+            </Link>
+            <Link to="/">
+              <img src="/images/icon-samsung.svg" alt="" />
+            </Link>
           </div>
-          <p dangerouslySetInnerHTML={{__html: t("help-step-2")}} />
+          <p dangerouslySetInnerHTML={{__html: t("screen:connect-help-step-2")}} />
           <img className={classes.pairingImg} src="/images/pairing.svg" alt="" />
-          <p dangerouslySetInnerHTML={{__html: t("help-step-3")}} />
+          <p dangerouslySetInnerHTML={{__html: t("screen:connect-help-step-3")}} />
           <div>
             <Link className={classes.link} to="/">
-              {t("help-link")}
+              {t("screen:connect-help-link")}
             </Link>
           </div>
         </div>
         <div className={classes.code}>
-          <h2>{t("code-title")}</h2>
+          <h2>{t("screen:connect-code-title")}</h2>
           <div className={classes.pinFieldContainer}>
             <PinField
               className={classes.pinField}
@@ -82,16 +83,20 @@ const ConnectScreen: FC = () => {
             />
           </div>
           <div className={classes.screenNameLabel}>
-            <h3>{t("code-screen-name")}</h3>
-            <div>{t("code-screen-name-eg")}</div>
+            <h3>{t("screen:connect-code-screen-name")}</h3>
+            <div>{t("screen:connect-code-screen-name-eg")}</div>
           </div>
           <div className={classes.screenNameInput}>
             <input type="text" onChange={evt => setName(evt.target.value.trim())} />
           </div>
           <div>
             <button className={classes.submit} type="submit" disabled={!code || !name || loading}>
-              {loading ? <Loader /> : <img src="" alt="" />}
-              {t("global:connect")}
+              <Fade
+                watch={loading}
+                onTrue={<Loader />}
+                onFalse={<img src="/images/icon-download.svg" alt="" />}
+              />
+              {t("connect")}
             </button>
           </div>
         </div>

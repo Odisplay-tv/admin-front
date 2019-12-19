@@ -1,6 +1,19 @@
 {
   "confirm-deletion": "Êtes-vous sûr de vouloir supprimer cet écran ?",
-  "connect-title": "Connecter un <strong>Écran</strong>",
+  "connect-available-on": "Disponible sur :",
+  "connect-code-screen-name": "Nom de votre écran :",
+  "connect-code-screen-name-eg": "Par exemple : donnez-lui le nom de la salle où il se trouve.",
+  "connect-code-title": "Tapez votre clé secrète",
+  "connect-help-available-on": "Disponible sur :",
+  "connect-help-link": "Voir la vidéo de présentation",
+  "connect-help-step-1": "<strong>1 - Téléchargez l'application Odisplay sur votre écran TV</strong>, tablette ou appareil directement depuis son catalogue d'application (Store).",
+  "connect-help-step-2": "<strong>2 - Ouvrez l'application sur votre écran TV</strong>, une clé secrete s'affiche sur l'écran :",
+  "connect-help-step-3": "<strong>3 - Saisissez la clé secrète sur notre interface</strong> puis donnez un nom à votre écran.",
+  "connect-help-title": "Comment ça marche ?",
+  "connect-successfully-paired": "Appairage réussi !",
+  "connect-title": "Connecter un écran",
+  "list-connect-title": "Connecter un <strong>Écran</strong>",
+  "list-create-group": "Créer un groupe",
   "list-empty": "Vous n'avez pas encore ajouté un écran",
   "list-title": "Écrans"
 }
