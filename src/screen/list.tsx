@@ -6,6 +6,7 @@ import {Screen, Group} from "./model"
 import useScreens from "./context"
 import ScreenListItem from "./list-screen-item"
 import GroupListItem from "./list-group-item"
+import Status from "./status"
 
 import classes from "./list.module.scss"
 
@@ -13,7 +14,7 @@ const ScreenList: FC = () => {
   const {screens, groups, ...$screen} = useScreens()
   const dragPreviewRef = useRef<HTMLDivElement>(null)
   const [draggedScreen, setDraggedScreen] = useState<Screen | null>(null)
-  const {t} = useTranslation(["global", "screen"])
+  const {t} = useTranslation(["default", "screen"])
 
   async function addGroup() {
     const name = window.prompt(t("screen:prompt-add-group"))
@@ -30,8 +31,6 @@ const ScreenList: FC = () => {
 
   async function handleDrop(group: Group) {
     if (draggedScreen) {
-      console.log(draggedScreen)
-
       await $screen.update({...draggedScreen, groupId: group.id})
       setDraggedScreen(null)
     }
@@ -42,13 +41,14 @@ const ScreenList: FC = () => {
       <h1 className={classes.title}>{t("screen:list-title")}</h1>
       <div ref={dragPreviewRef} className={classes.dragPreview}>
         <img src="/images/screen.svg" alt="" />
-        <div>{t("screen:move-at")}</div>
+        <div>{draggedScreen && draggedScreen.name}</div>
       </div>
       <div className={classes.content}>
         <table cellSpacing={0} className={classes.table}>
           <thead>
             <tr>
               <th className={classes.selectHead}>{t("select")}</th>
+              <th className={classes.linkHead}>{null}</th>
               <th className={classes.statusHead}>{t("connected")}</th>
               <th className={classes.nameHead}>{t("screen-name")}</th>
               <th className={classes.layoutHead}>{t("broadcasting")}</th>
@@ -57,26 +57,52 @@ const ScreenList: FC = () => {
             </tr>
           </thead>
           <tbody>
+            {screens
+              .filter(s => !groups.map(g => g.id).includes(s.groupId || ""))
+              .map(screen => (
+                <ScreenListItem
+                  key={screen.id}
+                  screen={screen}
+                  preview={dragPreviewRef}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                />
+              ))}
             {groups.map(group => (
-              <GroupListItem key={group.id} group={group} onDrop={handleDrop} />
+              <GroupListItem key={group.id} group={group} onDrop={handleDrop}>
+                {screens
+                  .filter(s => s.groupId === group.id)
+                  .map(screen => (
+                    <ScreenListItem
+                      key={screen.id}
+                      screen={screen}
+                      preview={dragPreviewRef}
+                      onDragStart={handleDragStart}
+                      onDragEnd={handleDragEnd}
+                    />
+                  ))}
+              </GroupListItem>
             ))}
             {screens.length === 0 && (
               <tr className={classes.emptyRow}>
-                <td className={classes.emptyCol} colSpan={6}>
+                <td className={classes.emptyCol} colSpan={7}>
                   <div>{t("screen:list-empty")}</div>
                 </td>
               </tr>
             )}
-            {screens.map(screen => (
-              <ScreenListItem
-                key={screen.id}
-                screen={screen}
-                preview={dragPreviewRef}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              />
-            ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td className={classes.legend} colSpan={7}>
+                <div>
+                  <Status connected />
+                  <span>{t("connected")}</span>
+                  <Status />
+                  {t("disconnected")}
+                </div>
+              </td>
+            </tr>
+          </tfoot>
         </table>
         <aside className={classes.aside}>
           <Link className={classes.connectScreen} to="/screens/connect">

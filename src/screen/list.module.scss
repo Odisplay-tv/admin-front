@@ -34,6 +34,7 @@
 .table {
   background: $white;
   box-shadow: 0 0 16px rgba($black, 0.15);
+  height: 0;
   width: 100%;
 }
 
@@ -46,31 +47,23 @@
   width: 50px;
 }
 
-.selectHead {
-  @include head;
-}
-
-.statusHead {
+.selectHead,
+.linkHead,
+.statusHead,
+.nameHead,
+.layoutHead,
+.settingsHead,
+.deleteHead {
   @include head;
 }
 
 .nameHead {
-  @include head;
   text-align: left;
   width: auto;
 }
 
 .layoutHead {
-  @include head;
   width: auto;
-}
-
-.settingsHead {
-  @include head;
-}
-
-.deleteHead {
-  @include head;
 }
 
 @mixin col {
@@ -222,5 +215,21 @@
 
   img {
     margin-bottom: 10px;
+  }
+}
+
+.legend {
+  color: $gray6A;
+  font-size: 13px;
+  padding: 10px 15px;
+
+  div {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  svg {
+    margin: -2px 10px 0 80px;
   }
 }

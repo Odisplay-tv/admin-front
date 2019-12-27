@@ -19,7 +19,7 @@ const ConnectScreen: FC = () => {
   const {loading, setLoading} = useAsync()
   const {user} = useAuthState()
   const history = useHistory()
-  const {t} = useTranslation(["global", "screen"])
+  const {t} = useTranslation(["default", "screen"])
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()

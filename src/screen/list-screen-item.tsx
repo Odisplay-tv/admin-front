@@ -2,6 +2,10 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import classNames from "classnames"
 
+import {ReactComponent as IconSettings} from "./icon-settings.svg"
+import {ReactComponent as IconTrash} from "./icon-trash.svg"
+import {ReactComponent as IconLink} from "./icon-link.svg"
+import Status from "./status"
 import {Screen} from "./model"
 import useScreens from "./context"
 
@@ -16,11 +20,13 @@ type ScreenListItemProps = {
 
 const ScreenListItem: FC<ScreenListItemProps> = props => {
   const {screen, preview} = props
-  const $screen = useScreens()
+  const {groups, ...$screen} = useScreens()
   const [dragging, setDragging] = useState(false)
-  const {t} = useTranslation(["global", "screen"])
+  const {t} = useTranslation(["default", "screen"])
 
-  async function deleteScreen() {
+  async function deleteScreen(evt: React.MouseEvent<HTMLButtonElement>) {
+    evt.preventDefault()
+
     if (window.confirm(t("screen:confirm-deletion"))) {
       await $screen.delete(screen.id)
     }
@@ -50,19 +56,32 @@ const ScreenListItem: FC<ScreenListItemProps> = props => {
       <td className={classes.selectCol}>
         <input type="checkbox" />
       </td>
+      <td className={classes.linkCol}>
+        {groups.map(g => g.id).includes(screen.groupId || "") && (
+          <div>
+            <hr />
+            <IconLink />
+            <hr />
+          </div>
+        )}
+      </td>
       <td className={classes.statusCol}>
-        <svg className={classes.connected} viewBox="0 0 2 2" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="1" cy="1" r="1" />
-        </svg>
+        <div>
+          <Status connected />
+        </div>
       </td>
       <td className={classes.nameCol}>{screen.name}</td>
-      <td className={classes.layoutCol}>{null}</td>
+      <td className={classes.layoutCol}>
+        <button type="button">{t("screen:add-content")}</button>
+      </td>
       <td className={classes.settingsCol}>
-        <button type="button">settings</button>
+        <button type="button">
+          <IconSettings className={classes.icon} />
+        </button>
       </td>
       <td className={classes.deleteCol}>
         <button type="button" onClick={deleteScreen}>
-          delete
+          <IconTrash className={classes.icon} />
         </button>
       </td>
     </tr>

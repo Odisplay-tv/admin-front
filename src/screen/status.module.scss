@@ -1,0 +1,14 @@
+@import "../app/theme.scss";
+
+.status {
+  height: 15px;
+  width: 15px;
+}
+
+.connected {
+  fill: $green;
+}
+
+.disconnected {
+  fill: $red;
+}

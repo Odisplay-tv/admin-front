@@ -2,6 +2,8 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import classNames from "classnames"
 
+import {ReactComponent as IconSettings} from "./icon-settings.svg"
+import {ReactComponent as IconTrash} from "./icon-trash.svg"
 import {Group} from "./model"
 import useScreens from "./context"
 
@@ -13,15 +15,22 @@ type GroupListItemProps = {
 }
 
 const GroupListItem: FC<GroupListItemProps> = props => {
-  const {group} = props
-  const $screen = useScreens()
+  const {group, children} = props
+  const {screens, ...$screen} = useScreens()
   const [draggedOver, setDraggedOver] = useState(false)
-  const {t} = useTranslation(["global", "screen"])
+  const [open, setOpen] = useState(true)
+  const {t} = useTranslation(["default", "screen"])
 
-  async function deleteGroup() {
+  async function deleteGroup(evt: React.MouseEvent<HTMLButtonElement>) {
+    evt.stopPropagation()
+
     if (window.confirm(t("screen:confirm-deletion"))) {
       await $screen.deleteGroup(group.id)
     }
+  }
+
+  function handleClick() {
+    setOpen(!open)
   }
 
   function handleDragOver(evt: React.DragEvent<HTMLTableRowElement>) {
@@ -39,30 +48,43 @@ const GroupListItem: FC<GroupListItemProps> = props => {
   }
 
   return (
-    <tr
-      key={group.id}
-      className={classNames(classes.row, {[classes.draggedOver]: draggedOver})}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      <td className={classes.selectCol}>
-        <img src="/images/icon-arrow-down.svg" alt="" />
-      </td>
-      <td className={classes.statusCol}>
-        <img src="/images/icon-folder.svg" alt="" />
-      </td>
-      <td className={classes.nameCol}>{group.name}</td>
-      <td className={classes.layoutCol} />
-      <td className={classes.settingsCol}>
-        <button type="button">settings</button>
-      </td>
-      <td className={classes.deleteCol}>
-        <button type="button" onClick={deleteGroup}>
-          delete
-        </button>
-      </td>
-    </tr>
+    <>
+      <tr
+        key={group.id}
+        className={classNames(classes.row, {[classes.draggedOver]: draggedOver})}
+        onClick={handleClick}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <td className={classes.selectCol}>
+          <img
+            className={classNames({[classes.open]: open})}
+            src="/images/icon-arrow-down.svg"
+            alt=""
+          />
+        </td>
+        <td className={classes.linkCol}>
+          ({t("screen:n-screens", {n: screens.filter(s => s.groupId === group.id).length})})
+        </td>
+        <td className={classes.statusCol}>
+          <img src="/images/icon-folder.svg" alt="" />
+        </td>
+        <td className={classes.nameCol}>{group.name}</td>
+        <td className={classes.layoutCol} />
+        <td className={classes.settingsCol}>
+          <button type="button">
+            <IconSettings className={classes.icon} />
+          </button>
+        </td>
+        <td className={classes.deleteCol}>
+          <button type="button" onClick={deleteGroup}>
+            <IconTrash className={classes.icon} />
+          </button>
+        </td>
+      </tr>
+      {open && children}
+    </>
   )
 }
 

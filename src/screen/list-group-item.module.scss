@@ -4,6 +4,9 @@
 .row {
   background: $gray6A;
   color: $white;
+  cursor: pointer;
+  min-height: 70px;
+  transition: 150ms background;
 
   > * {
     padding: 10px 15px;
@@ -11,30 +14,62 @@
 }
 
 .draggedOver {
-  background: $blue;
-  transition-duration: 150ms;
-  transition-property: background;
+  background: $green;
 }
 
 @mixin col {
   border-bottom: 1px solid $white;
   font-size: 13px;
   font-weight: normal;
+  min-height: 70px;
   padding: 20px 15px;
   text-align: center;
 }
 
-.nameCol,
-.layoutCol,
-.settingsCol,
-.deleteCol {
+.linkCol {
+  @include col;
+  font-size: 10px;
+  padding: 20px 0;
+}
+
+.nameCol {
+  @include col;
+  font-size: 17px;
+  text-align: left;
+}
+
+.layoutCol {
   @include col;
 }
 
-.selectCol,
+.settingsCol,
+.deleteCol {
+  @include col;
+
+  button {
+    margin: 0 auto;
+  }
+}
+
+.selectCol {
+  @include col;
+
+  img {
+    display: inherit;
+    height: 30px;
+    margin: 0 auto;
+    transform: rotate(-90deg);
+    transition: 150ms transform;
+    width: 30px;
+
+    &.open {
+      transform: rotate(0);
+    }
+  }
+}
+
 .statusCol {
   @include col;
-  text-align: center;
 
   img {
     display: inherit;
@@ -42,4 +77,9 @@
     margin: 0 auto;
     width: 30px;
   }
+}
+
+.icon {
+  fill: $white;
+  width: 20px;
 }

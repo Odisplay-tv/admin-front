@@ -1,4 +1,5 @@
 {
+  "add-content": "Ajouter du contenu",
   "confirm-deletion": "Êtes-vous sûr de vouloir supprimer cet écran ?",
   "connect-available-on": "Disponible sur :",
   "connect-code-screen-name": "Nom de votre écran :",
@@ -18,8 +19,9 @@
   "list-empty": "Vous n'avez pas encore ajouté un écran",
   "list-title": "Écrans",
   "move-at": "Déplacer vers",
+  "n-screens": "{{n}} Écrans",
   "prompt-add-group": "Saisissez le nom du groupe :",
   "successfully-deleted": "Écran supprimé avec succès !",
   "successfully-paired": "Appairage réussi !",
-  "successfully-updated": "Écran mise à jour avec succès !"
+  "successfully-updated": "Écran mis à jour avec succès !"
 }

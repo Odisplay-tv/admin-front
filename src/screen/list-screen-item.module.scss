@@ -3,6 +3,7 @@
 
 .row {
   cursor: pointer;
+  min-height: 70px;
   opacity: 1;
   transition-duration: 150ms;
   transition-property: opacity;
@@ -16,6 +17,7 @@
 @mixin col {
   font-size: 13px;
   font-weight: normal;
+  min-height: 70px;
   padding: 20px 15px;
   text-align: center;
   transition-duration: 250ms;
@@ -28,6 +30,36 @@
 
 .statusCol {
   @include col;
+
+  div {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.linkCol {
+  height: 100%;
+  padding: 0;
+
+  div {
+    align-items: center;
+    display: grid;
+    grid-auto-flow: row;
+    grid-row-gap: 5px;
+    grid-template-rows: minmax(0, 1fr) min-content minmax(0, 1fr);
+    height: 100%;
+    justify-items: center;
+  }
+
+  svg {
+    height: 30px;
+  }
+
+  hr {
+    border-right: 2px solid $gray6A;
+    height: 100%;
+    width: 0;
+  }
 }
 
 .nameCol {
@@ -40,15 +72,25 @@
 
 .layoutCol {
   @include col;
+  padding: 0;
   width: auto;
+
+  button {
+    @include button($green, $white);
+    font-size: 13px;
+    font-weight: normal;
+    margin: 0 auto;
+    padding: 7.5px 15px;
+  }
 }
 
-.settingsCol {
-  @include col;
-}
-
+.settingsCol,
 .deleteCol {
   @include col;
+
+  button {
+    margin: 0 auto;
+  }
 }
 
 @mixin status {
@@ -73,4 +115,9 @@
   position: fixed;
   top: 0;
   width: 100%;
+}
+
+.icon {
+  fill: $gray6A;
+  width: 20px;
 }
