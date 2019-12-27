@@ -72,12 +72,13 @@
   transition-duration: 200ms;
   transition-property: background, border;
 
-  &:hover {
-    background: rgba($white, 0.1);
-  }
-
   &.active {
     border-left-color: $yellow;
+  }
+
+  &:hover,
+  &.active {
+    background: rgba($white, 0.1);
   }
 
   @include media(md) {

@@ -1,7 +1,9 @@
 import React, {FC} from "react"
+import {useLocation} from "react-router-dom"
 import {useTranslation} from "react-i18next"
 import classNames from "classnames"
 
+import useScreens from "../screen/context"
 import Link from "./link"
 
 import classes from "./nav.module.scss"
@@ -13,6 +15,8 @@ type NavProps = {
 
 const Nav: FC<NavProps> = props => {
   const dataVisible = props.isVisible ? {"data-visible": ""} : {}
+  const {pathname} = useLocation()
+  const {screens} = useScreens()
   const {t} = useTranslation()
 
   function handleBurgerClick(evt: React.MouseEvent) {
@@ -29,25 +33,34 @@ const Nav: FC<NavProps> = props => {
         </button>
       </Link>
 
-      <Link className={classNames(classes.item, {[classes.active]: true})} to="/screens">
+      <Link
+        className={classNames(classes.item, {[classes.active]: pathname.startsWith("/screens")})}
+        to="/screens"
+      >
         <img className={classes.itemIcon} src="/images/icon-screen.svg" alt="" />
         <span className={classes.itemText}>{t("screens")}</span>
-        <span className={classes.itemCount}>1</span>
+        <span className={classes.itemCount}>{screens.length}</span>
       </Link>
 
-      <Link className={classes.item} to="/playlists">
+      <Link
+        className={classNames(classes.item, {[classes.active]: pathname.startsWith("/playlists")})}
+        to="/playlists"
+      >
         <img className={classes.itemIcon} src="/images/icon-playlist.svg" alt="" />
         <span className={classes.itemText}>{t("playlists")}</span>
       </Link>
 
-      <Link className={classes.subitem} to="/playlist/1">
+      <Link className={classes.subitem} to="/playlists/1">
         <span className={classes.itemText}>
           <span className={classes.itemPill} />
           Playlist exemple
         </span>
       </Link>
 
-      <Link className={classes.item} to="/plannings">
+      <Link
+        className={classNames(classes.item, {[classes.active]: pathname.startsWith("/plannings")})}
+        to="/plannings"
+      >
         <img className={classes.itemIcon} src="/images/icon-planning.svg" alt="" />
         <span className={classes.itemText}>{t("plannings")}</span>
       </Link>
