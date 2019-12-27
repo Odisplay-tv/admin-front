@@ -32,7 +32,7 @@ const Aside: FC<AsideProps> = props => {
         <div className={classes.infoArrow} />
         <div
           className={classes.infoLabel}
-          dangerouslySetInnerHTML={{__html: t("trial-days-left", {days: 14})}}
+          dangerouslySetInnerHTML={{__html: t("auth:trial-days-left", {days: 14})}}
         />
       </div>
       <div />
@@ -42,7 +42,7 @@ const Aside: FC<AsideProps> = props => {
       </Link>
       <Link className={classes.navItem} to="/logout">
         <img src="/images/icon-logout.svg" alt="" />
-        <div>{t("auth:logout")}</div>
+        <div>{t("logout")}</div>
       </Link>
       <Link className={classes.navItem} to="/">
         <img src="/images/icon-fr.svg" alt="" />

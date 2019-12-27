@@ -14,7 +14,13 @@
   opacity: 0.25;
 }
 
-@mixin col {
+.selectCol,
+.linkCol,
+.statusCol,
+.nameCol,
+.layoutCol,
+.settingsCol,
+.deleteCol {
   font-size: 13px;
   font-weight: normal;
   min-height: 70px;
@@ -22,19 +28,6 @@
   text-align: center;
   transition-duration: 250ms;
   transition-property: background;
-}
-
-.selectCol {
-  @include col;
-}
-
-.statusCol {
-  @include col;
-
-  div {
-    display: flex;
-    justify-content: center;
-  }
 }
 
 .linkCol {
@@ -62,8 +55,14 @@
   }
 }
 
+.statusCol {
+  div {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .nameCol {
-  @include col;
   font-size: 17px;
   font-weight: bold;
   text-align: left;
@@ -71,7 +70,6 @@
 }
 
 .layoutCol {
-  @include col;
   padding: 0;
   width: auto;
 
@@ -86,38 +84,12 @@
 
 .settingsCol,
 .deleteCol {
-  @include col;
-
   button {
     margin: 0 auto;
   }
-}
 
-@mixin status {
-  height: 15px;
-  width: 15px;
-}
-
-.connected {
-  @include status;
-  fill: $green;
-}
-
-.disconnected {
-  @include status;
-  fill: $red;
-}
-
-.dragLayout {
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-.icon {
-  fill: $gray6A;
-  width: 20px;
+  svg {
+    fill: $gray6A;
+    width: 20px;
+  }
 }

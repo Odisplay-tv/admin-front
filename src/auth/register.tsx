@@ -20,7 +20,7 @@ const Register: FC<RouteComponentProps> = props => {
   const {loading, setLoading} = useAsync()
   const {transitions} = useStepTranslation()
   const perspective = usePerspective()
-  const {t} = useTranslation("auth")
+  const {t} = useTranslation()
 
   useEffect(() => {
     if (auth.state.authenticated) {

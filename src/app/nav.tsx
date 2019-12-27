@@ -12,9 +12,8 @@ type NavProps = {
 }
 
 const Nav: FC<NavProps> = props => {
-  const {isVisible} = props
+  const dataVisible = props.isVisible ? {"data-visible": ""} : {}
   const {t} = useTranslation()
-  const dataVisible = isVisible ? {"data-visible": ""} : {}
 
   function handleBurgerClick(evt: React.MouseEvent) {
     evt.preventDefault()

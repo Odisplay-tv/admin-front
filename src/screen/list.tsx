@@ -12,8 +12,8 @@ import classes from "./list.module.scss"
 
 const ScreenList: FC = () => {
   const {screens, groups, ...$screen} = useScreens()
-  const dragPreviewRef = useRef<HTMLDivElement>(null)
   const [draggedScreen, setDraggedScreen] = useState<Screen | null>(null)
+  const dragPreviewRef = useRef<HTMLDivElement>(null)
   const {t} = useTranslation(["default", "screen"])
 
   async function addGroup() {
@@ -44,7 +44,7 @@ const ScreenList: FC = () => {
         <div>{draggedScreen && draggedScreen.name}</div>
       </div>
       <div className={classes.content}>
-        <table cellSpacing={0} className={classes.table}>
+        <table className={classes.table} cellSpacing={0}>
           <thead>
             <tr>
               <th className={classes.selectHead}>{t("select")}</th>
@@ -96,7 +96,7 @@ const ScreenList: FC = () => {
               <td className={classes.legend} colSpan={7}>
                 <div>
                   <Status connected />
-                  <span>{t("connected")}</span>
+                  {t("connected")}
                   <Status />
                   {t("disconnected")}
                 </div>

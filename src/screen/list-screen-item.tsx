@@ -76,12 +76,12 @@ const ScreenListItem: FC<ScreenListItemProps> = props => {
       </td>
       <td className={classes.settingsCol}>
         <button type="button">
-          <IconSettings className={classes.icon} />
+          <IconSettings />
         </button>
       </td>
       <td className={classes.deleteCol}>
         <button type="button" onClick={deleteScreen}>
-          <IconTrash className={classes.icon} />
+          <IconTrash />
         </button>
       </td>
     </tr>

@@ -38,15 +38,6 @@
   width: 100%;
 }
 
-@mixin head {
-  border-bottom: 1px solid rgba($gray51, 0.15);
-  color: $gray6A;
-  font-size: 13px;
-  font-weight: normal;
-  padding: 20px 15px;
-  width: 50px;
-}
-
 .selectHead,
 .linkHead,
 .statusHead,
@@ -54,7 +45,12 @@
 .layoutHead,
 .settingsHead,
 .deleteHead {
-  @include head;
+  border-bottom: 1px solid rgba($gray51, 0.15);
+  color: $gray6A;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 20px 15px;
+  width: 50px;
 }
 
 .nameHead {
@@ -64,15 +60,6 @@
 
 .layoutHead {
   width: auto;
-}
-
-@mixin col {
-  font-size: 13px;
-  font-weight: normal;
-  padding: 20px 15px;
-  text-align: center;
-  transition-duration: 250ms;
-  transition-property: background;
 }
 
 .emptyRow {
@@ -86,81 +73,6 @@
   margin: 60px auto;
   max-width: 250px;
   text-align: center;
-}
-
-.groupRow {
-  background: $gray6A;
-  color: $white;
-
-  > * {
-    padding: 10px 15px;
-  }
-
-  td {
-    border-bottom: 1px solid $white;
-  }
-}
-
-.groupSelectCol,
-.groupStatusCol {
-  @include col;
-  text-align: center;
-
-  img {
-    display: inherit;
-    height: 30px;
-    margin: 0 auto;
-    width: 30px;
-  }
-}
-
-.screenRow {
-  cursor: pointer;
-  user-select: none;
-}
-
-.screenSelectCol {
-  @include col;
-}
-
-.screenStatusCol {
-  @include col;
-}
-
-.screenNameCol {
-  @include col;
-  font-size: 17px;
-  font-weight: bold;
-  text-align: left;
-  width: auto;
-}
-
-.screenLayoutCol {
-  @include col;
-  width: auto;
-}
-
-.screenSettingsCol {
-  @include col;
-}
-
-.screenDeleteCol {
-  @include col;
-}
-
-@mixin status {
-  height: 15px;
-  width: 15px;
-}
-
-.connected {
-  @include status;
-  fill: $green;
-}
-
-.disconnected {
-  @include status;
-  fill: $red;
 }
 
 .aside {

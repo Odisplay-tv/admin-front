@@ -101,6 +101,11 @@ export const ScreenContextProvider: FC = ({children}) => {
     try {
       if (!user) return
       await $screen.deleteGroup(user.uid, id)
+      await Promise.all(
+        screens
+          .filter(s => s.groupId === id)
+          .map(s => $screen.update(user.uid, {...s, groupId: null})),
+      )
       toast.success(t("group-successfully-deleted"))
     } catch (err) {
       toast.error(t(err.message))

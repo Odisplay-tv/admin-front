@@ -74,7 +74,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
   const [email, setEmail] = useState(creds.email)
   const {loading, setLoading} = useAsync()
   const {transitions} = useStepTranslation(step === "email")
-  const {t} = useTranslation("auth")
+  const {t} = useTranslation(["default", "auth"])
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     if (loading) return
@@ -144,7 +144,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
           <div className={classes.otherContinues}>
             <button className={classes.buttonSuccessGoogle} type="button" onClick={loginWithGoogle}>
               <img src="/images/icon-google.svg" alt="" />
-              {t("continue-with-google")}
+              {t("auth:continue-with-google")}
             </button>
             <button
               className={classes.buttonSuccessFacebook}
@@ -152,7 +152,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
               onClick={loginWithFacebook}
             >
               <img src="/images/icon-facebook.svg" alt="" />
-              {t("continue-with-facebook")}
+              {t("auth:continue-with-facebook")}
             </button>
           </div>
         </animated.form>
@@ -167,7 +167,7 @@ const PasswordStep: FC<StepFormProps> = ({creds, step, prevStep, nextStep}) => {
   const [password, setPassword] = useState(creds.password)
   const {loading, setLoading} = useAsync()
   const {transitions} = useStepTranslation(step === "password")
-  const {t} = useTranslation("auth")
+  const {t} = useTranslation()
 
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     if (loading) return
