@@ -13,15 +13,16 @@
    id="Calque_1"
    x="0px"
    y="0px"
-   viewBox="0 0 1048.2 1042.8"
-   style="enable-background:new 0 0 1048.2 1042.8;"
+   viewBox="0 0 154.6 154.60001"
    xml:space="preserve"
    sodipodi:docname="loader.svg"
+   width="154.60001"
+   height="154.60001"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"><metadata
-   id="metadata964"><rdf:RDF><cc:Work
+   id="metadata3833"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs962" /><sodipodi:namedview
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs3831" /><sodipodi:namedview
    pagecolor="#ffffff"
    bordercolor="#666666"
    borderopacity="1"
@@ -32,45 +33,32 @@
    inkscape:pageshadow="2"
    inkscape:window-width="1920"
    inkscape:window-height="1075"
-   id="namedview960"
+   id="namedview3829"
    showgrid="false"
-   inkscape:zoom="0.81319521"
-   inkscape:cx="524.09998"
-   inkscape:cy="521.40002"
-   inkscape:window-x="0"
+   inkscape:zoom="5.2703545"
+   inkscape:cx="71.18585"
+   inkscape:cy="78.772059"
+   inkscape:window-x="1920"
    inkscape:window-y="4"
    inkscape:window-maximized="0"
-   inkscape:current-layer="g952" />
+   inkscape:current-layer="Calque_1" />
 <style
    type="text/css"
-   id="style944">
+   id="style3822">
 	.st0{fill:#FFFFFF;}
+	.st1{fill:#545554;}
 </style>
-<g
-   id="Calque_1_1_">
-	<g
-   id="g954">
-		<g
-   id="g948">
-			<path
+<path
    class="st0"
-   d="M529.9,59.9c-261,0-472.6,211.6-472.6,472.6S268.9,1005,529.9,1005s472.6-211.6,472.6-472.6     S790.9,59.9,529.9,59.9z M529.9,829c-163.8,0-296.6-132.8-296.6-296.6s132.8-296.6,296.6-296.6s296.6,132.8,296.6,296.6     S693.7,829,529.9,829z"
-   id="path946" />
-		</g>
-		<g
-   id="g952">
-			<path
-   d="m 195.64592,812.17902 c -23.45837,0 -44.10978,-8.82196 -61.55319,-26.26538 -17.44342,-17.44341 -26.26537,-37.89431 -26.26537,-61.55319 0,-24.26038 8.82195,-45.11228 26.26537,-62.55569 17.44341,-17.44342 37.89432,-26.26537 61.55319,-26.26537 24.26038,0 45.11228,8.82195 62.55569,26.26537 17.44342,17.44341 26.26538,38.29531 26.26538,62.55569 0,23.45838 -8.82196,44.10978 -26.26538,61.55319 -17.44341,17.44342 -38.29531,26.26538 -62.55569,26.26538 z"
-   id="path950"
+   d="M 77.3,0 C 34.6,0 0,34.6 0,77.3 0,120 34.6,154.6 77.3,154.6 120,154.6 154.6,120 154.6,77.3 154.6,34.6 119.9,0 77.3,0 Z m 0,134.9 c -31.8,0 -57.6,-25.8 -57.6,-57.6 0,-31.8 25.8,-57.6 57.6,-57.6 31.8,0 57.6,25.8 57.6,57.6 0,31.8 -25.8,57.6 -57.6,57.6 z"
+   id="path3824"
    inkscape:connector-curvature="0"
-   style="stroke-width:2.0049901" />
-		</g>
-	</g>
-</g>
-<g
-   id="Calque_3">
-</g>
-<g
-   id="Calque_2_1_">
-</g>
+   style="fill:#ffffff" />
+<circle
+   class="st1"
+   cx="11.000001"
+   cy="89.769218"
+   id="circle3826"
+   r="9.8153305"
+   style="fill:#545554;stroke-width:1.53364527" />
 </svg>

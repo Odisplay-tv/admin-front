@@ -13,6 +13,7 @@ import Home from "../home/home"
 import Viewer from "../screen/viewer"
 import ConnectScreen from "../screen/connect"
 import ScreenList from "../screen/list"
+import ScreenEdit from "../screen/edit"
 import Nav from "./nav"
 import Aside from "./aside"
 import Main from "./main"
@@ -27,6 +28,7 @@ const App: FC = () => {
         <Route path="/logout" component={Logout} />
         <Route path="/viewer" component={Viewer} />
         <PrivateRoute path="/screens/connect" component={withLayout(ConnectScreen)} />
+        <PrivateRoute path="/screens/:id" component={withLayout(ScreenEdit)} />
         <PrivateRoute path="/screens" component={withLayout(ScreenList)} />
         <PrivateRoute path="/" component={withLayout(Home)} />
         <Redirect to="/login" />

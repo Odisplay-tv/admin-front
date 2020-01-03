@@ -1,0 +1,105 @@
+@import "../app/theme.scss";
+@import "../app/media.scss";
+
+.container {
+  background: black;
+  height: 500px;
+  padding: 10px;
+  width: 100%;
+}
+
+.content {
+  background: $gray43;
+  color: $white;
+  height: 100%;
+  width: 100%;
+}
+
+.viewContainer {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+@mixin view {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  user-select: none;
+}
+
+.leftView {
+  @include view;
+  border-right: 1px solid $black;
+}
+
+.rightView {
+  @include view;
+  border-left: 1px solid $black;
+}
+
+.topView {
+  @include view;
+  border-bottom: 1px solid $black;
+}
+
+.bottomView {
+  @include view;
+  border-top: 1px solid $black;
+}
+
+.view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+@mixin handle {
+  background: $blue4F;
+}
+
+@mixin handleX {
+  @include handle;
+  align-self: center;
+  cursor: col-resize;
+  height: 40px;
+  width: 5px;
+}
+
+@mixin handleY {
+  @include handle;
+  cursor: row-resize;
+  height: 5px;
+  justify-self: center;
+  width: 40px;
+}
+
+.handleRight {
+  @include handleX;
+  justify-self: end;
+}
+
+.handleLeft {
+  @include handleX;
+  justify-self: start;
+}
+
+.handleTop {
+  @include handleY;
+  align-self: start;
+}
+
+.handleBottom {
+  @include handleY;
+  align-self: end;
+}

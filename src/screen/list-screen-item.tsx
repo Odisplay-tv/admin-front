@@ -2,6 +2,7 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import classNames from "classnames"
 
+import Link from "../app/link"
 import {ReactComponent as IconSettings} from "./icon-settings.svg"
 import {ReactComponent as IconTrash} from "./icon-trash.svg"
 import {ReactComponent as IconLink} from "./icon-link.svg"
@@ -72,7 +73,7 @@ const ScreenListItem: FC<ScreenListItemProps> = props => {
       </td>
       <td className={classes.nameCol}>{screen.name}</td>
       <td className={classes.layoutCol}>
-        <button type="button">{t("screen:add-content")}</button>
+        <Link to={`/screens/${screen.id}`}>{t("screen:add-content")}</Link>
       </td>
       <td className={classes.settingsCol}>
         <button type="button">
