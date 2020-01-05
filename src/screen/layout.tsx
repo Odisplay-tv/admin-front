@@ -1,28 +1,26 @@
 import React, {FC, useCallback, useEffect, useRef, useState} from "react"
-import {useTranslation} from "react-i18next"
-import noop from "lodash/fp/noop"
+import uuid from "uuid/v4"
 
 import classes from "./layout.module.scss"
 
-type SplitLayout = VSplitLayout | HSplitLayout
-type Layout = NoSplitLayout | SplitLayout
+type Layout = LeafLayout | VNodeLayout | HNodeLayout
 
-type NoSplitLayout = {
-  id: number
-  type: "no-split"
+type LeafLayout = {
+  id: string
+  type: "leaf"
 }
 
-type VSplitLayout = {
-  id: number
-  type: "v-split"
+type VNodeLayout = {
+  id: string
+  type: "v-node"
   val: number
   left: Layout
   right: Layout
 }
 
-type HSplitLayout = {
-  id: number
-  type: "h-split"
+type HNodeLayout = {
+  id: string
+  type: "h-node"
   val: number
   top: Layout
   bottom: Layout
@@ -30,59 +28,61 @@ type HSplitLayout = {
 
 type Position = "top" | "right" | "bottom" | "left"
 
-type NoSplitView = {
-  parentRef: React.RefObject<HTMLDivElement>
-  parentLayout: VSplitLayout | HSplitLayout
-  onResize: (val: number) => void
-  onResizeEnd: () => void
-  onPropageSplit: (layout: Layout) => void
-  onSplit: (pos: Position) => void
-  pos: Position
-}
+type Msg =
+  | {
+      type: "grab-right-handle"
+      layoutId: string
+    }
+  | {
+      type: "grab-left-handle"
+      layoutId: string
+    }
+  | {
+      type: "resize-start"
+      layoutId: string
+    }
+  | {
+      type: "resize"
+      val: number
+    }
+  | {
+      type: "resize-stop"
+    }
+  | {
+      type: "update-layout"
+      layout: Layout
+    }
 
-const NoSplitView: FC<NoSplitView> = props => {
-  const {parentRef, parentLayout, onResize: setVal, pos} = props
-  const split = props.onSplit
-  const propageResizeEnd = props.onResizeEnd
-  const [resizing, setResizing] = useState(init)
+const NoSplitView: FC<ViewProps> = props => {
+  const {parentRef, layout, sendMsg, resizedLayoutId} = props
+  const rightHandleRef = useRef<HTMLButtonElement>(null)
+  const leftHandleRef = useRef<HTMLButtonElement>(null)
 
   const resize = useCallback(
     (evt: MouseEvent) => {
-      if (resizing && parentRef.current) {
+      if (resizedLayoutId && parentRef.current) {
         const {x: parentLeft, width: parentWidth} = parentRef.current.getBoundingClientRect()
         const delta = ((evt.clientX - parentLeft) * 100) / parentWidth
-        setVal(Math.max(5, Math.min(95, delta)))
+        sendMsg({type: "resize", val: Math.max(0, Math.min(100, delta))})
       }
     },
-    [parentRef, resizing, setVal],
+    [parentRef, resizedLayoutId, sendMsg],
   )
 
   function rightHandleGrabbed() {
-    console.log(parentLayout, pos)
-    if (parentLayout.type === "v-split" && pos === "left") {
-      setResizing(true)
-    } else if (pos === "right") {
-      console.log("split from leaf")
-      setResizing(true)
-      split("right")
+    if (rightHandleRef.current) {
+      sendMsg({type: "grab-right-handle", layoutId: layout.id})
     }
   }
 
   function leftHandleGrabbed() {
-    if (parentLayout.type === "v-split" && pos === "right") {
-      setResizing(true)
-    } else if (pos === "left") {
-      console.log("split from leaf")
-      setResizing(true)
-      split("left")
+    if (rightHandleRef.current) {
+      sendMsg({type: "grab-left-handle", layoutId: layout.id})
     }
   }
 
   useEffect(() => {
-    const stopResizing = () => {
-      setResizing(false)
-      if (resizing) propageResizeEnd()
-    }
+    const stopResizing = () => sendMsg({type: "resize-stop"})
 
     document.addEventListener("mouseup", stopResizing)
     document.addEventListener("mousemove", resize)
@@ -91,241 +91,213 @@ const NoSplitView: FC<NoSplitView> = props => {
       document.removeEventListener("mouseup", stopResizing)
       document.removeEventListener("mousemove", resize)
     }
-  }, [propageResizeEnd, resize, resizing])
+  }, [layout.id, resize, resizedLayoutId, sendMsg])
 
   return (
     <div className={classes.view}>
       <div>YOLO</div>
       <button type="button" className={classes.handleTop} />
-      <button type="button" onMouseDown={rightHandleGrabbed} className={classes.handleRight} />
+      <button
+        ref={rightHandleRef}
+        type="button"
+        onMouseDown={rightHandleGrabbed}
+        className={classes.handleRight}
+      />
       <button type="button" className={classes.handleBottom} />
-      <button type="button" onMouseDown={leftHandleGrabbed} className={classes.handleLeft} />
+      <button
+        type="button"
+        ref={leftHandleRef}
+        className={classes.handleLeft}
+        onMouseDown={leftHandleGrabbed}
+      />
     </div>
   )
 }
 
-type SplitViewProps<L> = {
-  parentRef: React.RefObject<HTMLDivElement>
-  onPropageSplit: (layout: Layout) => void
-  layout: L
-}
+const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
+  const {sendMsg: propageMsg, layout, resizedLayoutId} = props
+  const [val, setVal] = useState(0)
 
-const VSplitView: FC<SplitViewProps<VSplitLayout>> = props => {
-  const {parentRef, onPropageSplit: propageSplit, layout} = props
-  const [val, setVal] = useState(layout.val)
+  const handleMsg = useCallback(
+    (msg: Msg) => {
+      console.log("node", msg)
+      switch (msg.type) {
+        case "grab-right-handle":
+          if (layout.left.id === msg.layoutId) {
+            propageMsg({type: "resize-start", layoutId: layout.id})
+          } else {
+            propageMsg({...msg, layoutId: layout.id})
+          }
+          break
+
+        case "grab-left-handle":
+          if (layout.right.id === msg.layoutId) {
+            propageMsg({type: "resize-start", layoutId: layout.id})
+          } else {
+            propageMsg({...msg, layoutId: layout.id})
+          }
+          break
+
+        case "resize-start":
+          propageMsg(msg)
+          break
+
+        case "resize":
+          if (resizedLayoutId === layout.id) {
+            setVal(msg.val)
+          }
+          break
+
+        case "resize-stop":
+          if (resizedLayoutId === layout.id) {
+            propageMsg({type: "update-layout", layout: {...layout, val}})
+          }
+          break
+
+        case "update-layout":
+          propageMsg({
+            type: "update-layout",
+            layout: {
+              ...layout,
+              [layout.right.id === msg.layout.id ? "right" : "left"]: msg.layout,
+            },
+          })
+          break
+
+        default:
+          break
+      }
+    },
+    [layout, propageMsg, resizedLayoutId, val],
+  )
 
   useEffect(() => {
     setVal(layout.val)
   }, [layout])
-
-  function split(pos: Position) {
-    return () => {
-      console.log("split from v-node")
-      propageSplit({
-        ...layout,
-        [pos]: {
-          id: 99,
-          type: "v-split",
-          right: {id: 0, type: "no-split"},
-          left: {id: 0, type: "no-split"},
-          val: 100,
-        },
-      })
-    }
-  }
 
   return (
     <>
       <div className={classes.leftView} style={{right: `${100 - val}%`}}>
-        <View
-          parentRef={parentRef}
-          onResize={setVal}
-          onResizeEnd={() => propageSplit({...layout, val})}
-          onSplit={split("left")}
-          onPropageSplit={left => {
-            console.log("propage from node", left)
-            propageSplit({...layout, left})
-          }}
-          parentLayout={layout}
-          layout={layout.left}
-          pos="left"
-        />
+        <View {...props} layout={layout.left} sendMsg={handleMsg} />
       </div>
       <div className={classes.rightView} style={{left: `${val}%`}}>
-        <View
-          parentRef={parentRef}
-          onSplit={split("right")}
-          onPropageSplit={right => {
-            console.log("propage from node", right)
-            propageSplit({...layout, right})
-          }}
-          onResize={setVal}
-          onResizeEnd={() => propageSplit({...layout, val})}
-          parentLayout={layout}
-          layout={layout.right}
-          pos="right"
-        />
+        <View {...props} layout={layout.right} sendMsg={handleMsg} />
       </div>
     </>
   )
 }
 
-const HSplitView: FC<SplitViewProps<HSplitLayout>> = props => {
-  const {parentRef, onPropageSplit: propageSplit, layout} = props
+const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
+  const {layout} = props
   const [val, setVal] = useState(layout.val)
-
-  function split() {
-    console.log("split from h-node")
-    propageSplit({
-      id: 0,
-      type: "h-split",
-      top: {id: 0, type: "no-split"},
-      bottom: {id: 0, type: "no-split"},
-      val,
-    })
-  }
-
-  useEffect(() => {
-    setVal(layout.val)
-  }, [layout])
 
   return (
     <>
       <div className={classes.topView} style={{bottom: `${100 - val}%`}}>
-        <View
-          parentRef={parentRef}
-          onResize={setVal}
-          onResizeEnd={() => propageSplit({...layout, val})}
-          onSplit={split}
-          onPropageSplit={top => {
-            console.log("propage from node", top)
-            propageSplit({...layout, top})
-          }}
-          parentLayout={layout}
-          layout={layout.top}
-          pos="top"
-        />
+        <View {...props} layout={layout.top} />
       </div>
       <div className={classes.bottomView} style={{top: `${val}%`}}>
-        <View
-          parentRef={parentRef}
-          onResize={setVal}
-          onResizeEnd={() => propageSplit({...layout, val})}
-          onSplit={split}
-          onPropageSplit={bottom => {
-            console.log("propage from node", bottom)
-            propageSplit({...layout, bottom})
-          }}
-          parentLayout={layout}
-          layout={layout.bottom}
-          pos="bottom"
-        />
+        <View {...props} layout={layout.bottom} />
       </div>
     </>
   )
 }
 
-type ViewProps = {
+type ViewProps<L = Layout> = {
   parentRef: React.RefObject<HTMLDivElement>
-  onResize: (val: number) => void
-  onResizeEnd: () => void
-  onSplit: (pos: Position) => void
-  onPropageSplit: (layout: Layout) => void
-  parentLayout: SplitLayout
-  layout: Layout
-  pos: "top" | "right" | "bottom" | "left"
+  layout: L
+  resizedLayoutId: string | null
+  sendMsg: (msg: Msg) => void
 }
 
 const View: FC<ViewProps> = props => {
-  const {parentRef, onPropageSplit, onSplit, onResize, layout, parentLayout, pos} = props
-  const {onResizeEnd} = props
+  const {layout} = props
   const ref = useRef<HTMLDivElement>(null)
+
+  const view = (() => {
+    switch (layout.type) {
+      case "leaf": {
+        return <NoSplitView {...props} />
+      }
+
+      case "v-node": {
+        return <VSplitView {...props} parentRef={ref} layout={layout} />
+      }
+
+      case "h-node": {
+        return <HSplitView {...props} parentRef={ref} layout={layout} />
+      }
+
+      default:
+        return null
+    }
+  })()
 
   return (
     <div ref={ref} className={classes.viewContainer}>
-      {(() => {
-        switch (layout.type) {
-          case "no-split": {
-            const props = {
-              parentRef,
-              onResizeEnd,
-              onPropageSplit,
-              onSplit,
-              onResize,
-              parentLayout,
-              pos,
-            }
-            return <NoSplitView {...props} />
-          }
-
-          case "v-split": {
-            const props = {parentRef: ref, onResizeEnd, onPropageSplit, layout, pos}
-            return <VSplitView {...props} />
-          }
-
-          case "h-split": {
-            const props = {parentRef: ref, onResizeEnd, onPropageSplit, layout, pos}
-            return <HSplitView {...props} />
-          }
-
-          default:
-            return null
-        }
-      })()}
+      {view}
     </div>
   )
 }
 
-let init = false
-
 const ScreenLayout: FC = () => {
-  const ref = useRef<HTMLDivElement>(null)
-  const {t} = useTranslation(["default", "screen"])
-  const [layout, setLayout] = useState<Layout>({
-    id: 1,
-    type: "h-split",
-    val: 50,
-    top: {
-      id: 3,
-      type: "v-split",
-      val: 50,
-      left: {
-        id: 4,
-        type: "no-split",
-      },
-      right: {
-        id: 5,
-        type: "no-split",
-      },
-    },
-    bottom: {
-      id: 2,
-      type: "no-split",
-    },
-  })
+  const frameRef = useRef<HTMLDivElement>(null)
+  const [layout, setLayout] = useState<Layout>({id: uuid(), type: "leaf"})
+  const [resizedLayoutId, setResizedLayoutId] = useState<string | null>(null)
 
-  function propageSplit(patch: Layout) {
-    const nextLayout: Layout = {...layout, ...patch}
-    console.log("propage split from root", nextLayout)
-    setLayout(nextLayout)
+  function sendMsg(msg: Msg) {
+    console.log("root", msg)
+    switch (msg.type) {
+      case "grab-right-handle": {
+        const id = uuid()
+        setResizedLayoutId(id)
+        setLayout({
+          id,
+          type: "v-node",
+          val: 100,
+          left: {...layout},
+          right: {id: uuid(), type: "leaf"},
+        })
+        break
+      }
+
+      case "grab-left-handle": {
+        const id = uuid()
+        setResizedLayoutId(id)
+        setLayout({
+          id,
+          type: "v-node",
+          val: 0,
+          left: {id: uuid(), type: "leaf"},
+          right: {...layout},
+        })
+        break
+      }
+
+      case "resize-start":
+        setResizedLayoutId(msg.layoutId)
+        break
+
+      case "update-layout": {
+        setLayout({...layout, ...msg.layout})
+        setResizedLayoutId(null)
+        break
+      }
+
+      default:
+        break
+    }
   }
 
-  useEffect(() => {
-    init = true
-  }, [])
-
+  console.log(layout)
   return (
     <div className={classes.container}>
-      <div ref={ref} className={classes.content}>
+      <div ref={frameRef} className={classes.content}>
         <View
-          parentRef={ref}
-          onResizeEnd={noop}
-          onResize={noop}
-          onSplit={noop}
-          onPropageSplit={propageSplit}
-          parentLayout={layout as HSplitLayout}
+          parentRef={frameRef}
+          resizedLayoutId={resizedLayoutId}
           layout={layout}
-          pos="top"
+          sendMsg={sendMsg}
         />
       </div>
     </div>
