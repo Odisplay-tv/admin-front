@@ -44,6 +44,11 @@ type Msg =
       layoutId: string
     }
   | {
+      type: "split"
+      layoutId: string
+      layout: Layout
+    }
+  | {
       type: "resize-start"
       layoutId: string
     }
@@ -159,16 +164,56 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
     (msg: Msg) => {
       console.log("v-node", msg)
       switch (msg.type) {
-        case "grab-left-handle":
-          if (layout.right.id === msg.layoutId) {
+        case "grab-top-handle": {
+          const id = uuid()
+          const pos = layout.right.id === msg.layoutId ? "right" : "left"
+          propageMsg({
+            type: "split",
+            layoutId: id,
+            layout: {
+              ...layout,
+              [pos]: {
+                id,
+                type: "h-node",
+                val: 0,
+                top: {id: uuid(), type: "leaf"},
+                bottom: layout[pos],
+              },
+            },
+          })
+          break
+        }
+
+        case "grab-right-handle":
+          if (layout.left.id === msg.layoutId) {
             propageMsg({type: "resize-start", layoutId: layout.id})
           } else {
             propageMsg({...msg, layoutId: layout.id})
           }
           break
 
-        case "grab-right-handle":
-          if (layout.left.id === msg.layoutId) {
+        case "grab-bottom-handle": {
+          const id = uuid()
+          const pos = layout.left.id === msg.layoutId ? "left" : "right"
+          propageMsg({
+            type: "split",
+            layoutId: id,
+            layout: {
+              ...layout,
+              [pos]: {
+                id,
+                type: "h-node",
+                val: 100,
+                top: layout[pos],
+                bottom: {id: uuid(), type: "leaf"},
+              },
+            },
+          })
+          break
+        }
+
+        case "grab-left-handle":
+          if (layout.right.id === msg.layoutId) {
             propageMsg({type: "resize-start", layoutId: layout.id})
           } else {
             propageMsg({...msg, layoutId: layout.id})
@@ -191,12 +236,22 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
           }
           break
 
+        case "split":
+          propageMsg({
+            ...msg,
+            layout: {
+              ...layout,
+              [layout.right.id === msg.layout.id ? "right" : "left"]: msg.layout,
+            },
+          })
+          break
+
         case "update-layout":
           propageMsg({
             type: "update-layout",
             layout: {
               ...layout,
-              [layout.right.id === msg.layout.id ? "right" : "left"]: msg.layout,
+              [layout.left.id === msg.layout.id ? "left" : "right"]: msg.layout,
             },
           })
           break
@@ -240,6 +295,26 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
           }
           break
 
+        case "grab-right-handle": {
+          const id = uuid()
+          const pos = layout.top.id === msg.layoutId ? "top" : "bottom"
+          propageMsg({
+            type: "split",
+            layoutId: id,
+            layout: {
+              ...layout,
+              [pos]: {
+                id,
+                type: "v-node",
+                val: 100,
+                left: layout[pos],
+                right: {id: uuid(), type: "leaf"},
+              },
+            },
+          })
+          break
+        }
+
         case "grab-bottom-handle":
           if (layout.top.id === msg.layoutId) {
             propageMsg({type: "resize-start", layoutId: layout.id})
@@ -247,6 +322,26 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
             propageMsg({...msg, layoutId: layout.id})
           }
           break
+
+        case "grab-left-handle": {
+          const id = uuid()
+          const pos = layout.top.id === msg.layoutId ? "top" : "bottom"
+          propageMsg({
+            type: "split",
+            layoutId: id,
+            layout: {
+              ...layout,
+              [pos]: {
+                id,
+                type: "v-node",
+                val: 0,
+                left: {id: uuid(), type: "leaf"},
+                right: layout[pos],
+              },
+            },
+          })
+          break
+        }
 
         case "resize-start":
           propageMsg(msg)
@@ -262,6 +357,16 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
           if (resizedLayoutId === layout.id) {
             propageMsg({type: "update-layout", layout: {...layout, val}})
           }
+          break
+
+        case "split":
+          propageMsg({
+            ...msg,
+            layout: {
+              ...layout,
+              [layout.top.id === msg.layout.id ? "top" : "bottom"]: msg.layout,
+            },
+          })
           break
 
         case "update-layout":
@@ -336,19 +441,7 @@ const View: FC<ViewProps> = props => {
 
 const ScreenLayout: FC = () => {
   const frameRef = useRef<HTMLDivElement>(null)
-  const [layout, setLayout] = useState<Layout>({
-    id: uuid(),
-    type: "v-node",
-    val: 30,
-    right: {id: uuid(), type: "leaf"},
-    left: {
-      id: uuid(),
-      type: "h-node",
-      val: 20,
-      bottom: {id: uuid(), type: "leaf"},
-      top: {id: uuid(), type: "leaf"},
-    },
-  })
+  const [layout, setLayout] = useState<Layout>({id: uuid(), type: "leaf"})
   const [resizedLayoutId, setResizedLayoutId] = useState<string | null>(null)
 
   function sendMsg(msg: Msg) {
@@ -409,6 +502,12 @@ const ScreenLayout: FC = () => {
       case "resize-start":
         setResizedLayoutId(msg.layoutId)
         break
+
+      case "split": {
+        setLayout({...layout, ...msg.layout})
+        setResizedLayoutId(msg.layoutId)
+        break
+      }
 
       case "update-layout": {
         setLayout({...layout, ...msg.layout})
