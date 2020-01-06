@@ -1,5 +1,8 @@
 import React, {FC, useCallback, useEffect, useRef, useState} from "react"
+import classNames from "classnames"
 import uuid from "uuid/v4"
+
+import {ReactComponent as IconTrash} from "./icon-trash.svg"
 
 import classes from "./layout.module.scss"
 
@@ -64,13 +67,18 @@ type Msg =
       type: "update-layout"
       layout: Layout
     }
+  | {
+      type: "delete-view"
+      layoutId: string
+    }
+  | {
+      type: "delete-layout"
+      prevLayoutId: string
+      layout: Layout
+    }
 
 const NoSplitView: FC<ViewProps> = props => {
   const {parentRef, layout, sendMsg, resizedLayoutId} = props
-  const topHandleRef = useRef<HTMLButtonElement>(null)
-  const rightHandleRef = useRef<HTMLButtonElement>(null)
-  const bottomHandleRef = useRef<HTMLButtonElement>(null)
-  const leftHandleRef = useRef<HTMLButtonElement>(null)
 
   const resize = useCallback(
     (evt: MouseEvent) => {
@@ -89,30 +97,6 @@ const NoSplitView: FC<ViewProps> = props => {
     [parentRef, resizedLayoutId, sendMsg],
   )
 
-  function topHandleGrabbed() {
-    if (topHandleRef.current) {
-      sendMsg({type: "grab-top-handle", layoutId: layout.id})
-    }
-  }
-
-  function rightHandleGrabbed() {
-    if (rightHandleRef.current) {
-      sendMsg({type: "grab-right-handle", layoutId: layout.id})
-    }
-  }
-
-  function bottomHandleGrabbed() {
-    if (bottomHandleRef.current) {
-      sendMsg({type: "grab-bottom-handle", layoutId: layout.id})
-    }
-  }
-
-  function leftHandleGrabbed() {
-    if (leftHandleRef.current) {
-      sendMsg({type: "grab-left-handle", layoutId: layout.id})
-    }
-  }
-
   useEffect(() => {
     const stopResizing = () => sendMsg({type: "resize-stop"})
 
@@ -125,33 +109,22 @@ const NoSplitView: FC<ViewProps> = props => {
     }
   }, [layout.id, resize, resizedLayoutId, sendMsg])
 
+  const topHandleGrabbed = () => sendMsg({type: "grab-top-handle", layoutId: layout.id})
+  const rightHandleGrabbed = () => sendMsg({type: "grab-right-handle", layoutId: layout.id})
+  const bottomHandleGrabbed = () => sendMsg({type: "grab-bottom-handle", layoutId: layout.id})
+  const leftHandleGrabbed = () => sendMsg({type: "grab-left-handle", layoutId: layout.id})
+  const deleteView = () => sendMsg({type: "delete-view", layoutId: layout.id})
+
   return (
     <div className={classes.view}>
-      <div>YOLO</div>
-      <button
-        type="button"
-        ref={topHandleRef}
-        className={classes.handleTop}
-        onMouseDown={topHandleGrabbed}
-      />
-      <button
-        type="button"
-        ref={rightHandleRef}
-        className={classes.handleRight}
-        onMouseDown={rightHandleGrabbed}
-      />
-      <button
-        type="button"
-        ref={bottomHandleRef}
-        className={classes.handleBottom}
-        onMouseDown={bottomHandleGrabbed}
-      />
-      <button
-        type="button"
-        ref={leftHandleRef}
-        className={classes.handleLeft}
-        onMouseDown={leftHandleGrabbed}
-      />
+      <div>{layout.id}</div>
+      <button type="button" className={classes.handleTop} onMouseDown={topHandleGrabbed} />
+      <button type="button" className={classes.handleRight} onMouseDown={rightHandleGrabbed} />
+      <button type="button" className={classes.handleBottom} onMouseDown={bottomHandleGrabbed} />
+      <button type="button" className={classes.handleLeft} onMouseDown={leftHandleGrabbed} />
+      <button type="button" className={classes.deleteView} onMouseDown={deleteView}>
+        <IconTrash />
+      </button>
     </div>
   )
 }
@@ -256,6 +229,24 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
           })
           break
 
+        case "delete-layout":
+          propageMsg({
+            type: "update-layout",
+            layout: {
+              ...layout,
+              [layout.left.id === msg.prevLayoutId ? "left" : "right"]: msg.layout,
+            },
+          })
+          break
+
+        case "delete-view":
+          propageMsg({
+            type: "delete-layout",
+            prevLayoutId: layout.id,
+            layout: layout.left.id === msg.layoutId ? layout.right : layout.left,
+          })
+          break
+
         default:
           break
       }
@@ -267,12 +258,14 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
     setVal(layout.val)
   }, [layout])
 
+  const active = {[classes.active]: resizedLayoutId === layout.id}
+
   return (
     <>
-      <div className={classes.leftView} style={{right: `${100 - val}%`}}>
+      <div className={classNames(classes.leftView, active)} style={{right: `${100 - val}%`}}>
         <View {...props} layout={layout.left} sendMsg={handleMsg} />
       </div>
-      <div className={classes.rightView} style={{left: `${val}%`}}>
+      <div className={classNames(classes.rightView, active)} style={{left: `${val}%`}}>
         <View {...props} layout={layout.right} sendMsg={handleMsg} />
       </div>
     </>
@@ -379,6 +372,24 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
           })
           break
 
+        case "delete-layout":
+          propageMsg({
+            type: "update-layout",
+            layout: {
+              ...layout,
+              [layout.top.id === msg.prevLayoutId ? "top" : "bottom"]: msg.layout,
+            },
+          })
+          break
+
+        case "delete-view":
+          propageMsg({
+            type: "delete-layout",
+            prevLayoutId: layout.id,
+            layout: layout.top.id === msg.layoutId ? layout.bottom : layout.top,
+          })
+          break
+
         default:
           break
       }
@@ -390,12 +401,14 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
     setVal(layout.val)
   }, [layout])
 
+  const active = {[classes.active]: resizedLayoutId === layout.id}
+
   return (
     <>
-      <div className={classes.topView} style={{bottom: `${100 - val}%`}}>
+      <div className={classNames(classes.topView, active)} style={{bottom: `${100 - val}%`}}>
         <View {...props} layout={layout.top} sendMsg={handleMsg} />
       </div>
-      <div className={classes.bottomView} style={{top: `${val}%`}}>
+      <div className={classNames(classes.bottomView, active)} style={{top: `${val}%`}}>
         <View {...props} layout={layout.bottom} sendMsg={handleMsg} />
       </div>
     </>
@@ -514,6 +527,14 @@ const ScreenLayout: FC = () => {
         setResizedLayoutId(null)
         break
       }
+
+      case "delete-layout":
+        if (layout.type === "v-node") {
+          setLayout(layout.left.id === msg.prevLayoutId ? layout.right : layout.left)
+        } else if (layout.type === "h-node") {
+          setLayout(layout.top.id === msg.prevLayoutId ? layout.bottom : layout.top)
+        }
+        break
 
       default:
         break

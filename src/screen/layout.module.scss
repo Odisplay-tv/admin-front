@@ -1,18 +1,22 @@
 @import "../app/theme.scss";
 @import "../app/media.scss";
 
-.container {
-  background: black;
-  height: 500px;
-  padding: 10px;
-  width: 100%;
-}
+.deleteView {
+  align-self: start;
+  background: $red;
+  display: flex;
+  height: 28px;
+  justify-self: end;
+  opacity: 0;
+  padding: 6px;
+  transition-duration: 150ms;
+  transition-property: opacity;
+  width: 28px;
 
-.content {
-  background: $gray43;
-  color: $white;
-  height: 100%;
-  width: 100%;
+  svg {
+    fill: $white;
+    width: 100%;
+  }
 }
 
 .viewContainer {
@@ -21,51 +25,21 @@
   width: 100%;
 }
 
-@mixin view {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  user-select: none;
-}
-
-.leftView {
-  @include view;
-  border-right: 1px solid $black;
-}
-
-.rightView {
-  @include view;
-  border-left: 1px solid $black;
-}
-
-.topView {
-  @include view;
-  border-bottom: 1px solid $black;
-}
-
-.bottomView {
-  @include view;
-  border-top: 1px solid $black;
-}
-
-.view {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
+.content {
+  background: $gray43;
+  color: $white;
   height: 100%;
-  position: relative;
   width: 100%;
 
-  > * {
-    grid-column: 1;
-    grid-row: 1;
+  > .viewContainer > .view > .deleteView {
+    display: none;
   }
 }
 
 @mixin handle {
   background: $blue4F;
+  opacity: 0;
+  transition: 150ms opacity;
 }
 
 @mixin handleX {
@@ -73,13 +47,13 @@
   align-self: center;
   cursor: col-resize;
   height: 40px;
-  width: 5px;
+  width: 7px;
 }
 
 @mixin handleY {
   @include handle;
   cursor: row-resize;
-  height: 5px;
+  height: 7px;
   justify-self: center;
   width: 40px;
 }
@@ -102,4 +76,82 @@
 .handleBottom {
   @include handleY;
   align-self: end;
+}
+
+@mixin view-hover {
+  background: $gray43;
+  transition: 150ms background;
+
+  &:hover,
+  &.active .view {
+    background: lighten($gray43, 2%);
+
+    > .handleTop,
+    > .handleRight,
+    > .handleBottom,
+    > .handleLeft,
+    > .deleteView {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin view {
+  @include view-hover;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  user-select: none;
+}
+
+.topView {
+  @include view;
+  border-bottom: 1px solid $black;
+
+  > .viewContainer > .view > .handleBottomRight {
+    display: inline-block;
+  }
+}
+
+.rightView {
+  @include view;
+  border-left: 1px solid $black;
+}
+
+.bottomView {
+  @include view;
+  border-top: 1px solid $black;
+
+  > .viewContainer > .view > .handleTopRight {
+    display: inline-block;
+  }
+}
+
+.leftView {
+  @include view;
+  border-right: 1px solid $black;
+}
+
+.view {
+  @include view-hover;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+.container {
+  background: black;
+  height: 500px;
+  padding: 10px;
+  width: 100%;
 }
