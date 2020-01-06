@@ -26,11 +26,17 @@ type HNodeLayout = {
   bottom: Layout
 }
 
-type Position = "top" | "right" | "bottom" | "left"
-
 type Msg =
   | {
+      type: "grab-top-handle"
+      layoutId: string
+    }
+  | {
       type: "grab-right-handle"
+      layoutId: string
+    }
+  | {
+      type: "grab-bottom-handle"
       layoutId: string
     }
   | {
@@ -43,7 +49,8 @@ type Msg =
     }
   | {
       type: "resize"
-      val: number
+      x: number
+      y: number
     }
   | {
       type: "resize-stop"
@@ -55,19 +62,33 @@ type Msg =
 
 const NoSplitView: FC<ViewProps> = props => {
   const {parentRef, layout, sendMsg, resizedLayoutId} = props
+  const topHandleRef = useRef<HTMLButtonElement>(null)
   const rightHandleRef = useRef<HTMLButtonElement>(null)
+  const bottomHandleRef = useRef<HTMLButtonElement>(null)
   const leftHandleRef = useRef<HTMLButtonElement>(null)
 
   const resize = useCallback(
     (evt: MouseEvent) => {
       if (resizedLayoutId && parentRef.current) {
-        const {x: parentLeft, width: parentWidth} = parentRef.current.getBoundingClientRect()
-        const delta = ((evt.clientX - parentLeft) * 100) / parentWidth
-        sendMsg({type: "resize", val: Math.max(0, Math.min(100, delta))})
+        const bounds = parentRef.current.getBoundingClientRect()
+        const {x: parentLeft, y: parentTop, width: parentWidth, height: parentHeight} = bounds
+        const deltaX = ((evt.clientX - parentLeft) * 100) / parentWidth
+        const deltaY = ((evt.clientY - parentTop) * 100) / parentHeight
+        sendMsg({
+          type: "resize",
+          x: Math.max(0, Math.min(100, deltaX)),
+          y: Math.max(0, Math.min(100, deltaY)),
+        })
       }
     },
     [parentRef, resizedLayoutId, sendMsg],
   )
+
+  function topHandleGrabbed() {
+    if (topHandleRef.current) {
+      sendMsg({type: "grab-top-handle", layoutId: layout.id})
+    }
+  }
 
   function rightHandleGrabbed() {
     if (rightHandleRef.current) {
@@ -75,8 +96,14 @@ const NoSplitView: FC<ViewProps> = props => {
     }
   }
 
+  function bottomHandleGrabbed() {
+    if (bottomHandleRef.current) {
+      sendMsg({type: "grab-bottom-handle", layoutId: layout.id})
+    }
+  }
+
   function leftHandleGrabbed() {
-    if (rightHandleRef.current) {
+    if (leftHandleRef.current) {
       sendMsg({type: "grab-left-handle", layoutId: layout.id})
     }
   }
@@ -96,14 +123,24 @@ const NoSplitView: FC<ViewProps> = props => {
   return (
     <div className={classes.view}>
       <div>YOLO</div>
-      <button type="button" className={classes.handleTop} />
       <button
-        ref={rightHandleRef}
         type="button"
-        onMouseDown={rightHandleGrabbed}
-        className={classes.handleRight}
+        ref={topHandleRef}
+        className={classes.handleTop}
+        onMouseDown={topHandleGrabbed}
       />
-      <button type="button" className={classes.handleBottom} />
+      <button
+        type="button"
+        ref={rightHandleRef}
+        className={classes.handleRight}
+        onMouseDown={rightHandleGrabbed}
+      />
+      <button
+        type="button"
+        ref={bottomHandleRef}
+        className={classes.handleBottom}
+        onMouseDown={bottomHandleGrabbed}
+      />
       <button
         type="button"
         ref={leftHandleRef}
@@ -120,18 +157,18 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
 
   const handleMsg = useCallback(
     (msg: Msg) => {
-      console.log("node", msg)
+      console.log("v-node", msg)
       switch (msg.type) {
-        case "grab-right-handle":
-          if (layout.left.id === msg.layoutId) {
+        case "grab-left-handle":
+          if (layout.right.id === msg.layoutId) {
             propageMsg({type: "resize-start", layoutId: layout.id})
           } else {
             propageMsg({...msg, layoutId: layout.id})
           }
           break
 
-        case "grab-left-handle":
-          if (layout.right.id === msg.layoutId) {
+        case "grab-right-handle":
+          if (layout.left.id === msg.layoutId) {
             propageMsg({type: "resize-start", layoutId: layout.id})
           } else {
             propageMsg({...msg, layoutId: layout.id})
@@ -144,7 +181,7 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
 
         case "resize":
           if (resizedLayoutId === layout.id) {
-            setVal(msg.val)
+            setVal(msg.x)
           }
           break
 
@@ -188,16 +225,73 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
 }
 
 const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
-  const {layout} = props
-  const [val, setVal] = useState(layout.val)
+  const {sendMsg: propageMsg, layout, resizedLayoutId} = props
+  const [val, setVal] = useState(0)
+
+  const handleMsg = useCallback(
+    (msg: Msg) => {
+      console.log("h-node", msg)
+      switch (msg.type) {
+        case "grab-top-handle":
+          if (layout.bottom.id === msg.layoutId) {
+            propageMsg({type: "resize-start", layoutId: layout.id})
+          } else {
+            propageMsg({...msg, layoutId: layout.id})
+          }
+          break
+
+        case "grab-bottom-handle":
+          if (layout.top.id === msg.layoutId) {
+            propageMsg({type: "resize-start", layoutId: layout.id})
+          } else {
+            propageMsg({...msg, layoutId: layout.id})
+          }
+          break
+
+        case "resize-start":
+          propageMsg(msg)
+          break
+
+        case "resize":
+          if (resizedLayoutId === layout.id) {
+            setVal(msg.y)
+          }
+          break
+
+        case "resize-stop":
+          if (resizedLayoutId === layout.id) {
+            propageMsg({type: "update-layout", layout: {...layout, val}})
+          }
+          break
+
+        case "update-layout":
+          propageMsg({
+            type: "update-layout",
+            layout: {
+              ...layout,
+              [layout.top.id === msg.layout.id ? "top" : "bottom"]: msg.layout,
+            },
+          })
+          break
+
+        default:
+          break
+      }
+    },
+    [layout, propageMsg, resizedLayoutId, val],
+  )
+
+  useEffect(() => {
+    setVal(layout.val)
+  }, [layout])
 
   return (
     <>
       <div className={classes.topView} style={{bottom: `${100 - val}%`}}>
-        <View {...props} layout={layout.top} />
+        <View {...props} layout={layout.top} sendMsg={handleMsg} />
       </div>
       <div className={classes.bottomView} style={{top: `${val}%`}}>
-        <View {...props} layout={layout.bottom} />
+        <View {...props} layout={layout.bottom} sendMsg={handleMsg} />
       </div>
     </>
   )
@@ -242,12 +336,37 @@ const View: FC<ViewProps> = props => {
 
 const ScreenLayout: FC = () => {
   const frameRef = useRef<HTMLDivElement>(null)
-  const [layout, setLayout] = useState<Layout>({id: uuid(), type: "leaf"})
+  const [layout, setLayout] = useState<Layout>({
+    id: uuid(),
+    type: "v-node",
+    val: 30,
+    right: {id: uuid(), type: "leaf"},
+    left: {
+      id: uuid(),
+      type: "h-node",
+      val: 20,
+      bottom: {id: uuid(), type: "leaf"},
+      top: {id: uuid(), type: "leaf"},
+    },
+  })
   const [resizedLayoutId, setResizedLayoutId] = useState<string | null>(null)
 
   function sendMsg(msg: Msg) {
     console.log("root", msg)
     switch (msg.type) {
+      case "grab-top-handle": {
+        const id = uuid()
+        setResizedLayoutId(id)
+        setLayout({
+          id,
+          type: "h-node",
+          val: 0,
+          top: {id: uuid(), type: "leaf"},
+          bottom: {...layout},
+        })
+        break
+      }
+
       case "grab-right-handle": {
         const id = uuid()
         setResizedLayoutId(id)
@@ -257,6 +376,19 @@ const ScreenLayout: FC = () => {
           val: 100,
           left: {...layout},
           right: {id: uuid(), type: "leaf"},
+        })
+        break
+      }
+
+      case "grab-bottom-handle": {
+        const id = uuid()
+        setResizedLayoutId(id)
+        setLayout({
+          id,
+          type: "h-node",
+          val: 100,
+          top: {...layout},
+          bottom: {id: uuid(), type: "leaf"},
         })
         break
       }
@@ -289,7 +421,6 @@ const ScreenLayout: FC = () => {
     }
   }
 
-  console.log(layout)
   return (
     <div className={classes.container}>
       <div ref={frameRef} className={classes.content}>
