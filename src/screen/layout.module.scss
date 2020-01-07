@@ -19,7 +19,7 @@
   }
 }
 
-.vHalfSep {
+.vMagneticRuler {
   border-left: 2px dashed lighten($gray43, 10%);
   display: none;
   height: 100%;
@@ -27,6 +27,16 @@
   margin-left: -1px;
   position: absolute;
   width: 0;
+}
+
+.hMagneticRuler {
+  border-top: 2px dashed lighten($gray43, 10%);
+  display: none;
+  height: 0;
+  margin-top: -1px;
+  position: absolute;
+  top: 50%;
+  width: 100%;
 }
 
 .viewContainer {
@@ -50,6 +60,7 @@
   background: $blue4F;
   opacity: 0;
   transition: 150ms opacity;
+  z-index: 1;
 }
 
 @mixin handleX {
@@ -105,7 +116,8 @@
     }
   }
 
-  &.active + .vHalfSep {
+  &.active + .vMagneticRuler,
+  &.active + .hMagneticRuler {
     display: inline-block;
   }
 }

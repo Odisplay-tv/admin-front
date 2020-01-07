@@ -6,7 +6,9 @@ import {ReactComponent as IconTrash} from "./icon-trash.svg"
 
 import classes from "./layout.module.scss"
 
-type Layout = LeafLayout | VNodeLayout | HNodeLayout
+type Position = "top" | "right" | "bottom" | "left"
+
+export type Layout = LeafLayout | VNodeLayout | HNodeLayout
 
 type LeafLayout = {
   id: string
@@ -31,34 +33,24 @@ type HNodeLayout = {
 
 type Msg =
   | {
-      type: "grab-top-handle"
+      type: "should-split"
+      pos: Position
       layoutId: string
-    }
-  | {
-      type: "grab-right-handle"
-      layoutId: string
-    }
-  | {
-      type: "grab-bottom-handle"
-      layoutId: string
-    }
-  | {
-      type: "grab-left-handle"
-      layoutId: string
+      callback: (shouldSplit: boolean) => void
     }
   | {
       type: "split"
+      pos: Position
+      layoutId: string
+    }
+  | {
+      type: "propage-split"
       layoutId: string
       layout: Layout
     }
   | {
       type: "resize-start"
       layoutId: string
-    }
-  | {
-      type: "resize"
-      x: number
-      y: number
     }
   | {
       type: "resize-stop"
@@ -77,51 +69,70 @@ type Msg =
       layout: Layout
     }
 
-const NoSplitView: FC<ViewProps> = props => {
-  const {parentRef, layout, sendMsg, resizedLayoutId} = props
+type ViewProps<L = Layout> = {
+  parentRef: React.RefObject<HTMLDivElement>
+  layout: L
+  resizedLayoutId: string | null
+  sendMsg: (msg: Msg) => void
+}
 
-  const resize = useCallback(
-    (evt: MouseEvent) => {
-      if (resizedLayoutId && parentRef.current) {
-        const bounds = parentRef.current.getBoundingClientRect()
-        const {x: parentLeft, y: parentTop, width: parentWidth, height: parentHeight} = bounds
-        const deltaX = ((evt.clientX - parentLeft) * 100) / parentWidth
-        const deltaY = ((evt.clientY - parentTop) * 100) / parentHeight
-        sendMsg({
-          type: "resize",
-          x: Math.max(0, Math.min(100, deltaX)),
-          y: Math.max(0, Math.min(100, deltaY)),
-        })
-      }
-    },
-    [parentRef, resizedLayoutId, sendMsg],
+const View: FC<ViewProps> = props => {
+  const {layout} = props
+  const ref = useRef<HTMLDivElement>(null)
+
+  return (
+    <div ref={ref} className={classes.viewContainer}>
+      {(() => {
+        switch (layout.type) {
+          case "leaf": {
+            return <NoSplitView {...props} />
+          }
+
+          case "v-node": {
+            return <VSplitView {...props} parentRef={ref} layout={layout} />
+          }
+
+          case "h-node": {
+            return <HSplitView {...props} parentRef={ref} layout={layout} />
+          }
+
+          default:
+            return null
+        }
+      })()}
+    </div>
   )
+}
 
-  useEffect(() => {
-    const stopResizing = () => sendMsg({type: "resize-stop"})
+const NoSplitView: FC<ViewProps> = props => {
+  const {layout, sendMsg} = props
 
-    document.addEventListener("mouseup", stopResizing)
-    document.addEventListener("mousemove", resize)
-
+  function grab(pos: Position) {
     return () => {
-      document.removeEventListener("mouseup", stopResizing)
-      document.removeEventListener("mousemove", resize)
+      sendMsg({
+        type: "should-split",
+        pos,
+        layoutId: layout.id,
+        callback: shouldSplit => {
+          if (shouldSplit) {
+            sendMsg({type: "split", pos, layoutId: layout.id})
+          }
+        },
+      })
     }
-  }, [layout.id, resize, resizedLayoutId, sendMsg])
+  }
 
-  const topHandleGrabbed = () => sendMsg({type: "grab-top-handle", layoutId: layout.id})
-  const rightHandleGrabbed = () => sendMsg({type: "grab-right-handle", layoutId: layout.id})
-  const bottomHandleGrabbed = () => sendMsg({type: "grab-bottom-handle", layoutId: layout.id})
-  const leftHandleGrabbed = () => sendMsg({type: "grab-left-handle", layoutId: layout.id})
-  const deleteView = () => sendMsg({type: "delete-view", layoutId: layout.id})
+  function deleteView() {
+    sendMsg({type: "delete-view", layoutId: layout.id})
+  }
 
   return (
     <div className={classes.view}>
       <div>{layout.id}</div>
-      <button type="button" className={classes.handleTop} onMouseDown={topHandleGrabbed} />
-      <button type="button" className={classes.handleRight} onMouseDown={rightHandleGrabbed} />
-      <button type="button" className={classes.handleBottom} onMouseDown={bottomHandleGrabbed} />
-      <button type="button" className={classes.handleLeft} onMouseDown={leftHandleGrabbed} />
+      <button type="button" className={classes.handleTop} onMouseDown={grab("top")} />
+      <button type="button" className={classes.handleRight} onMouseDown={grab("right")} />
+      <button type="button" className={classes.handleBottom} onMouseDown={grab("bottom")} />
+      <button type="button" className={classes.handleLeft} onMouseDown={grab("left")} />
       <button type="button" className={classes.deleteView} onMouseDown={deleteView}>
         <IconTrash />
       </button>
@@ -129,95 +140,165 @@ const NoSplitView: FC<ViewProps> = props => {
   )
 }
 
+function withMinMax(val: number) {
+  return Math.max(0, Math.min(100, val))
+}
+
+function withMagneticRulers(val: number) {
+  return Math.abs(50 - val) < 2 ? 50 : val
+}
+
 const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
-  const {sendMsg: propageMsg, layout, resizedLayoutId} = props
+  const {sendMsg: propageMsg, parentRef, layout, resizedLayoutId} = props
   const [val, setVal] = useState(0)
 
   const handleMsg = useCallback(
     (msg: Msg) => {
       console.log("v-node", msg)
       switch (msg.type) {
-        case "grab-top-handle": {
-          const id = uuid()
-          const pos = layout.right.id === msg.layoutId ? "right" : "left"
-          propageMsg({
-            type: "split",
-            layoutId: id,
-            layout: {
-              ...layout,
-              [pos]: {
-                id,
-                type: "h-node",
-                val: 0,
-                top: {id: uuid(), type: "leaf"},
-                bottom: layout[pos],
-              },
-            },
-          })
+        case "should-split": {
+          switch (msg.pos) {
+            case "left": {
+              if (layout.right.id === msg.layoutId) {
+                msg.callback(false)
+                propageMsg({type: "resize-start", layoutId: layout.id})
+              } else {
+                propageMsg({
+                  type: "should-split",
+                  pos: msg.pos,
+                  layoutId: layout.id,
+                  callback: msg.callback,
+                })
+              }
+              break
+            }
+
+            case "right": {
+              if (layout.left.id === msg.layoutId) {
+                msg.callback(false)
+                propageMsg({type: "resize-start", layoutId: layout.id})
+              } else {
+                propageMsg({
+                  type: "should-split",
+                  pos: msg.pos,
+                  layoutId: layout.id,
+                  callback: msg.callback,
+                })
+              }
+              break
+            }
+
+            default:
+              msg.callback(true)
+              break
+          }
           break
         }
 
-        case "grab-right-handle":
-          if (layout.left.id === msg.layoutId) {
-            propageMsg({type: "resize-start", layoutId: layout.id})
-          } else {
-            propageMsg({...msg, layoutId: layout.id})
-          }
-          break
+        case "split": {
+          switch (msg.pos) {
+            case "top": {
+              const id = uuid()
+              const pos = layout.left.id === msg.layoutId ? "left" : "right"
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  [pos]: {
+                    id,
+                    type: "h-node",
+                    val: 0,
+                    top: {id: uuid(), type: "leaf"},
+                    bottom: layout[pos],
+                  },
+                },
+              })
+              break
+            }
 
-        case "grab-bottom-handle": {
-          const id = uuid()
-          const pos = layout.left.id === msg.layoutId ? "left" : "right"
-          propageMsg({
-            type: "split",
-            layoutId: id,
-            layout: {
-              ...layout,
-              [pos]: {
-                id,
-                type: "h-node",
-                val: 100,
-                top: layout[pos],
-                bottom: {id: uuid(), type: "leaf"},
-              },
-            },
-          })
+            case "right": {
+              const id = uuid()
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  right: {
+                    id,
+                    type: "v-node",
+                    val: 100,
+                    left: layout.right,
+                    right: {id: uuid(), type: "leaf"},
+                  },
+                },
+              })
+              break
+            }
+
+            case "bottom": {
+              const id = uuid()
+              const pos = layout.left.id === msg.layoutId ? "left" : "right"
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  [pos]: {
+                    id,
+                    type: "h-node",
+                    val: 100,
+                    top: layout[pos],
+                    bottom: {id: uuid(), type: "leaf"},
+                  },
+                },
+              })
+              break
+            }
+
+            case "left": {
+              const id = uuid()
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  left: {
+                    id,
+                    type: "v-node",
+                    val: 0,
+                    left: {id: uuid(), type: "leaf"},
+                    right: layout.left,
+                  },
+                },
+              })
+              break
+            }
+
+            default:
+              break
+          }
           break
         }
 
-        case "grab-left-handle":
-          if (layout.right.id === msg.layoutId) {
-            propageMsg({type: "resize-start", layoutId: layout.id})
-          } else {
-            propageMsg({...msg, layoutId: layout.id})
-          }
+        case "propage-split":
+          propageMsg({
+            ...msg,
+            layout: {
+              ...layout,
+              [layout.left.id === msg.layout.id ? "left" : "right"]: msg.layout,
+            },
+          })
           break
 
         case "resize-start":
           propageMsg(msg)
           break
 
-        case "resize":
-          if (resizedLayoutId === layout.id) {
-            /* const closestRulerVal = Math.round(msg.x / 5) * 5 */
-            setVal(Math.abs(50 - msg.x) < 2 ? 50 : msg.x)
-          }
-          break
-
         case "resize-stop":
           if (resizedLayoutId === layout.id) {
             propageMsg({type: "update-layout", layout: {...layout, val}})
           }
-          break
-
-        case "split":
-          propageMsg({
-            ...msg,
-            layout: {
-              ...layout,
-              [layout.right.id === msg.layout.id ? "right" : "left"]: msg.layout,
-            },
-          })
           break
 
         case "update-layout":
@@ -227,6 +308,14 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
               ...layout,
               [layout.left.id === msg.layout.id ? "left" : "right"]: msg.layout,
             },
+          })
+          break
+
+        case "delete-view":
+          propageMsg({
+            type: "delete-layout",
+            prevLayoutId: layout.id,
+            layout: layout.left.id === msg.layoutId ? layout.right : layout.left,
           })
           break
 
@@ -240,20 +329,45 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
           })
           break
 
-        case "delete-view":
-          propageMsg({
-            type: "delete-layout",
-            prevLayoutId: layout.id,
-            layout: layout.left.id === msg.layoutId ? layout.right : layout.left,
-          })
-          break
-
         default:
           break
       }
     },
     [layout, propageMsg, resizedLayoutId, val],
   )
+
+  const resize = useCallback(
+    (evt: MouseEvent) => {
+      if (resizedLayoutId === layout.id && parentRef.current) {
+        const bounds = parentRef.current.getBoundingClientRect()
+        const {x: parentLeft, width: parentWidth} = bounds
+        const deltaX = ((evt.clientX - parentLeft) * 100) / parentWidth
+        setVal(withMinMax(withMagneticRulers(deltaX)))
+      }
+    },
+    [layout.id, parentRef, resizedLayoutId],
+  )
+
+  const stopResizing = useCallback(() => {
+    console.log(val)
+    if (val === 0) {
+      handleMsg({type: "delete-view", layoutId: layout.left.id})
+    } else if (val === 100) {
+      handleMsg({type: "delete-view", layoutId: layout.right.id})
+    } else if (resizedLayoutId === layout.id) {
+      propageMsg({type: "update-layout", layout: {...layout, val}})
+    }
+  }, [handleMsg, layout, propageMsg, resizedLayoutId, val])
+
+  useEffect(() => {
+    document.addEventListener("mouseup", stopResizing)
+    document.addEventListener("mousemove", resize)
+
+    return () => {
+      document.removeEventListener("mouseup", stopResizing)
+      document.removeEventListener("mousemove", resize)
+    }
+  }, [handleMsg, resize, stopResizing])
 
   useEffect(() => {
     setVal(layout.val)
@@ -269,83 +383,146 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
       <div className={classNames(classes.rightView, active)} style={{left: `${val}%`}}>
         <View {...props} layout={layout.right} sendMsg={handleMsg} />
       </div>
-      <div className={classes.vHalfSep} />
+      <div className={classes.vMagneticRuler} />
     </>
   )
 }
 
 const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
-  const {sendMsg: propageMsg, layout, resizedLayoutId} = props
+  const {parentRef, sendMsg: propageMsg, layout, resizedLayoutId} = props
   const [val, setVal] = useState(0)
 
   const handleMsg = useCallback(
     (msg: Msg) => {
       console.log("h-node", msg)
       switch (msg.type) {
-        case "grab-top-handle":
-          if (layout.bottom.id === msg.layoutId) {
-            propageMsg({type: "resize-start", layoutId: layout.id})
-          } else {
-            propageMsg({...msg, layoutId: layout.id})
-          }
-          break
+        case "should-split": {
+          switch (msg.pos) {
+            case "top": {
+              if (layout.bottom.id === msg.layoutId) {
+                msg.callback(false)
+                propageMsg({type: "resize-start", layoutId: layout.id})
+              } else {
+                propageMsg({
+                  type: "should-split",
+                  pos: msg.pos,
+                  layoutId: layout.id,
+                  callback: msg.callback,
+                })
+              }
+              break
+            }
 
-        case "grab-right-handle": {
-          const id = uuid()
-          const pos = layout.top.id === msg.layoutId ? "top" : "bottom"
-          propageMsg({
-            type: "split",
-            layoutId: id,
-            layout: {
-              ...layout,
-              [pos]: {
-                id,
-                type: "v-node",
-                val: 100,
-                left: layout[pos],
-                right: {id: uuid(), type: "leaf"},
-              },
-            },
-          })
+            case "bottom": {
+              if (layout.top.id === msg.layoutId) {
+                msg.callback(false)
+                propageMsg({type: "resize-start", layoutId: layout.id})
+              } else {
+                propageMsg({
+                  type: "should-split",
+                  pos: msg.pos,
+                  layoutId: layout.id,
+                  callback: msg.callback,
+                })
+              }
+              break
+            }
+
+            default:
+              msg.callback(true)
+              break
+          }
           break
         }
 
-        case "grab-bottom-handle":
-          if (layout.top.id === msg.layoutId) {
-            propageMsg({type: "resize-start", layoutId: layout.id})
-          } else {
-            propageMsg({...msg, layoutId: layout.id})
-          }
-          break
+        case "split": {
+          switch (msg.pos) {
+            case "top": {
+              const id = uuid()
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  top: {
+                    id,
+                    type: "h-node",
+                    val: 0,
+                    top: {id: uuid(), type: "leaf"},
+                    bottom: layout.top,
+                  },
+                },
+              })
+              break
+            }
 
-        case "grab-left-handle": {
-          const id = uuid()
-          const pos = layout.top.id === msg.layoutId ? "top" : "bottom"
-          propageMsg({
-            type: "split",
-            layoutId: id,
-            layout: {
-              ...layout,
-              [pos]: {
-                id,
-                type: "v-node",
-                val: 0,
-                left: {id: uuid(), type: "leaf"},
-                right: layout[pos],
-              },
-            },
-          })
+            case "right": {
+              const id = uuid()
+              const pos = layout.top.id === msg.layoutId ? "top" : "bottom"
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  [pos]: {
+                    id,
+                    type: "v-node",
+                    val: 100,
+                    left: layout[pos],
+                    right: {id: uuid(), type: "leaf"},
+                  },
+                },
+              })
+              break
+            }
+
+            case "bottom": {
+              const id = uuid()
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  bottom: {
+                    id,
+                    type: "h-node",
+                    val: 100,
+                    top: layout.bottom,
+                    bottom: {id: uuid(), type: "leaf"},
+                  },
+                },
+              })
+              break
+            }
+
+            case "left": {
+              const id = uuid()
+              const pos = layout.top.id === msg.layoutId ? "top" : "bottom"
+              propageMsg({
+                type: "propage-split",
+                layoutId: id,
+                layout: {
+                  ...layout,
+                  [pos]: {
+                    id,
+                    type: "v-node",
+                    val: 0,
+                    left: {id: uuid(), type: "leaf"},
+                    right: layout[pos],
+                  },
+                },
+              })
+              break
+            }
+
+            default:
+              break
+          }
           break
         }
 
         case "resize-start":
           propageMsg(msg)
-          break
-
-        case "resize":
-          if (resizedLayoutId === layout.id) {
-            setVal(msg.y)
-          }
           break
 
         case "resize-stop":
@@ -354,7 +531,7 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
           }
           break
 
-        case "split":
+        case "propage-split":
           propageMsg({
             ...msg,
             layout: {
@@ -374,6 +551,14 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
           })
           break
 
+        case "delete-view":
+          propageMsg({
+            type: "delete-layout",
+            prevLayoutId: layout.id,
+            layout: layout.top.id === msg.layoutId ? layout.bottom : layout.top,
+          })
+          break
+
         case "delete-layout":
           propageMsg({
             type: "update-layout",
@@ -384,20 +569,45 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
           })
           break
 
-        case "delete-view":
-          propageMsg({
-            type: "delete-layout",
-            prevLayoutId: layout.id,
-            layout: layout.top.id === msg.layoutId ? layout.bottom : layout.top,
-          })
-          break
-
         default:
           break
       }
     },
     [layout, propageMsg, resizedLayoutId, val],
   )
+
+  const resize = useCallback(
+    (evt: MouseEvent) => {
+      if (resizedLayoutId === layout.id && parentRef.current) {
+        const bounds = parentRef.current.getBoundingClientRect()
+        const {y: parentTop, height: parentHeight} = bounds
+        const deltaY = ((evt.clientY - parentTop) * 100) / parentHeight
+        setVal(withMinMax(withMagneticRulers(deltaY)))
+      }
+    },
+    [layout.id, parentRef, resizedLayoutId],
+  )
+
+  const stopResizing = useCallback(() => {
+    console.log(val)
+    if (val === 0) {
+      handleMsg({type: "delete-view", layoutId: layout.top.id})
+    } else if (val === 100) {
+      handleMsg({type: "delete-view", layoutId: layout.bottom.id})
+    } else if (resizedLayoutId === layout.id) {
+      propageMsg({type: "update-layout", layout: {...layout, val}})
+    }
+  }, [handleMsg, layout, propageMsg, resizedLayoutId, val])
+
+  useEffect(() => {
+    document.addEventListener("mouseup", stopResizing)
+    document.addEventListener("mousemove", resize)
+
+    return () => {
+      document.removeEventListener("mouseup", stopResizing)
+      document.removeEventListener("mousemove", resize)
+    }
+  }, [handleMsg, resize, stopResizing])
 
   useEffect(() => {
     setVal(layout.val)
@@ -413,104 +623,91 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
       <div className={classNames(classes.bottomView, active)} style={{top: `${val}%`}}>
         <View {...props} layout={layout.bottom} sendMsg={handleMsg} />
       </div>
+      <div className={classes.hMagneticRuler} />
     </>
   )
 }
 
-type ViewProps<L = Layout> = {
-  parentRef: React.RefObject<HTMLDivElement>
-  layout: L
-  resizedLayoutId: string | null
-  sendMsg: (msg: Msg) => void
+type ScreenLayoutProps = {
+  layout: Layout
+  onChange: (layout: Layout) => void
 }
 
-const View: FC<ViewProps> = props => {
-  const {layout} = props
-  const ref = useRef<HTMLDivElement>(null)
-
-  const view = (() => {
-    switch (layout.type) {
-      case "leaf": {
-        return <NoSplitView {...props} />
-      }
-
-      case "v-node": {
-        return <VSplitView {...props} parentRef={ref} layout={layout} />
-      }
-
-      case "h-node": {
-        return <HSplitView {...props} parentRef={ref} layout={layout} />
-      }
-
-      default:
-        return null
-    }
-  })()
-
-  return (
-    <div ref={ref} className={classes.viewContainer}>
-      {view}
-    </div>
-  )
-}
-
-const ScreenLayout: FC = () => {
+const ScreenLayout: FC<ScreenLayoutProps> = props => {
+  const {layout, onChange: setLayout} = props
   const frameRef = useRef<HTMLDivElement>(null)
-  const [layout, setLayout] = useState<Layout>({id: uuid(), type: "leaf"})
   const [resizedLayoutId, setResizedLayoutId] = useState<string | null>(null)
 
   function sendMsg(msg: Msg) {
     console.log("root", msg)
     switch (msg.type) {
-      case "grab-top-handle": {
-        const id = uuid()
-        setResizedLayoutId(id)
-        setLayout({
-          id,
-          type: "h-node",
-          val: 0,
-          top: {id: uuid(), type: "leaf"},
-          bottom: {...layout},
-        })
+      case "should-split":
+        msg.callback(true)
+        break
+
+      case "split": {
+        switch (msg.pos) {
+          case "top": {
+            const id = uuid()
+            setResizedLayoutId(id)
+            setLayout({
+              id,
+              type: "h-node",
+              val: 0,
+              top: {id: uuid(), type: "leaf"},
+              bottom: layout,
+            })
+            break
+          }
+
+          case "right": {
+            const id = uuid()
+            setResizedLayoutId(id)
+            setLayout({
+              id,
+              type: "v-node",
+              val: 100,
+              left: layout,
+              right: {id: uuid(), type: "leaf"},
+            })
+            break
+          }
+
+          case "bottom": {
+            const id = uuid()
+            setResizedLayoutId(id)
+            setLayout({
+              id,
+              type: "h-node",
+              val: 100,
+              top: layout,
+              bottom: {id: uuid(), type: "leaf"},
+            })
+            break
+          }
+
+          case "left": {
+            const id = uuid()
+            setResizedLayoutId(id)
+            setLayout({
+              id,
+              type: "v-node",
+              val: 0,
+              left: {id: uuid(), type: "leaf"},
+              right: layout,
+            })
+            break
+          }
+
+          default:
+            break
+        }
         break
       }
 
-      case "grab-right-handle": {
-        const id = uuid()
-        setResizedLayoutId(id)
-        setLayout({
-          id,
-          type: "v-node",
-          val: 100,
-          left: {...layout},
-          right: {id: uuid(), type: "leaf"},
-        })
-        break
-      }
-
-      case "grab-bottom-handle": {
-        const id = uuid()
-        setResizedLayoutId(id)
-        setLayout({
-          id,
-          type: "h-node",
-          val: 100,
-          top: {...layout},
-          bottom: {id: uuid(), type: "leaf"},
-        })
-        break
-      }
-
-      case "grab-left-handle": {
-        const id = uuid()
-        setResizedLayoutId(id)
-        setLayout({
-          id,
-          type: "v-node",
-          val: 0,
-          left: {id: uuid(), type: "leaf"},
-          right: {...layout},
-        })
+      case "propage-split": {
+        setLayout({...layout, ...msg.layout})
+        setResizedLayoutId(msg.layoutId)
         break
       }
 
@@ -518,25 +715,12 @@ const ScreenLayout: FC = () => {
         setResizedLayoutId(msg.layoutId)
         break
 
-      case "split": {
-        setLayout({...layout, ...msg.layout})
-        setResizedLayoutId(msg.layoutId)
-        break
-      }
-
+      case "delete-layout":
       case "update-layout": {
         setLayout({...layout, ...msg.layout})
         setResizedLayoutId(null)
         break
       }
-
-      case "delete-layout":
-        if (layout.type === "v-node") {
-          setLayout(layout.left.id === msg.prevLayoutId ? layout.right : layout.left)
-        } else if (layout.type === "h-node") {
-          setLayout(layout.top.id === msg.prevLayoutId ? layout.bottom : layout.top)
-        }
-        break
 
       default:
         break
@@ -555,6 +739,10 @@ const ScreenLayout: FC = () => {
       </div>
     </div>
   )
+}
+
+export function emptyLayout(): Layout {
+  return {id: uuid(), type: "leaf"}
 }
 
 export default ScreenLayout

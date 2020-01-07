@@ -18,3 +18,13 @@
     margin-bottom: 15px;
   }
 }
+
+.resetContainer {
+  margin: 10px 0;
+  text-align: right;
+}
+
+.reset {
+  @include button($red, $white);
+  display: inline-block;
+}
