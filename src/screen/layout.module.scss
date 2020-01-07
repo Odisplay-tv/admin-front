@@ -19,6 +19,16 @@
   }
 }
 
+.vHalfSep {
+  border-left: 2px dashed lighten($gray43, 10%);
+  display: none;
+  height: 100%;
+  left: 50%;
+  margin-left: -1px;
+  position: absolute;
+  width: 0;
+}
+
 .viewContainer {
   height: 100%;
   position: relative;
@@ -93,6 +103,10 @@
     > .deleteView {
       opacity: 1;
     }
+  }
+
+  &.active + .vHalfSep {
+    display: inline-block;
   }
 }
 

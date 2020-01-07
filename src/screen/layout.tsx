@@ -199,7 +199,8 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
 
         case "resize":
           if (resizedLayoutId === layout.id) {
-            setVal(msg.x)
+            /* const closestRulerVal = Math.round(msg.x / 5) * 5 */
+            setVal(Math.abs(50 - msg.x) < 2 ? 50 : msg.x)
           }
           break
 
@@ -268,6 +269,7 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
       <div className={classNames(classes.rightView, active)} style={{left: `${val}%`}}>
         <View {...props} layout={layout.right} sendMsg={handleMsg} />
       </div>
+      <div className={classes.vHalfSep} />
     </>
   )
 }
