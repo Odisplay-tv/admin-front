@@ -22,7 +22,9 @@ const ScreenEdit: FC = () => {
           RESET
         </button>
       </div>
-      <Layout layout={layout} onChange={setLayout} />
+      <div className={classes.content}>
+        <Layout layout={layout} onChange={setLayout} />
+      </div>
     </div>
   )
 }
