@@ -1,7 +1,9 @@
 import React, {FC} from "react"
 import {Link as RouterLink, LinkProps as RouterLinkProps, useLocation} from "react-router-dom"
 
-const Link: FC<RouterLinkProps> = ({className = "", to, children, ...props}) => {
+export type LinkProps = RouterLinkProps
+
+const Link: FC<LinkProps> = ({className = "", to, children, ...props}) => {
   const location = useLocation()
   const href: string = (() => {
     switch (typeof to) {

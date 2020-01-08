@@ -1,12 +1,81 @@
 @import "../app/theme.scss";
 @import "../app/media.scss";
 
-.container {
-  padding: 40px 50px;
+@mixin input {
+  background: $white;
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 1px 3px rgba($black, 0.15);
+  font-weight: bold;
+  margin-left: 10px;
+  min-width: auto;
+  padding: 5px 10px;
+}
 
-  @include media(md) {
-    padding: 15px;
+.nameInput {
+  @include input;
+  font-size: 16px;
+  max-width: 220px;
+}
+
+.statusInput {
+  @include input;
+  font-size: 13px;
+  max-width: 100px;
+}
+
+.orientationInput {
+  @include input;
+  font-size: 13px;
+  max-width: 100px;
+}
+
+.layoutInput {
+  @include input;
+  font-size: 13px;
+  max-width: 100px;
+}
+
+.config {
+  background: $white;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  display: grid;
+  grid-column-gap: 30px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 30px;
+
+  .left {
+    div {
+      margin: 10px 0;
+    }
   }
+
+  .right {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .actions {
+    margin-bottom: 50px;
+
+    button {
+      margin: 5px;
+    }
+  }
+
+  .desc {
+    margin: 10px 0;
+  }
+
+  .delete {
+    margin-top: 10px;
+  }
+}
+
+.layout {
+  margin-bottom: 30px;
+  padding-top: 56.25%; // 16:9 ratio
+  position: relative;
 }
 
 .title {
@@ -19,17 +88,10 @@
   }
 }
 
-.resetContainer {
-  margin: 10px 0;
-  text-align: right;
-}
+.container {
+  padding: 40px 50px;
 
-.reset {
-  @include button($red, $white);
-  display: inline-block;
-}
-
-.content {
-  padding-top: 56.25%; // 16:9 ratio
-  position: relative;
+  @include media(md) {
+    padding: 15px;
+  }
 }

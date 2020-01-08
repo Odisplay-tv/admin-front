@@ -30,14 +30,13 @@ export function onConfigChange(userId: string, screenId: string, handler: Change
   return firestore(`users/${userId}/screens`, screenId).onSnapshot(async snap => {
     const screen = snap.data()
     if (!screen) return handler()
-    if (!screen.layoutId) return handler({})
-    const layoutRef = await firestore(`users/${userId}/layouts`, screen.layoutId).get()
-    handler(layoutRef.data() || {})
+    if (!screen.layout) return handler()
+    return handler(screen.layout)
   })
 }
 
 export function update(userId: string, screen: PartialScreen) {
-  return firestore(`users/${userId}/screens`, screen.id).set(omit(["layout", "code"], screen), {
+  return firestore(`users/${userId}/screens`, screen.id).set(omit(["code"], screen), {
     merge: true,
   })
 }

@@ -2,34 +2,12 @@ import React, {FC, useCallback, useEffect, useRef, useState} from "react"
 import classNames from "classnames"
 import uuid from "uuid/v4"
 
+import {Layout, HNodeLayout, VNodeLayout, emptyLeaf} from "./model"
 import {ReactComponent as IconTrash} from "./icon-trash.svg"
 
 import classes from "./layout.module.scss"
 
 type Position = "top" | "right" | "bottom" | "left"
-
-export type Layout = LeafLayout | VNodeLayout | HNodeLayout
-
-type LeafLayout = {
-  id: string
-  type: "leaf"
-}
-
-type VNodeLayout = {
-  id: string
-  type: "v-node"
-  val: number
-  left: Layout
-  right: Layout
-}
-
-type HNodeLayout = {
-  id: string
-  type: "h-node"
-  val: number
-  top: Layout
-  bottom: Layout
-}
 
 type Msg =
   | {
@@ -154,7 +132,6 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
 
   const handleMsg = useCallback(
     (msg: Msg) => {
-      console.log("v-node", msg)
       switch (msg.type) {
         case "should-split": {
           switch (msg.pos) {
@@ -209,7 +186,7 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
                     id,
                     type: "h-node",
                     val: 0,
-                    top: {id: uuid(), type: "leaf"},
+                    top: emptyLeaf(),
                     bottom: layout[pos],
                   },
                 },
@@ -229,7 +206,7 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
                     type: "v-node",
                     val: 100,
                     left: layout.right,
-                    right: {id: uuid(), type: "leaf"},
+                    right: emptyLeaf(),
                   },
                 },
               })
@@ -249,7 +226,7 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
                     type: "h-node",
                     val: 100,
                     top: layout[pos],
-                    bottom: {id: uuid(), type: "leaf"},
+                    bottom: emptyLeaf(),
                   },
                 },
               })
@@ -267,7 +244,7 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
                     id,
                     type: "v-node",
                     val: 0,
-                    left: {id: uuid(), type: "leaf"},
+                    left: emptyLeaf(),
                     right: layout.left,
                   },
                 },
@@ -349,7 +326,6 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
   )
 
   const stopResizing = useCallback(() => {
-    console.log(val)
     if (val === 0) {
       handleMsg({type: "delete-view", layoutId: layout.left.id})
     } else if (val === 100) {
@@ -394,7 +370,6 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
 
   const handleMsg = useCallback(
     (msg: Msg) => {
-      console.log("h-node", msg)
       switch (msg.type) {
         case "should-split": {
           switch (msg.pos) {
@@ -448,7 +423,7 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
                     id,
                     type: "h-node",
                     val: 0,
-                    top: {id: uuid(), type: "leaf"},
+                    top: emptyLeaf(),
                     bottom: layout.top,
                   },
                 },
@@ -469,7 +444,7 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
                     type: "v-node",
                     val: 100,
                     left: layout[pos],
-                    right: {id: uuid(), type: "leaf"},
+                    right: emptyLeaf(),
                   },
                 },
               })
@@ -488,7 +463,7 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
                     type: "h-node",
                     val: 100,
                     top: layout.bottom,
-                    bottom: {id: uuid(), type: "leaf"},
+                    bottom: emptyLeaf(),
                   },
                 },
               })
@@ -507,7 +482,7 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
                     id,
                     type: "v-node",
                     val: 0,
-                    left: {id: uuid(), type: "leaf"},
+                    left: emptyLeaf(),
                     right: layout[pos],
                   },
                 },
@@ -589,7 +564,6 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
   )
 
   const stopResizing = useCallback(() => {
-    console.log(val)
     if (val === 0) {
       handleMsg({type: "delete-view", layoutId: layout.top.id})
     } else if (val === 100) {
@@ -629,7 +603,7 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
 }
 
 type ScreenLayoutProps = {
-  layout: Layout
+  layout?: Layout
   onChange: (layout: Layout) => void
 }
 
@@ -639,7 +613,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
   const [resizedLayoutId, setResizedLayoutId] = useState<string | null>(null)
 
   function sendMsg(msg: Msg) {
-    console.log("root", msg)
+    if (!layout) return null
     switch (msg.type) {
       case "should-split":
         msg.callback(true)
@@ -654,7 +628,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
               id,
               type: "h-node",
               val: 0,
-              top: {id: uuid(), type: "leaf"},
+              top: emptyLeaf(),
               bottom: layout,
             })
             break
@@ -668,7 +642,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
               type: "v-node",
               val: 100,
               left: layout,
-              right: {id: uuid(), type: "leaf"},
+              right: emptyLeaf(),
             })
             break
           }
@@ -681,7 +655,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
               type: "h-node",
               val: 100,
               top: layout,
-              bottom: {id: uuid(), type: "leaf"},
+              bottom: emptyLeaf(),
             })
             break
           }
@@ -693,7 +667,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
               id,
               type: "v-node",
               val: 0,
-              left: {id: uuid(), type: "leaf"},
+              left: emptyLeaf(),
               right: layout,
             })
             break
@@ -730,19 +704,17 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
   return (
     <div className={classes.container}>
       <div ref={frameRef} className={classes.content}>
-        <View
-          parentRef={frameRef}
-          resizedLayoutId={resizedLayoutId}
-          layout={layout}
-          sendMsg={sendMsg}
-        />
+        {layout && (
+          <View
+            parentRef={frameRef}
+            resizedLayoutId={resizedLayoutId}
+            layout={layout}
+            sendMsg={sendMsg}
+          />
+        )}
       </div>
     </div>
   )
-}
-
-export function emptyLayout(): Layout {
-  return {id: uuid(), type: "leaf"}
 }
 
 export default ScreenLayout

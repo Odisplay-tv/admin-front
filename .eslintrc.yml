@@ -44,6 +44,7 @@ rules:
   prettier/prettier: error
   react-hooks/exhaustive-deps: warn
   react-hooks/rules-of-hooks: error
+  react/button-has-type: 0
   react/destructuring-assignment: 0
   react/jsx-filename-extension: [1, {extensions: [.tsx]}]
   react/jsx-one-expression-per-line: 0
