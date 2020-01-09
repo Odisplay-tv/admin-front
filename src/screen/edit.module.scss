@@ -36,6 +36,29 @@
   max-width: 100px;
 }
 
+.left {
+  div {
+    margin: 10px 0;
+  }
+}
+
+.right {
+  justify-self: end;
+  text-align: right;
+}
+
+.topActions {
+  margin-bottom: 25px;
+}
+
+.bottomActions {
+  margin-top: 25px;
+}
+
+.desc {
+  margin: 10px 0;
+}
+
 .config {
   background: $white;
   box-shadow: 0 0 16px rgba($black, 0.15);
@@ -43,33 +66,10 @@
   grid-column-gap: 30px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   padding: 30px;
+}
 
-  .left {
-    div {
-      margin: 10px 0;
-    }
-  }
-
-  .right {
-    justify-self: end;
-    text-align: right;
-  }
-
-  .actions {
-    margin-bottom: 50px;
-
-    button {
-      margin: 5px;
-    }
-  }
-
-  .desc {
-    margin: 10px 0;
-  }
-
-  .delete {
-    margin-top: 10px;
-  }
+.button {
+  margin: 5px;
 }
 
 .layout {
@@ -88,10 +88,153 @@
   }
 }
 
-.container {
-  padding: 40px 50px;
+.asideContentBtn {
+  align-items: center;
+  background: $white;
+  color: $gray6A;
+  flex-direction: column;
+  font-size: 16px;
+  height: 180px;
+  justify-content: center;
+  transition-duration: 150ms;
+  transition-property: color, background;
+
+  strong {
+    color: $black;
+    font-size: 21px;
+    transition-duration: 150ms;
+    transition-property: color;
+  }
+
+  svg {
+    fill: $green;
+    height: 25px;
+    width: 25px;
+  }
+
+  &:hover {
+    background: $gray6A;
+    color: $white;
+
+    strong {
+      color: $white;
+    }
+  }
+}
+
+.asideContentBtns {
+  background: $grayE8;
+  display: grid;
+  grid-gap: 3px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.asideContent {
+  padding: 85px 20px 20px 20px;
+}
+
+.asideHeader {
+  align-items: center;
+  background: $gray6A;
+  display: grid;
+  grid-auto-flow: column;
+  height: 50px;
+  justify-items: stretch;
+  position: relative;
+
+  &::before {
+    background: $gray43;
+    content: "";
+    height: 100%;
+    position: absolute;
+    right: 100%;
+    transform: skewY(30deg);
+    transform-origin: bottom left;
+    width: 20px;
+  }
+
+  &::after {
+    background: $gray6A;
+    content: "";
+    height: 100%;
+    position: absolute;
+    right: 100%;
+    width: 20px;
+  }
+}
+
+.asideHeaderBtn {
+  align-items: center;
+  border-bottom: 4px solid transparent;
+  border-top: 4px solid transparent;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  transition-duration: 150ms;
+  transition-property: background, border;
+
+  &:hover {
+    background: lighten($gray6A, 5%);
+  }
+
+  &.active {
+    background: lighten($gray6A, 5%);
+    border-bottom: 4px solid $yellow;
+  }
+
+  svg {
+    height: 25px;
+    width: auto;
+  }
+}
+
+.aside {
+  background: $white;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  position: relative;
+
+  &::before {
+    border-bottom: 14px solid transparent;
+    border-right: 14px solid $white;
+    border-top: 14px solid transparent;
+    content: "";
+    height: 0;
+    position: absolute;
+    right: 100%;
+    top: calc(50% - 64px);
+    width: 0;
+  }
+}
+
+.dragArrow {
+  align-self: center;
+  fill: $black;
+  height: 20px;
+  margin-bottom: 100px;
+  transform: rotateZ(90deg);
+  width: 20px;
+}
+
+.dragMsg {
+  align-self: center;
+  font-size: 16px;
+  font-weight: 200;
+  margin: 0 20px 0 0;
+  margin-bottom: 100px;
+  text-align: center;
+}
+
+.content {
+  padding: 40px 0 40px 50px;
 
   @include media(md) {
     padding: 15px;
   }
+}
+
+.container {
+  display: grid;
+  grid-template-columns: auto 20px 90px 400px;
+  height: 100%;
 }
