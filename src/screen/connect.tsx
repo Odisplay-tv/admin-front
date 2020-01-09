@@ -17,18 +17,18 @@ const ConnectScreen: FC = () => {
   const [code, setCode] = useState("")
   const [name, setName] = useState("")
   const {loading, setLoading} = useAsync()
-  const {user} = useAuthState()
+  const {auth} = useAuthState()
   const history = useHistory()
   const {t} = useTranslation(["default", "screen"])
 
   async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault()
     if (loading) return
-    if (!user) return
+    if (!auth) return
     setLoading(true)
 
     try {
-      await $screen.connectScreen(await user.getIdToken(), {code, name})
+      await $screen.connectScreen(await auth.getIdToken(), {code, name})
       toast.success(t("screen:successfully-paired"))
       history.push("/screens")
     } catch (err) {

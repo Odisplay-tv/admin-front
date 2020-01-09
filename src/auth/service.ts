@@ -1,12 +1,35 @@
 import firebase, {auth, firestore} from "../app/firebase"
-import {AuthCredentials} from "./context"
+import {AuthCredentials, User} from "./model"
 
 function _register(user: firebase.User) {
   return firestore("users", user.uid).set({
     id: user.uid,
     email: user.email,
+    uploads: [],
     createdAt: new Date(),
   })
+}
+
+type AuthStateChangedHandler = (auth: firebase.User | null, user: User | null) => void
+export function onAuthStateChanged(handler: AuthStateChangedHandler) {
+  return auth.onAuthStateChanged(async fbaseUser => {
+    if (!fbaseUser) return handler(null, null)
+    const ref = await firestore("users", fbaseUser.uid).get()
+    const fstoreUser = ref.data() || null
+    handler(fbaseUser, fstoreUser as User | null)
+  })
+}
+
+type UserChangedHandler = (user: User | null) => void
+export function onUserChanged(id: string, handler: UserChangedHandler) {
+  return firestore("users", id).onSnapshot(ref => {
+    const user = ref.data() || null
+    handler(user as User | null)
+  })
+}
+
+export function addUploads(userId: string, uploads: string[]) {
+  return firestore("users", userId).set({uploads}, {merge: true})
 }
 
 export async function register({email, password}: AuthCredentials) {
@@ -45,10 +68,13 @@ export function logout() {
 }
 
 export default {
+  onAuthStateChanged,
   register,
   resetPassword,
   loginWithCredentials,
   loginWithGoogle,
   loginWithFacebook,
   logout,
+  onUserChanged,
+  addUploads,
 }

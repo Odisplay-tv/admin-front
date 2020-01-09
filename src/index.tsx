@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css"
 import serviceWorker from "./app/service-worker"
 import Loader from "./async/loader"
 import App from "./app/app"
+import "./app/filestack"
 import "./app/i18n"
 import "./app/base.scss"
 

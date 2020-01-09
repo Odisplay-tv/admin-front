@@ -5,6 +5,9 @@ import cn from "classnames"
 import find from "lodash/fp/find"
 import getOr from "lodash/fp/getOr"
 
+import $auth from "../auth/service"
+import {useAuthState} from "../auth/context"
+import filestack from "../app/filestack"
 import {ReactComponent as IconAdd} from "../app/icon-add.svg"
 import {ReactComponent as IconArrowLeft} from "../app/icon-arrow-left.svg"
 import {ReactComponent as IconApp} from "../app/icon-app.svg"
@@ -32,6 +35,7 @@ const icons: {[V in View]: JSX.Element} = {
 
 const ScreenEdit: FC = () => {
   const {id} = useRouteMatch<{id: string}>().params
+  const {user} = useAuthState()
   const {screens, ...$screen} = useScreens()
   const screen = find({id}, screens)
   const defaultLayout = getOr(undefined, "layout", screen)
@@ -77,6 +81,19 @@ const ScreenEdit: FC = () => {
         <strong>{t(view)}</strong>
       </button>
     )
+  }
+
+  async function uploadMedia() {
+    const picker = filestack.picker({
+      onUploadDone: ({filesUploaded}) => {
+        if (user) {
+          const uploads = (user.uploads || []).concat(filesUploaded.map(f => f.url))
+          $auth.addUploads(user.id, uploads)
+        }
+      },
+    })
+
+    picker.open()
   }
 
   return (
@@ -151,14 +168,26 @@ const ScreenEdit: FC = () => {
                 return null
 
               case "file":
-                return null
+                return (
+                  <div className={classes.asideFile}>
+                    <Button prefix={IconSave} color="gray" onClick={uploadMedia}>
+                      {t("screen:upload-file")}
+                    </Button>
+                    {user &&
+                      user.uploads.map(upload => (
+                        <div key={upload}>
+                          <img height={200} src={upload} alt="" />
+                        </div>
+                      ))}
+                  </div>
+                )
 
               case "app":
                 return null
 
               default:
                 return (
-                  <div className={classes.asideContentBtns}>
+                  <div className={classes.asideHome}>
                     <AsideContentBtn view="file" />
                     <AsideContentBtn view="planning" />
                     <AsideContentBtn view="playlist" />

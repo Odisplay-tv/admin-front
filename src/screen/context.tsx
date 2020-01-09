@@ -30,14 +30,14 @@ const defaultState: ScreenState = {
 const ScreenContext = createContext<ScreenState>(defaultState)
 
 export const ScreenContextProvider: FC = ({children}) => {
-  const {user} = useAuthState()
+  const {auth} = useAuthState()
   const [screens, setScreens] = useState<Screen[]>([])
   const [groups, setGroups] = useState<Group[]>([])
   const {t} = useTranslation(["screen"])
 
   useEffect(() => {
-    if (!user) return
-    const unsubscribe = firestore(`users/${user.uid}/screens`).onSnapshot(
+    if (!auth) return
+    const unsubscribe = firestore(`users/${auth.uid}/screens`).onSnapshot(
       query => {
         const screens: Screen[] = []
         query.forEach(ref => screens.push({...emptyScreen, id: ref.id, ...ref.data()}))
@@ -49,12 +49,12 @@ export const ScreenContextProvider: FC = ({children}) => {
     )
 
     return () => unsubscribe()
-  }, [t, user])
+  }, [t, auth])
 
   async function update(screen: PartialScreen) {
     try {
-      if (!user) return
-      await $screen.update(user.uid, screen)
+      if (!auth) return
+      await $screen.update(auth.uid, screen)
       toast.success(t("successfully-updated"))
     } catch (err) {
       toast.error(t(err.message))
@@ -63,8 +63,8 @@ export const ScreenContextProvider: FC = ({children}) => {
 
   async function _delete(id: string) {
     try {
-      if (!user) return
-      await $screen.delete(user.uid, id)
+      if (!auth) return
+      await $screen.delete(auth.uid, id)
       toast.success(t("successfully-deleted"))
     } catch (err) {
       toast.error(t(err.message))
@@ -72,8 +72,8 @@ export const ScreenContextProvider: FC = ({children}) => {
   }
 
   useEffect(() => {
-    if (!user) return
-    const unsubscribe = firestore(`users/${user.uid}/groups`).onSnapshot(
+    if (!auth) return
+    const unsubscribe = firestore(`users/${auth.uid}/groups`).onSnapshot(
       query => {
         const groups: Group[] = []
         query.forEach(ref => groups.push({...emptyGroup, id: ref.id, ...ref.data()}))
@@ -85,12 +85,12 @@ export const ScreenContextProvider: FC = ({children}) => {
     )
 
     return () => unsubscribe()
-  }, [t, user])
+  }, [t, auth])
 
   async function addGroup(name: string) {
     try {
-      if (!user) return
-      await $screen.addGroup(user.uid, name)
+      if (!auth) return
+      await $screen.addGroup(auth.uid, name)
       toast.success(t("group-successfully-added"))
     } catch (err) {
       toast.error(t(err.message))
@@ -99,12 +99,12 @@ export const ScreenContextProvider: FC = ({children}) => {
 
   async function deleteGroup(id: string) {
     try {
-      if (!user) return
-      await $screen.deleteGroup(user.uid, id)
+      if (!auth) return
+      await $screen.deleteGroup(auth.uid, id)
       await Promise.all(
         screens
           .filter(s => s.groupId === id)
-          .map(s => $screen.update(user.uid, {...s, groupId: null})),
+          .map(s => $screen.update(auth.uid, {...s, groupId: null})),
       )
       toast.success(t("group-successfully-deleted"))
     } catch (err) {
