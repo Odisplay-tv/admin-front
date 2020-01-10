@@ -47,7 +47,7 @@ const ScreenEdit: FC = () => {
     evt.preventDefault()
 
     if (screen && layout) {
-      $screen.update({...screen, layout})
+      $screen.update({...screen, layout}, false)
     }
   }
 
@@ -94,6 +94,13 @@ const ScreenEdit: FC = () => {
     })
 
     picker.open()
+  }
+
+  function startDragging(url: string) {
+    return (evt: React.DragEvent<HTMLImageElement>) => {
+      evt.dataTransfer.setData("type", "file")
+      evt.dataTransfer.setData("url", url)
+    }
   }
 
   return (
@@ -176,7 +183,13 @@ const ScreenEdit: FC = () => {
                     {user &&
                       user.uploads.map(upload => (
                         <div key={upload}>
-                          <img height={200} src={upload} alt="" />
+                          <img
+                            draggable
+                            onDragStart={startDragging(upload)}
+                            height={200}
+                            src={upload}
+                            alt=""
+                          />
                         </div>
                       ))}
                   </div>

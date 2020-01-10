@@ -2,9 +2,15 @@ import uuid from "uuid/v4"
 
 export type Layout = LeafLayout | VNodeLayout | HNodeLayout
 
+export type LeafLayoutData = {
+  type: "file"
+  url: string
+}
+
 export type LeafLayout = {
   id: string
   type: "leaf"
+  data: LeafLayoutData | null
 }
 
 export type VNodeLayout = {
@@ -39,7 +45,7 @@ export type Group = {
 }
 
 export function emptyLeaf(): LeafLayout {
-  return {id: uuid(), type: "leaf"}
+  return {id: uuid(), type: "leaf", data: null}
 }
 
 export const emptyScreen: Screen = {

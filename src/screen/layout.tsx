@@ -1,8 +1,9 @@
 import React, {FC, useCallback, useEffect, useRef, useState} from "react"
-import classNames from "classnames"
+import {useTranslation} from "react-i18next"
+import cn from "classnames"
 import uuid from "uuid/v4"
 
-import {Layout, HNodeLayout, VNodeLayout, emptyLeaf} from "./model"
+import {Layout, LeafLayout, LeafLayoutData, HNodeLayout, VNodeLayout, emptyLeaf} from "./model"
 import {ReactComponent as IconTrash} from "./icon-trash.svg"
 
 import classes from "./layout.module.scss"
@@ -63,7 +64,7 @@ const View: FC<ViewProps> = props => {
       {(() => {
         switch (layout.type) {
           case "leaf": {
-            return <NoSplitView {...props} />
+            return <NoSplitView {...props} layout={layout} />
           }
 
           case "v-node": {
@@ -82,8 +83,11 @@ const View: FC<ViewProps> = props => {
   )
 }
 
-const NoSplitView: FC<ViewProps> = props => {
+const NoSplitView: FC<ViewProps<LeafLayout>> = props => {
   const {layout, sendMsg} = props
+  const [draggedOver, setDraggedOver] = useState(false)
+  const [lock, setLock] = useState(true)
+  const {t} = useTranslation()
 
   function grab(pos: Position) {
     return () => {
@@ -104,9 +108,64 @@ const NoSplitView: FC<ViewProps> = props => {
     sendMsg({type: "delete-view", layoutId: layout.id})
   }
 
+  function drop(evt: React.DragEvent<HTMLImageElement>) {
+    evt.preventDefault()
+    setLock(true)
+    setDraggedOver(false)
+    const type = evt.dataTransfer.getData("type") as LeafLayoutData["type"]
+    const url = evt.dataTransfer.getData("url")
+    sendMsg({type: "update-layout", layout: {...layout, data: {type, url}}})
+  }
+
+  function dragOver(evt: React.DragEvent<HTMLImageElement>) {
+    evt.preventDefault()
+    setDraggedOver(true)
+  }
+
+  function dragLeave(evt: React.DragEvent<HTMLImageElement>) {
+    evt.preventDefault()
+    setDraggedOver(false)
+  }
+
+  function startDragging(url: string) {
+    return (evt: React.DragEvent<HTMLImageElement>) => {
+      evt.dataTransfer.setData("type", "file")
+      evt.dataTransfer.setData("url", url)
+      setLock(false)
+    }
+  }
+
+  function stopDragging() {
+    if (!lock) sendMsg({type: "update-layout", layout: {...layout, data: null}})
+    setLock(true)
+  }
+
   return (
-    <div className={classes.view}>
-      <div>{layout.id}</div>
+    <div
+      className={cn(classes.view, {[classes.draggedOver]: draggedOver})}
+      onDragOver={dragOver}
+      onDragLeave={dragLeave}
+      onDrop={drop}
+    >
+      {(() => {
+        if (!layout.data) return <div>{t("no-content")}</div>
+        switch (layout.data.type) {
+          case "file":
+            return (
+              <img
+                draggable
+                height="100%"
+                src={layout.data.url}
+                alt=""
+                onDragStart={startDragging(layout.data.url)}
+                onDragEnd={stopDragging}
+              />
+            )
+
+          default:
+            return <div>{t("no-content")}</div>
+        }
+      })()}
       <button type="button" className={classes.handleTop} onMouseDown={grab("top")} />
       <button type="button" className={classes.handleRight} onMouseDown={grab("right")} />
       <button type="button" className={classes.handleBottom} onMouseDown={grab("bottom")} />
@@ -353,10 +412,10 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
 
   return (
     <>
-      <div className={classNames(classes.leftView, active)} style={{right: `${100 - val}%`}}>
+      <div className={cn(classes.leftView, active)} style={{right: `${100 - val}%`}}>
         <View {...props} layout={layout.left} sendMsg={handleMsg} />
       </div>
-      <div className={classNames(classes.rightView, active)} style={{left: `${val}%`}}>
+      <div className={cn(classes.rightView, active)} style={{left: `${val}%`}}>
         <View {...props} layout={layout.right} sendMsg={handleMsg} />
       </div>
       <div className={classes.vMagneticRuler} />
@@ -591,10 +650,10 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
 
   return (
     <>
-      <div className={classNames(classes.topView, active)} style={{bottom: `${100 - val}%`}}>
+      <div className={cn(classes.topView, active)} style={{bottom: `${100 - val}%`}}>
         <View {...props} layout={layout.top} sendMsg={handleMsg} />
       </div>
-      <div className={classNames(classes.bottomView, active)} style={{top: `${val}%`}}>
+      <div className={cn(classes.bottomView, active)} style={{top: `${val}%`}}>
         <View {...props} layout={layout.bottom} sendMsg={handleMsg} />
       </div>
       <div className={classes.hMagneticRuler} />

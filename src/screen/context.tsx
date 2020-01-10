@@ -11,7 +11,7 @@ const noop = async () => {}
 
 type ScreenState = {
   screens: Screen[]
-  update: (screen: PartialScreen) => Promise<void>
+  update: (screen: PartialScreen, merge?: boolean) => Promise<void>
   delete: (id: string) => Promise<void>
   groups: Group[]
   addGroup: (name: string) => Promise<void>
@@ -51,10 +51,10 @@ export const ScreenContextProvider: FC = ({children}) => {
     return () => unsubscribe()
   }, [t, auth])
 
-  async function update(screen: PartialScreen) {
+  async function update(screen: PartialScreen, merge = true) {
     try {
       if (!auth) return
-      await $screen.update(auth.uid, screen)
+      await $screen.update(auth.uid, screen, merge)
       toast.success(t("successfully-updated"))
     } catch (err) {
       toast.error(t(err.message))

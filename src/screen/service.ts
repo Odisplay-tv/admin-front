@@ -35,9 +35,9 @@ export function onConfigChange(userId: string, screenId: string, handler: Change
   })
 }
 
-export function update(userId: string, screen: PartialScreen) {
+export function update(userId: string, screen: PartialScreen, merge = true) {
   return firestore(`users/${userId}/screens`, screen.id).set(omit(["code"], screen), {
-    merge: true,
+    merge,
   })
 }
 
