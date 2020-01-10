@@ -4,6 +4,8 @@ import {toast} from "react-toastify"
 
 import Loader from "../async/loader"
 import $screen from "./service"
+import LayoutView from "./layout"
+import {Layout} from "./model"
 
 import classes from "./viewer.module.scss"
 
@@ -13,8 +15,11 @@ const Viewer: FC = () => {
   const code = localStorage.getItem("code") || null
   const userId = localStorage.getItem("userId") || null
   const screenId = localStorage.getItem("screenId") || null
-  const layout = JSON.parse(localStorage.getItem("layout") || "null")
   const [step, setStep] = useState<Step>("loading")
+  const [layout, setLayout] = useState<Layout | null>(
+    JSON.parse(localStorage.getItem("layout") || "null"),
+  )
+
   const transitions = useTransition(step, s => s, {
     from: {opacity: 0},
     enter: {opacity: 1},
@@ -26,6 +31,7 @@ const Viewer: FC = () => {
     localStorage.removeItem("userId")
     localStorage.removeItem("screenId")
     localStorage.removeItem("layout")
+    setLayout(null)
     setStep("loading")
   }
 
@@ -67,6 +73,7 @@ const Viewer: FC = () => {
           const unsubscribe = $screen.onConfigChange(userId, screenId, layout => {
             if (!layout) return resetPairing()
             localStorage.setItem("layout", JSON.stringify(layout))
+            setLayout(layout as Layout)
           })
 
           return () => unsubscribe()
@@ -88,7 +95,7 @@ const Viewer: FC = () => {
         return code
 
       case "rendering":
-        return "rendering!" + JSON.stringify(layout)
+        return layout ? <LayoutView layout={layout} readOnly /> : null
 
       default:
         return null

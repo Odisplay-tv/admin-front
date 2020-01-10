@@ -1,7 +1,7 @@
 import omit from "lodash/fp/omit"
 
 import firebase, {functions, firestore} from "../app/firebase"
-import {Screen, PartialScreen} from "./model"
+import {Screen, PartialScreen, emptyLeaf} from "./model"
 
 type ChangeHandler = (doc?: firebase.firestore.DocumentData) => void
 
@@ -30,8 +30,7 @@ export function onConfigChange(userId: string, screenId: string, handler: Change
   return firestore(`users/${userId}/screens`, screenId).onSnapshot(async snap => {
     const screen = snap.data()
     if (!screen) return handler()
-    if (!screen.layout) return handler()
-    return handler(screen.layout)
+    return handler(screen.layout || emptyLeaf())
   })
 }
 

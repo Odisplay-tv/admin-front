@@ -2,6 +2,7 @@ import React, {FC, useCallback, useEffect, useRef, useState} from "react"
 import {useTranslation} from "react-i18next"
 import cn from "classnames"
 import uuid from "uuid/v4"
+import noop from "lodash/fp/noop"
 
 import {Layout, LeafLayout, LeafLayoutData, HNodeLayout, VNodeLayout, emptyLeaf} from "./model"
 import {ReactComponent as IconTrash} from "./icon-trash.svg"
@@ -53,6 +54,7 @@ type ViewProps<L = Layout> = {
   layout: L
   resizedLayoutId: string | null
   sendMsg: (msg: Msg) => void
+  readOnly: boolean
 }
 
 const View: FC<ViewProps> = props => {
@@ -84,7 +86,7 @@ const View: FC<ViewProps> = props => {
 }
 
 const NoSplitView: FC<ViewProps<LeafLayout>> = props => {
-  const {layout, sendMsg} = props
+  const {layout, sendMsg, readOnly} = props
   const [draggedOver, setDraggedOver] = useState(false)
   const [lock, setLock] = useState(true)
   const {t} = useTranslation()
@@ -142,18 +144,21 @@ const NoSplitView: FC<ViewProps<LeafLayout>> = props => {
 
   return (
     <div
-      className={cn(classes.view, {[classes.draggedOver]: draggedOver})}
+      className={cn(classes.view, {
+        [classes.draggedOver]: draggedOver,
+        [classes.readOnly]: readOnly,
+      })}
       onDragOver={dragOver}
       onDragLeave={dragLeave}
       onDrop={drop}
     >
       {(() => {
-        if (!layout.data) return <div>{t("no-content")}</div>
+        if (!layout.data) return <div>{readOnly ? "" : t("no-content")}</div>
         switch (layout.data.type) {
           case "file":
             return (
               <img
-                draggable
+                draggable={!readOnly}
                 height="100%"
                 src={layout.data.url}
                 alt=""
@@ -163,16 +168,20 @@ const NoSplitView: FC<ViewProps<LeafLayout>> = props => {
             )
 
           default:
-            return <div>{t("no-content")}</div>
+            return <div>{readOnly ? "" : t("no-content")}</div>
         }
       })()}
-      <button type="button" className={classes.handleTop} onMouseDown={grab("top")} />
-      <button type="button" className={classes.handleRight} onMouseDown={grab("right")} />
-      <button type="button" className={classes.handleBottom} onMouseDown={grab("bottom")} />
-      <button type="button" className={classes.handleLeft} onMouseDown={grab("left")} />
-      <button type="button" className={classes.deleteView} onMouseDown={deleteView}>
-        <IconTrash />
-      </button>
+      {!readOnly && (
+        <>
+          <button type="button" className={classes.handleTop} onMouseDown={grab("top")} />
+          <button type="button" className={classes.handleRight} onMouseDown={grab("right")} />
+          <button type="button" className={classes.handleBottom} onMouseDown={grab("bottom")} />
+          <button type="button" className={classes.handleLeft} onMouseDown={grab("left")} />
+          <button type="button" className={classes.deleteView} onMouseDown={deleteView}>
+            <IconTrash />
+          </button>
+        </>
+      )}
     </div>
   )
 }
@@ -409,13 +418,14 @@ const VSplitView: FC<ViewProps<VNodeLayout>> = props => {
   }, [layout])
 
   const active = {[classes.active]: resizedLayoutId === layout.id}
+  const readOnly = {[classes.readOnly]: props.readOnly}
 
   return (
     <>
-      <div className={cn(classes.leftView, active)} style={{right: `${100 - val}%`}}>
+      <div className={cn(classes.leftView, active, readOnly)} style={{right: `${100 - val}%`}}>
         <View {...props} layout={layout.left} sendMsg={handleMsg} />
       </div>
-      <div className={cn(classes.rightView, active)} style={{left: `${val}%`}}>
+      <div className={cn(classes.rightView, active, readOnly)} style={{left: `${val}%`}}>
         <View {...props} layout={layout.right} sendMsg={handleMsg} />
       </div>
       <div className={classes.vMagneticRuler} />
@@ -647,13 +657,14 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
   }, [layout])
 
   const active = {[classes.active]: resizedLayoutId === layout.id}
+  const readOnly = {[classes.readOnly]: props.readOnly}
 
   return (
     <>
-      <div className={cn(classes.topView, active)} style={{bottom: `${100 - val}%`}}>
+      <div className={cn(classes.topView, active, readOnly)} style={{bottom: `${100 - val}%`}}>
         <View {...props} layout={layout.top} sendMsg={handleMsg} />
       </div>
-      <div className={cn(classes.bottomView, active)} style={{top: `${val}%`}}>
+      <div className={cn(classes.bottomView, active, readOnly)} style={{top: `${val}%`}}>
         <View {...props} layout={layout.bottom} sendMsg={handleMsg} />
       </div>
       <div className={classes.hMagneticRuler} />
@@ -663,11 +674,13 @@ const HSplitView: FC<ViewProps<HNodeLayout>> = props => {
 
 type ScreenLayoutProps = {
   layout?: Layout
-  onChange: (layout: Layout) => void
+  onChange?: (layout: Layout) => void
+  readOnly?: boolean
 }
 
 const ScreenLayout: FC<ScreenLayoutProps> = props => {
-  const {layout, onChange: setLayout} = props
+  const {layout, readOnly = false} = props
+  const setLayout = props.onChange || noop
   const frameRef = useRef<HTMLDivElement>(null)
   const [resizedLayoutId, setResizedLayoutId] = useState<string | null>(null)
 
@@ -761,7 +774,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
   }
 
   return (
-    <div className={classes.container}>
+    <div className={cn(classes.container, {[classes.readOnly]: readOnly})}>
       <div ref={frameRef} className={classes.content}>
         {layout && (
           <View
@@ -769,6 +782,7 @@ const ScreenLayout: FC<ScreenLayoutProps> = props => {
             resizedLayoutId={resizedLayoutId}
             layout={layout}
             sendMsg={sendMsg}
+            readOnly={readOnly}
           />
         )}
       </div>
