@@ -22,8 +22,7 @@
 .statusCol,
 .nameCol,
 .layoutCol,
-.settingsCol,
-.deleteCol {
+.actionsCol {
   border-bottom: 1px solid $white;
   font-size: 13px;
   font-weight: normal;
@@ -42,10 +41,10 @@
   text-align: left;
 }
 
-.settingsCol,
-.deleteCol {
-  button {
-    margin: 0 auto;
+.actionsCol {
+  div {
+    display: flex;
+    justify-content: space-between;
   }
 }
 

@@ -19,8 +19,7 @@
 .statusCol,
 .nameCol,
 .layoutCol,
-.settingsCol,
-.deleteCol {
+.actionsCol {
   font-size: 13px;
   font-weight: normal;
   min-height: 70px;
@@ -72,20 +71,12 @@
 .layoutCol {
   padding: 0;
   width: auto;
-
-  a {
-    @include button($green, $white);
-    font-size: 13px;
-    font-weight: normal;
-    margin: 0 auto;
-    padding: 7.5px 15px;
-  }
 }
 
-.settingsCol,
-.deleteCol {
-  button {
-    margin: 0 auto;
+.actionsCol {
+  div {
+    display: flex;
+    justify-content: space-between;
   }
 
   svg {

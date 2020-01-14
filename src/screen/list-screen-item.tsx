@@ -2,7 +2,7 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import classNames from "classnames"
 
-import Link from "../app/link"
+import Button from "../app/button"
 import {ReactComponent as IconSettings} from "./icon-settings.svg"
 import {ReactComponent as IconTrash} from "./icon-trash.svg"
 import {ReactComponent as IconLink} from "./icon-link.svg"
@@ -73,17 +73,19 @@ const ScreenListItem: FC<ScreenListItemProps> = props => {
       </td>
       <td className={classes.nameCol}>{screen.name}</td>
       <td className={classes.layoutCol}>
-        <Link to={`/screens/${screen.id}`}>{t("screen:add-content")}</Link>
+        <Button to={`/screens/${screen.id}`} size="sm">
+          {t("screen:add-content")}
+        </Button>
       </td>
-      <td className={classes.settingsCol}>
-        <button type="button">
-          <IconSettings />
-        </button>
-      </td>
-      <td className={classes.deleteCol}>
-        <button type="button" onClick={deleteScreen}>
-          <IconTrash />
-        </button>
+      <td className={classes.actionsCol}>
+        <div>
+          <button type="button">
+            <IconSettings />
+          </button>
+          <button type="button" onClick={deleteScreen}>
+            <IconTrash />
+          </button>
+        </div>
       </td>
     </tr>
   )

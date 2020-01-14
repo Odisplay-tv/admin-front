@@ -4,7 +4,7 @@
 .container {
   padding: 40px 50px;
 
-  @include media(md) {
+  @include media(lg) {
     padding: 15px;
   }
 }
@@ -14,7 +14,7 @@
   font-weight: normal;
   margin: 0 0 60px 0;
 
-  @include media(md) {
+  @include media(lg) {
     margin-bottom: 15px;
   }
 }
@@ -35,6 +35,7 @@
   background: $white;
   box-shadow: 0 0 16px rgba($black, 0.15);
   height: 0;
+  table-layout: fixed;
   width: 100%;
 }
 
@@ -43,14 +44,24 @@
 .statusHead,
 .nameHead,
 .layoutHead,
-.settingsHead,
-.deleteHead {
+.actionsHead {
   border-bottom: 1px solid rgba($gray51, 0.15);
   color: $gray6A;
   font-size: 13px;
   font-weight: normal;
   padding: 20px 15px;
+}
+
+.selectHead {
   width: 50px;
+}
+
+.linkHead {
+  width: 60px;
+}
+
+.statusHead {
+  width: 85px;
 }
 
 .nameHead {
@@ -60,6 +71,10 @@
 
 .layoutHead {
   width: auto;
+}
+
+.actionsHead {
+  width: 90px;
 }
 
 .emptyRow {

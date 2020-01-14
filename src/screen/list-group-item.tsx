@@ -72,15 +72,15 @@ const GroupListItem: FC<GroupListItemProps> = props => {
         </td>
         <td className={classes.nameCol}>{group.name}</td>
         <td className={classes.layoutCol} />
-        <td className={classes.settingsCol}>
-          <button type="button">
-            <IconSettings className={classes.icon} />
-          </button>
-        </td>
-        <td className={classes.deleteCol}>
-          <button type="button" onClick={deleteGroup}>
-            <IconTrash className={classes.icon} />
-          </button>
+        <td className={classes.actionsCol}>
+          <div>
+            <button type="button">
+              <IconSettings className={classes.icon} />
+            </button>
+            <button type="button" onClick={deleteGroup}>
+              <IconTrash className={classes.icon} />
+            </button>
+          </div>
         </td>
       </tr>
       {open && children}

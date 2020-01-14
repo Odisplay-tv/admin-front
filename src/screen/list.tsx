@@ -52,8 +52,7 @@ const ScreenList: FC = () => {
               <th className={classes.statusHead}>{t("connected")}</th>
               <th className={classes.nameHead}>{t("screen-name")}</th>
               <th className={classes.layoutHead}>{t("broadcasting")}</th>
-              <th className={classes.settingsHead}>{t("settings")}</th>
-              <th className={classes.deleteHead}>{t("delete")}</th>
+              <th className={classes.actionsHead}>{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -85,7 +84,7 @@ const ScreenList: FC = () => {
             ))}
             {screens.length === 0 && (
               <tr className={classes.emptyRow}>
-                <td className={classes.emptyCol} colSpan={7}>
+                <td className={classes.emptyCol} colSpan={6}>
                   <div>{t("screen:list-empty")}</div>
                 </td>
               </tr>
@@ -93,7 +92,7 @@ const ScreenList: FC = () => {
           </tbody>
           <tfoot>
             <tr>
-              <td className={classes.legend} colSpan={7}>
+              <td className={classes.legend} colSpan={6}>
                 <div>
                   <Status connected />
                   {t("connected")}
