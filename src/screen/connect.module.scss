@@ -4,7 +4,7 @@
 .container {
   padding: 40px 50px;
 
-  @include media(md) {
+  @include media(lg) {
     padding: 15px;
   }
 }
@@ -14,7 +14,7 @@
   font-weight: normal;
   margin: 0 0 60px 0;
 
-  @include media(md) {
+  @include media(lg) {
     margin-bottom: 15px;
   }
 }
@@ -22,7 +22,7 @@
 .content {
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 400px minmax(0, 1fr);
+  grid-template-columns: 550px auto;
 
   @include media(lg) {
     grid-auto-flow: row;
@@ -31,7 +31,7 @@
   }
 }
 
-.help {
+.contentHelp {
   background: $white;
   box-shadow: 0 0 16px rgba($black, 0.15);
   font-size: 16px;
@@ -63,7 +63,7 @@
   }
 }
 
-.code {
+.contentCode {
   align-self: start;
   background: $gray51;
   box-shadow: 0 0 16px rgba($black, 0.15);
@@ -85,8 +85,15 @@
     margin: 0;
   }
 
-  @include media(sm) {
+  @include media(lg) {
+    grid-row-gap: 25px;
+  }
+
+  @include media(md) {
     grid-row-gap: 15px;
+  }
+
+  @include media(sm) {
     padding: 15px;
   }
 }
@@ -144,7 +151,7 @@
   display: grid;
   grid-auto-columns: minmax(0, 1fr);
   grid-auto-flow: column;
-  grid-column-gap: 25px;
+  grid-column-gap: 15px;
 
   @include media(sm) {
     grid-column-gap: 5px;
@@ -155,9 +162,9 @@
   border: 3px solid transparent;
   border-radius: 10px;
   color: $black;
-  font-size: 100px;
-  max-height: 185px;
-  max-width: 115px;
+  font-size: 80px;
+  height: 150px;
+  max-width: 90px;
   padding: 5px 0;
   text-align: center;
   text-transform: uppercase;
@@ -171,19 +178,14 @@
 
   @include media(md) {
     font-size: 70px;
+    height: 120px;
+    max-width: 70px;
   }
 
   @include media(sm) {
-    font-size: 50px;
-  }
-}
-
-.submit {
-  @include button($green, $white);
-  padding: 10px 30px;
-
-  img {
-    margin-right: 20px;
+    font-size: 40px;
+    height: 80px;
+    max-width: 50px;
   }
 }
 

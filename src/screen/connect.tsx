@@ -4,10 +4,10 @@ import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
 import PinField from "react-pin-field"
 
-import Fade from "../app/fade"
+import {ReactComponent as IconDowload} from "../app/icon-save.svg"
+import Button from "../app/button"
 import Link from "../app/link"
 import useAsync from "../async/context"
-import Loader from "../async/loader"
 import {useAuthState} from "../auth/context"
 import $screen from "./service"
 
@@ -32,7 +32,7 @@ const ConnectScreen: FC = () => {
       toast.success(t("screen:successfully-paired"))
       history.push("/screens")
     } catch (err) {
-      toast.error(t(err.message))
+      toast.error(t("screen:" + err.message))
     }
 
     setLoading(false)
@@ -42,7 +42,30 @@ const ConnectScreen: FC = () => {
     <form className={classes.container} onSubmit={handleSubmit}>
       <h1 className={classes.title}>{t("screen:connect-title")}</h1>
       <div className={classes.content}>
-        <div className={classes.help}>
+        <div className={classes.contentCode}>
+          <h2>{t("screen:connect-code-title")}</h2>
+          <div className={classes.pinFieldContainer}>
+            <PinField
+              className={classes.pinField}
+              validate="abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789"
+              format={k => k.toUpperCase()}
+              onChange={setCode}
+            />
+          </div>
+          <div className={classes.screenNameLabel}>
+            <h3>{t("screen:connect-code-screen-name")}</h3>
+            <div>{t("screen:connect-code-screen-name-eg")}</div>
+          </div>
+          <div className={classes.screenNameInput}>
+            <input type="text" onChange={evt => setName(evt.target.value.trim())} />
+          </div>
+          <div>
+            <Button type="submit" prefix={IconDowload} disabled={!code || !name || loading}>
+              {t("connect")}
+            </Button>
+          </div>
+        </div>
+        <div className={classes.contentHelp}>
           <h2>{t("screen:connect-help-title")}</h2>
           <p dangerouslySetInnerHTML={{__html: t("screen:connect-help-step-1")}} />
           <div className={classes.platformsTitle}>{t("screen:connect-available-on")}</div>
@@ -70,34 +93,6 @@ const ConnectScreen: FC = () => {
             <Link className={classes.link} to="/">
               {t("screen:connect-help-link")}
             </Link>
-          </div>
-        </div>
-        <div className={classes.code}>
-          <h2>{t("screen:connect-code-title")}</h2>
-          <div className={classes.pinFieldContainer}>
-            <PinField
-              className={classes.pinField}
-              validate="abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789"
-              format={k => k.toUpperCase()}
-              onChange={setCode}
-            />
-          </div>
-          <div className={classes.screenNameLabel}>
-            <h3>{t("screen:connect-code-screen-name")}</h3>
-            <div>{t("screen:connect-code-screen-name-eg")}</div>
-          </div>
-          <div className={classes.screenNameInput}>
-            <input type="text" onChange={evt => setName(evt.target.value.trim())} />
-          </div>
-          <div>
-            <button className={classes.submit} type="submit" disabled={!code || !name || loading}>
-              <Fade
-                watch={loading}
-                onTrue={<Loader />}
-                onFalse={<img src="/images/icon-download.svg" alt="" />}
-              />
-              {t("connect")}
-            </button>
           </div>
         </div>
       </div>

@@ -1,6 +1,10 @@
 import React, {FC} from "react"
 import classNames from "classnames"
 
+import {useAsyncState} from "../async/context"
+import Loader from "../async/loader"
+import Fade from "./fade"
+
 import classes from "./button.module.scss"
 
 type HTMLButtonProps = Omit<
@@ -18,6 +22,7 @@ export type ButtonProps = HTMLButtonProps & {
 const Button: FC<ButtonProps> = props => {
   const {className, color, size, prefix, type = "button", ...buttonProps} = props
   const Prefix = prefix || null
+  const loading = useAsyncState()
 
   return (
     <button
@@ -30,7 +35,9 @@ const Button: FC<ButtonProps> = props => {
         props.className,
       )}
     >
-      {Prefix && <Prefix className={classes.icon} />}
+      {Prefix && (
+        <Fade watch={loading} onTrue={<Loader />} onFalse={<Prefix className={classes.icon} />} />
+      )}
       {props.children}
     </button>
   )
