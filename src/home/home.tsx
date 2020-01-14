@@ -1,11 +1,13 @@
 import React, {FC} from "react"
 import {useTranslation} from "react-i18next"
 
+import {useScreens} from "../screen/context"
 import Link from "../app/link"
 
 import classes from "./home.module.scss"
 
 const Home: FC = () => {
+  const {screens} = useScreens()
   const {t} = useTranslation(["global", "home"])
 
   return (
@@ -30,7 +32,7 @@ const Home: FC = () => {
 
       <Link className={classes.cardScreens} to="/screens">
         <div>
-          <strong>199</strong>
+          <strong>{screens.length}</strong>
           <h3 dangerouslySetInnerHTML={{__html: t("home:screen(s)")}} />
         </div>
       </Link>

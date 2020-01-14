@@ -36,14 +36,15 @@
   display: none;
   padding: 0 15px;
 
-  img {
-    height: 32px;
-    width: 32px;
-  }
-
   @include media(sm) {
     display: flex;
   }
+}
+
+.burgerBtn {
+  height: 32px;
+  margin-right: 10px;
+  width: 32px;
 }
 
 .account {
@@ -65,8 +66,8 @@
 
     img {
       align-self: center;
-      height: 24px;
-      width: 24px;
+      height: 20px;
+      width: 20px;
     }
   }
 }
@@ -136,7 +137,7 @@
   }
 
   img {
-    height: 24px;
-    width: 24px;
+    height: 20px;
+    width: 20px;
   }
 }

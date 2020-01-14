@@ -20,9 +20,10 @@ const Aside: FC<AsideProps> = props => {
   return (
     <aside className={classes.aside}>
       <div className={classes.burger}>
-        <button onClick={handleBurgerClick} type="button">
+        <button className={classes.burgerBtn} onClick={handleBurgerClick} type="button">
           <img src="/images/icon-burger.svg" alt="" />
         </button>
+        <img src="/images/logo.svg" alt="" width={60} />
       </div>
       <Link className={classes.account} to="/account">
         <img src="/images/icon-account.svg" alt="" />
