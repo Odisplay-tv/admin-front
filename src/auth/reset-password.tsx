@@ -4,8 +4,9 @@ import {useTranslation} from "react-i18next"
 import {animated} from "react-spring"
 import {toast} from "react-toastify"
 
-import Loader from "../async/loader"
+import {ReactComponent as IconArrowRight} from "../app/icon-arrow-right.svg"
 import useAsync from "../async/context"
+import Button from "../app/button"
 import Link from "../app/link"
 import useAuth from "./context"
 import $auth from "./service"
@@ -73,10 +74,15 @@ const ResetPassword: FC = () => {
               />
             </div>
 
-            <button className={classes.buttonDanger} type="submit" disabled={!email || loading}>
-              <span>{t("reset")}</span>
-              <Loader className={classes.loader} />
-            </button>
+            <Button
+              type="submit"
+              sufix={IconArrowRight}
+              color="red"
+              size="lg"
+              disabled={!email || loading}
+            >
+              {t("reset")}
+            </Button>
 
             <div>
               <Link className={classes.link} to="/login">

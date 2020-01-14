@@ -4,13 +4,14 @@ import {useTranslation} from "react-i18next"
 import {animated} from "react-spring"
 import {toast} from "react-toastify"
 
-import Loader from "../async/loader"
+import {ReactComponent as IconArrowRight} from "../app/icon-arrow-right.svg"
 import useAsync from "../async/context"
 import Link from "../app/link"
+import Button from "../app/button"
 import {AuthCredentials, defaultCredentials} from "./model"
 import useAuth from "./context"
 import $auth from "./service"
-import {useStepTranslation, usePerspective} from "./animations"
+import {useStepTranslation} from "./animations"
 
 import classes from "./auth.module.scss"
 
@@ -27,7 +28,6 @@ const Login: FC<RouteComponentProps> = props => {
   const [creds, setCreds] = useState(defaultCredentials)
   const [step, setStep] = useState<Step>("email")
   const auth = useAuth()
-  const perspective = usePerspective()
 
   useEffect(() => {
     if (auth.state.authenticated) {
@@ -46,9 +46,9 @@ const Login: FC<RouteComponentProps> = props => {
   }
 
   return (
-    <div onMouseMove={perspective.handleMouseMove} className={classes.container}>
+    <div className={classes.container}>
       <img className={classes.logo} src="/images/logo.svg" alt="" />
-      <animated.div className={classes.content} style={perspective.style}>
+      <animated.div className={classes.content}>
         <EmailStep
           creds={creds}
           step={step}
@@ -93,7 +93,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
       setLoading(true)
       await $auth.loginWithGoogle()
     } catch (err) {
-      toast.error(t(err.code))
+      toast.error(t("auth:" + err.code))
     }
 
     setLoading(false)
@@ -104,7 +104,7 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
       setLoading(true)
       await $auth.loginWithFacebook()
     } catch (err) {
-      toast.error(t(err.code))
+      toast.error(t("auth:" + err.code))
     }
 
     setLoading(false)
@@ -127,10 +127,9 @@ const EmailStep: FC<StepFormProps> = ({creds, step, nextStep}) => {
             />
           </div>
 
-          <button className={classes.buttonSuccess} type="submit" disabled={!email || loading}>
-            <span>{t("continue")}</span>
-            <Loader className={classes.loader} />
-          </button>
+          <Button sufix={IconArrowRight} type="submit" size="lg" disabled={!email || loading}>
+            {t("continue")}
+          </Button>
 
           <div>
             <Link className={classes.link} to="/register">
@@ -183,7 +182,7 @@ const PasswordStep: FC<StepFormProps> = ({creds, step, prevStep, nextStep}) => {
       setLoading(true)
       await nextStep(password)
     } catch (err) {
-      toast.error(t(err.code || err.message))
+      toast.error(t("auth:" + err.code || err.message))
       if (err.code === "auth/user-not-found") {
         prevStep()
       }
@@ -209,10 +208,9 @@ const PasswordStep: FC<StepFormProps> = ({creds, step, prevStep, nextStep}) => {
             />
           </div>
 
-          <button className={classes.buttonSuccess} type="submit" disabled={!password || loading}>
-            <span>{t("continue")}</span>
-            <Loader className={classes.loader} />
-          </button>
+          <Button type="submit" sufix={IconArrowRight} size="lg" disabled={!password || loading}>
+            {t("continue")}
+          </Button>
 
           <div>
             <Link

@@ -1,4 +1,5 @@
 @import "../app/theme.scss";
+@import "../app/media.scss";
 
 .container {
   align-items: center;
@@ -13,7 +14,11 @@
 }
 
 .logo {
-  width: 400px;
+  height: 110px;
+
+  @include media(lg) {
+    height: 70px;
+  }
 }
 
 .loader {
@@ -35,6 +40,11 @@
   overflow: hidden;
   padding: 80px 0;
   width: 550px;
+
+  @include media(lg) {
+    height: 500px;
+    width: 500px;
+  }
 }
 
 .form {
@@ -47,6 +57,10 @@
   grid-row-gap: 20px;
   justify-items: center;
   text-align: center;
+
+  @include media(lg) {
+    grid-row-gap: 10px;
+  }
 }
 
 @mixin form-item {
@@ -74,6 +88,10 @@
   font-size: 20px;
   font-size: 25px;
   font-weight: bold;
+
+  @include media(lg) {
+    font-size: 18px;
+  }
 }
 
 .input {
@@ -91,6 +109,12 @@
 
   &:focus {
     border-color: darken($yellow, 10%);
+  }
+
+  @include media(lg) {
+    font-size: 18px;
+    min-width: 200px;
+    padding: 8px;
   }
 }
 
@@ -139,12 +163,6 @@
     text-transform: uppercase;
     transform: translateY(50%);
   }
-}
-
-.buttonSuccess {
-  @include button($green, $white);
-  display: flex;
-  position: relative;
 }
 
 .buttonDanger {

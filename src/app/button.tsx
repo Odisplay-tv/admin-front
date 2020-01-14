@@ -16,8 +16,9 @@ type HTMLButtonProps = Omit<
 export type ButtonProps = HTMLButtonProps & {
   className?: string
   color?: "green" | "gray" | "red" | "transparent"
-  size?: "md" | "sm"
+  size?: "lg" | "md" | "sm"
   prefix?: FC<React.SVGProps<SVGSVGElement>>
+  sufix?: FC<React.SVGProps<SVGSVGElement>>
   to?: string
 }
 
@@ -30,8 +31,9 @@ function withLink(to: string): FC {
 }
 
 const Button: FC<ButtonProps> = props => {
-  const {className, color, size, prefix, type = "button", to, ...buttonProps} = props
+  const {className, color, size, prefix, sufix, type = "button", to, ...buttonProps} = props
   const Prefix = prefix || null
+  const Sufix = sufix || null
   const loading = useAsyncState()
   const Container = useMemo(() => (to ? withLink(to) : withFragment()), [to])
 
@@ -48,9 +50,20 @@ const Button: FC<ButtonProps> = props => {
         )}
       >
         {Prefix && (
-          <Fade watch={loading} onTrue={<Loader />} onFalse={<Prefix className={classes.icon} />} />
+          <Fade
+            watch={loading}
+            onTrue={<Loader className={classes.prefix} />}
+            onFalse={<Prefix className={classes.prefix} />}
+          />
         )}
         {props.children}
+        {Sufix && (
+          <Fade
+            watch={loading}
+            onTrue={<Loader className={classes.sufix} />}
+            onFalse={<Sufix className={classes.sufix} />}
+          />
+        )}
       </button>
     </Container>
   )
