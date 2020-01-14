@@ -45,7 +45,7 @@
 .nameHead,
 .layoutHead,
 .actionsHead {
-  border-bottom: 1px solid rgba($gray51, 0.15);
+  border-bottom: 1px solid $grayE8;
   color: $gray6A;
   font-size: 13px;
   font-weight: normal;
@@ -146,6 +146,7 @@
 }
 
 .legend {
+  border-top: 1px solid $grayE8;
   color: $gray6A;
   font-size: 13px;
   padding: 10px 15px;

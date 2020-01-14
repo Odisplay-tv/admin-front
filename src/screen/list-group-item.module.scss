@@ -6,15 +6,31 @@
   color: $white;
   cursor: pointer;
   min-height: 70px;
-  transition: 150ms background;
+  transition-duration: 150ms;
+  transition-property: background, color, fill;
+  user-select: none;
 
   > * {
     padding: 10px 15px;
   }
 }
 
+.defaultRow {
+  background: $grayE8;
+  color: $gray6A;
+
+  svg {
+    fill: $gray6A;
+  }
+}
+
 .draggedOver {
   background: $green;
+  color: $white;
+
+  svg {
+    fill: $white;
+  }
 }
 
 .selectCol,
@@ -23,7 +39,7 @@
 .nameCol,
 .layoutCol,
 .actionsCol {
-  border-bottom: 1px solid $white;
+  border-bottom: 1px solid $grayE8;
   font-size: 13px;
   font-weight: normal;
   min-height: 70px;
@@ -49,7 +65,7 @@
 }
 
 .selectCol {
-  img {
+  svg {
     display: inherit;
     height: 30px;
     margin: 0 auto;
@@ -64,7 +80,7 @@
 }
 
 .statusCol {
-  img {
+  svg {
     display: inherit;
     height: 30px;
     margin: 0 auto;

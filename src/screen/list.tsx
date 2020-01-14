@@ -29,9 +29,9 @@ const ScreenList: FC = () => {
     setDraggedScreen(null)
   }
 
-  async function handleDrop(group: Group) {
+  async function handleDrop(group: Group | null) {
     if (draggedScreen) {
-      await $screen.update({...draggedScreen, groupId: group.id})
+      await $screen.update({...draggedScreen, groupId: group ? group.id : null})
       setDraggedScreen(null)
     }
   }
@@ -56,17 +56,19 @@ const ScreenList: FC = () => {
             </tr>
           </thead>
           <tbody>
-            {screens
-              .filter(s => !groups.map(g => g.id).includes(s.groupId || ""))
-              .map(screen => (
-                <ScreenListItem
-                  key={screen.id}
-                  screen={screen}
-                  preview={dragPreviewRef}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                />
-              ))}
+            <GroupListItem group={null} onDrop={handleDrop}>
+              {screens
+                .filter(s => !groups.map(g => g.id).includes(s.groupId || ""))
+                .map(screen => (
+                  <ScreenListItem
+                    key={screen.id}
+                    screen={screen}
+                    preview={dragPreviewRef}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                  />
+                ))}
+            </GroupListItem>
             {groups.map(group => (
               <GroupListItem key={group.id} group={group} onDrop={handleDrop}>
                 {screens
