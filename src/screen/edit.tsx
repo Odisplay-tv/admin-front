@@ -43,13 +43,18 @@ const ScreenEdit: FC = () => {
   const defaultLayout = getOr(undefined, "layout", screen)
   const [layout, setLayout] = useState(defaultLayout)
   const [activeView, setActiveView] = useState<View | undefined>()
+  const [name, setName] = useState("")
   const {t} = useTranslation(["default", "screen"])
 
   function save(evt: React.FormEvent) {
     evt.preventDefault()
     if (!screen) return
     if (!layout) return
-    $screen.update({...screen, layout}, false)
+    $screen.update({...screen, name: name.trim(), layout}, false)
+  }
+
+  function changeName(evt: React.ChangeEvent<HTMLInputElement>) {
+    setName(evt.target.value)
   }
 
   useEffect(() => {
@@ -57,6 +62,12 @@ const ScreenEdit: FC = () => {
       setLayout(defaultLayout)
     }
   }, [defaultLayout])
+
+  useEffect(() => {
+    if (screen) {
+      setName(screen.name)
+    }
+  }, [screen])
 
   const AsideHeaderBtn: FC<{view?: View}> = ({view}) => {
     const className = cn(classes.asideHeaderBtn, {[classes.active]: view === activeView})
@@ -127,7 +138,8 @@ const ScreenEdit: FC = () => {
       <form className={classes.config} onSubmit={save}>
         <div className={classes.left}>
           <div>
-            {t("screen:name")} <input type="text" className={classes.nameInput} />
+            {t("screen:name")}{" "}
+            <input type="text" className={classes.nameInput} value={name} onChange={changeName} />
           </div>
           <div>
             {t("screen:status")} <input type="text" className={classes.statusInput} />
