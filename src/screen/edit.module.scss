@@ -1,6 +1,144 @@
 @import "../app/theme.scss";
 @import "../app/media.scss";
 
+.container {
+  display: grid;
+  grid-row-gap: 50px;
+  grid-template-columns: auto 20px 90px 400px;
+  grid-template-rows: repeat(2, min-content);
+  height: 100%;
+
+  @include media(lg) {
+    grid-gap: 15px;
+    grid-template-columns: auto 200px;
+  }
+
+  @include media(md) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(3, min-content);
+    height: auto;
+    padding: 15px;
+  }
+}
+
+.title {
+  font-size: 26px;
+  font-weight: normal;
+  margin: 40px 0 60px 50px;
+
+  @include media(lg) {
+    margin: 0 0 15px 0;
+  }
+}
+
+.layout {
+  margin-left: 50px;
+  padding-top: 56.25%; // 16:9 ratio
+  position: relative;
+
+  @include media(lg) {
+    margin-left: 15px;
+  }
+
+  @include media(md) {
+    margin: 0;
+  }
+}
+
+.config {
+  background: $white;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  display: grid;
+  grid-column: 1;
+  grid-column-gap: 30px;
+  grid-row: 2;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 50px 50px;
+  padding: 30px;
+
+  @include media(lg) {
+    margin: 0 0 15px 15px;
+  }
+
+  @include media(md) {
+    grid-row: 3;
+    margin: 0;
+  }
+}
+
+.dragArrow {
+  align-self: center;
+  fill: $black;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  height: 20px;
+  margin-bottom: 100px;
+  transform: rotateZ(90deg);
+  width: 20px;
+
+  @include media(lg) {
+    display: none;
+  }
+}
+
+.dragMsg {
+  align-self: center;
+  font-size: 16px;
+  font-weight: 200;
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  margin: 0 20px 0 0;
+  margin-bottom: 100px;
+  text-align: center;
+
+  @include media(lg) {
+    display: none;
+  }
+}
+
+.aside {
+  background: $white;
+  bottom: 0;
+  box-shadow: 0 0 16px rgba($black, 0.15);
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  height: 100%;
+  position: fixed;
+  right: 0;
+  top: 50px;
+  width: 400px;
+
+  &::before {
+    border-bottom: 14px solid transparent;
+    border-right: 14px solid $white;
+    border-top: 14px solid transparent;
+    content: "";
+    height: 0;
+    position: absolute;
+    right: 100%;
+    top: calc(50% - 64px);
+    width: 0;
+  }
+
+  @include media(lg) {
+    grid-column: 2;
+    width: 200px;
+  }
+
+  @include media(md) {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    position: relative;
+    top: 0;
+    width: auto;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
 @mixin input {
   background: $white;
   border: none;
@@ -59,33 +197,8 @@
   margin: 10px 0;
 }
 
-.config {
-  background: $white;
-  box-shadow: 0 0 16px rgba($black, 0.15);
-  display: grid;
-  grid-column-gap: 30px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: 30px;
-}
-
 .button {
   margin: 5px;
-}
-
-.layout {
-  margin-bottom: 30px;
-  padding-top: 56.25%; // 16:9 ratio
-  position: relative;
-}
-
-.title {
-  font-size: 26px;
-  font-weight: normal;
-  margin: 0 0 60px 0;
-
-  @include media(md) {
-    margin-bottom: 15px;
-  }
 }
 
 .asideContentBtn {
@@ -120,6 +233,10 @@
       color: $white;
     }
   }
+
+  @include media(lg) {
+    height: 120px;
+  }
 }
 
 .asideHome {
@@ -128,6 +245,11 @@
   grid-gap: 3px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
+
+  @include media(lg) {
+    grid-gap: 1px;
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .asideFile {
@@ -136,6 +258,10 @@
 
 .asideContent {
   padding: 60px 20px 20px 20px;
+
+  @include media(lg) {
+    padding: 10px;
+  }
 }
 
 .asideHeader {
@@ -166,6 +292,15 @@
     right: 100%;
     width: 20px;
   }
+
+  @include media(md) {
+    box-shadow: 0 0 16px rgba($black, 0.15);
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
 }
 
 .asideHeaderBtn {
@@ -191,54 +326,10 @@
     height: 25px;
     width: auto;
   }
-}
 
-.aside {
-  background: $white;
-  box-shadow: 0 0 16px rgba($black, 0.15);
-  position: relative;
-
-  &::before {
-    border-bottom: 14px solid transparent;
-    border-right: 14px solid $white;
-    border-top: 14px solid transparent;
-    content: "";
-    height: 0;
-    position: absolute;
-    right: 100%;
-    top: calc(50% - 64px);
-    width: 0;
+  @include media(lg) {
+    svg {
+      height: 20px;
+    }
   }
-}
-
-.dragArrow {
-  align-self: center;
-  fill: $black;
-  height: 20px;
-  margin-bottom: 100px;
-  transform: rotateZ(90deg);
-  width: 20px;
-}
-
-.dragMsg {
-  align-self: center;
-  font-size: 16px;
-  font-weight: 200;
-  margin: 0 20px 0 0;
-  margin-bottom: 100px;
-  text-align: center;
-}
-
-.content {
-  padding: 40px 0 40px 50px;
-
-  @include media(md) {
-    padding: 15px;
-  }
-}
-
-.container {
-  display: grid;
-  grid-template-columns: auto 20px 90px 400px;
-  height: 100%;
 }

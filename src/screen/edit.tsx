@@ -105,53 +105,53 @@ const ScreenEdit: FC = () => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.content}>
+      <div>
         <h1 className={classes.title}>{t("screen:edit-title")}</h1>
         <div className={classes.layout}>
           <LayoutView layout={layout} onChange={setLayout} />
         </div>
-        <form className={classes.config} onSubmit={save}>
-          <div className={classes.left}>
-            <div>
-              {t("screen:name")} <input type="text" className={classes.nameInput} />
-            </div>
-            <div>
-              {t("screen:status")} <input type="text" className={classes.statusInput} />
-            </div>
-            <div>
-              {t("screen:orientation")} <input type="text" className={classes.orientationInput} />
-            </div>
-            <div>
-              {t("screen:layout")} <input type="text" className={classes.layoutInput} />
-            </div>
-          </div>
-          <div className={classes.right}>
-            <div className={classes.topActions}>
-              <Button className={classes.button} prefix={IconPreview} color="gray">
-                {t("preview")}
-              </Button>
-              <Button type="submit" className={classes.button} prefix={IconSave} color="green">
-                {t("save")}
-              </Button>
-            </div>
-            <div className={classes.desc}>{t("screen:platform-type")} Android</div>
-            <div className={classes.desc}>{t("screen:connected-at")} 16 octobre 2019</div>
-            <div className={classes.bottomActions}>
-              <Button
-                className={classes.button}
-                prefix={IconSave}
-                color="transparent"
-                onClick={() => setLayout(emptyLeaf())}
-              >
-                {t("reset")}
-              </Button>
-              <Button className={classes.button} prefix={IconTrash} color="red">
-                {t("delete")}
-              </Button>
-            </div>
-          </div>
-        </form>
       </div>
+      <form className={classes.config} onSubmit={save}>
+        <div className={classes.left}>
+          <div>
+            {t("screen:name")} <input type="text" className={classes.nameInput} />
+          </div>
+          <div>
+            {t("screen:status")} <input type="text" className={classes.statusInput} />
+          </div>
+          <div>
+            {t("screen:orientation")} <input type="text" className={classes.orientationInput} />
+          </div>
+          <div>
+            {t("screen:layout")} <input type="text" className={classes.layoutInput} />
+          </div>
+        </div>
+        <div className={classes.right}>
+          <div className={classes.topActions}>
+            <Button className={classes.button} prefix={IconPreview} color="gray">
+              {t("preview")}
+            </Button>
+            <Button type="submit" className={classes.button} prefix={IconSave} color="green">
+              {t("save")}
+            </Button>
+          </div>
+          <div className={classes.desc}>{t("screen:platform-type")} Android</div>
+          <div className={classes.desc}>{t("screen:connected-at")} 16 octobre 2019</div>
+          <div className={classes.bottomActions}>
+            <Button
+              className={classes.button}
+              prefix={IconSave}
+              color="transparent"
+              onClick={() => setLayout(emptyLeaf())}
+            >
+              {t("reset")}
+            </Button>
+            <Button className={classes.button} prefix={IconTrash} color="red">
+              {t("delete")}
+            </Button>
+          </div>
+        </div>
+      </form>
       <IconArrowLeft className={classes.dragArrow} />
       <span
         className={classes.dragMsg}
