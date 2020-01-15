@@ -69,13 +69,18 @@ export const ScreenContextProvider: FC = ({children}) => {
   }
 
   async function _delete(id: string) {
+    if (loading) return
+    if (!auth) return
+    setLoading(true)
+
     try {
-      if (!auth) return
       await $screen.delete(auth.uid, id)
       toast.success(t("successfully-deleted"))
     } catch (err) {
       toast.error(t(err.message))
     }
+
+    setLoading(false)
   }
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from "react"
-import {useRouteMatch} from "react-router-dom"
+import {useHistory, useRouteMatch} from "react-router-dom"
 import {useTranslation} from "react-i18next"
 import cn from "classnames"
 import qs from "query-string"
@@ -35,6 +35,7 @@ const icons: {[V in View]: JSX.Element} = {
 }
 
 const ScreenEdit: FC = () => {
+  const history = useHistory()
   const {id} = useRouteMatch<{id: string}>().params
   const {user} = useAuthState()
   const {screens, ...$screen} = useScreens()
@@ -103,6 +104,15 @@ const ScreenEdit: FC = () => {
     }
   }
 
+  async function deleteScreen(evt: React.MouseEvent<HTMLButtonElement>) {
+    evt.preventDefault()
+
+    if (screen && window.confirm(t("screen:confirm-deletion"))) {
+      await $screen.delete(screen.id)
+      history.push("/screens")
+    }
+  }
+
   const userId = getOr("", "id", user)
   const screenId = getOr("", "id", screen)
 
@@ -154,7 +164,12 @@ const ScreenEdit: FC = () => {
             >
               {t("reset")}
             </Button>
-            <Button className={classes.button} prefix={IconTrash} color="red">
+            <Button
+              className={classes.button}
+              prefix={IconTrash}
+              color="red"
+              onClick={deleteScreen}
+            >
               {t("delete")}
             </Button>
           </div>
