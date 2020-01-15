@@ -45,6 +45,7 @@
 .nameHead,
 .layoutHead,
 .actionsHead {
+  background: $white;
   border-bottom: 1px solid $grayE8;
   color: $gray6A;
   font-size: 13px;
@@ -119,6 +120,7 @@
   @include card-base;
   background: $gray6A;
   color: $white;
+  font-size: 16px;
   padding: 15px;
 
   img {

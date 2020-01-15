@@ -21,8 +21,8 @@
 
 .content {
   display: grid;
-  grid-gap: 20px;
-  grid-template-columns: 550px auto;
+  grid-gap: 25px;
+  grid-template-columns: minmax(500px, auto) 350px;
 
   @include media(lg) {
     grid-auto-flow: row;
@@ -163,8 +163,8 @@
   border-radius: 10px;
   color: $black;
   font-size: 80px;
-  height: 150px;
-  max-width: 90px;
+  height: 180px;
+  max-width: 110px;
   padding: 5px 0;
   text-align: center;
   text-transform: uppercase;

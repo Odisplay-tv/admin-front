@@ -60,7 +60,12 @@ const ConnectScreen: FC = () => {
             <input type="text" onChange={evt => setName(evt.target.value.trim())} />
           </div>
           <div>
-            <Button type="submit" prefix={IconDowload} disabled={!code || !name || loading}>
+            <Button
+              type="submit"
+              size="lg"
+              prefix={IconDowload}
+              disabled={!code || !name || loading}
+            >
               {t("connect")}
             </Button>
           </div>

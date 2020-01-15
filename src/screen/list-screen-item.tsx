@@ -2,6 +2,7 @@ import React, {FC, useState} from "react"
 import {useTranslation} from "react-i18next"
 import classNames from "classnames"
 
+import Link from "../app/link"
 import Button from "../app/button"
 import {ReactComponent as IconSettings} from "./icon-settings.svg"
 import {ReactComponent as IconTrash} from "./icon-trash.svg"
@@ -48,7 +49,6 @@ const ScreenListItem: FC<ScreenListItemProps> = props => {
 
   return (
     <tr
-      key={screen.id}
       className={classNames(classes.row, {[classes.dragging]: dragging})}
       draggable
       onDragStart={handleDragStart}
@@ -79,9 +79,9 @@ const ScreenListItem: FC<ScreenListItemProps> = props => {
       </td>
       <td className={classes.actionsCol}>
         <div>
-          <button type="button">
+          <Link className={classes.icon} to={`/screens/${screen.id}`}>
             <IconSettings />
-          </button>
+          </Link>
           <button type="button" onClick={deleteScreen}>
             <IconTrash />
           </button>

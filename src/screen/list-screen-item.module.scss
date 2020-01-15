@@ -2,6 +2,7 @@
 @import "../app/media.scss";
 
 .row {
+  background: $white;
   cursor: pointer;
   min-height: 70px;
   opacity: 1;
@@ -84,4 +85,8 @@
     fill: $gray6A;
     width: 20px;
   }
+}
+
+.icon {
+  display: inherit;
 }
