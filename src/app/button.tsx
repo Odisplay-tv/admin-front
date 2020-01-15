@@ -31,7 +31,18 @@ function withLink(to: string): FC {
 }
 
 const Button: FC<ButtonProps> = props => {
-  const {className, color, size, prefix, sufix, type = "button", to, ...buttonProps} = props
+  const {
+    className,
+    color,
+    size,
+    prefix,
+    sufix,
+    type = "button",
+    to,
+    disabled,
+    ...buttonProps
+  } = props
+
   const Prefix = prefix || null
   const Sufix = sufix || null
   const loading = useAsyncState()
@@ -41,6 +52,7 @@ const Button: FC<ButtonProps> = props => {
     <Container>
       <button
         type={type}
+        disabled={disabled || loading}
         {...buttonProps}
         className={classNames(
           classes.button,

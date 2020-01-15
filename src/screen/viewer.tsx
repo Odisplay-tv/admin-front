@@ -1,6 +1,7 @@
 import React, {FC, useEffect, useState} from "react"
 import {animated, useTransition} from "react-spring"
 import {toast} from "react-toastify"
+import qs from "query-string"
 
 import Loader from "../async/loader"
 import $screen from "./service"
@@ -12,10 +13,15 @@ import classes from "./viewer.module.scss"
 type Step = "loading" | "pairing" | "rendering"
 
 const Viewer: FC = () => {
+  const {query} = qs.parseUrl(window.location.href)
+  const qsUserId = query.userId ? String(query.userId) : null
+  const qsScreenId = query.screenId ? String(query.screenId) : null
+
   const code = localStorage.getItem("code") || null
-  const userId = localStorage.getItem("userId") || null
-  const screenId = localStorage.getItem("screenId") || null
-  const [step, setStep] = useState<Step>("loading")
+  const userId = qsUserId || localStorage.getItem("userId") || null
+  const screenId = qsScreenId || localStorage.getItem("screenId") || null
+
+  const [step, setStep] = useState<Step>(userId && screenId ? "rendering" : "loading")
   const [layout, setLayout] = useState<Layout | null>(
     JSON.parse(localStorage.getItem("layout") || "null"),
   )
@@ -38,20 +44,24 @@ const Viewer: FC = () => {
   useEffect(() => {
     switch (step) {
       case "loading": {
-        $screen
-          .generatePairingCode()
-          .then(({code}) => {
-            localStorage.setItem("code", code)
-            setStep("pairing")
-          })
-          .catch(err => {
-            toast.error(err.message)
-          })
+        if (userId && screenId) {
+          setStep("rendering")
+        } else {
+          $screen
+            .generatePairingCode()
+            .then(({code}) => {
+              localStorage.setItem("code", code)
+              setStep("pairing")
+            })
+            .catch(err => {
+              toast.error(err.message)
+            })
+        }
         break
       }
 
       case "pairing": {
-        if (code && userId) {
+        if (userId && screenId) {
           setStep("rendering")
         } else if (code) {
           const unsubscribe = $screen.onPairingChange(code, pairing => {

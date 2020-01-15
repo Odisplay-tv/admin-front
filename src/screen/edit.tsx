@@ -2,6 +2,7 @@ import React, {FC, useEffect, useState} from "react"
 import {useRouteMatch} from "react-router-dom"
 import {useTranslation} from "react-i18next"
 import cn from "classnames"
+import qs from "query-string"
 import find from "lodash/fp/find"
 import getOr from "lodash/fp/getOr"
 
@@ -45,10 +46,9 @@ const ScreenEdit: FC = () => {
 
   function save(evt: React.FormEvent) {
     evt.preventDefault()
-
-    if (screen && layout) {
-      $screen.update({...screen, layout}, false)
-    }
+    if (!screen) return
+    if (!layout) return
+    $screen.update({...screen, layout}, false)
   }
 
   useEffect(() => {
@@ -103,6 +103,9 @@ const ScreenEdit: FC = () => {
     }
   }
 
+  const userId = getOr("", "id", user)
+  const screenId = getOr("", "id", screen)
+
   return (
     <div className={classes.container}>
       <div>
@@ -128,7 +131,12 @@ const ScreenEdit: FC = () => {
         </div>
         <div className={classes.right}>
           <div className={classes.topActions}>
-            <Button className={classes.button} prefix={IconPreview} color="gray">
+            <Button
+              className={classes.button}
+              to={window.location.origin + "/viewer?" + qs.stringify({userId, screenId})}
+              prefix={IconPreview}
+              color="gray"
+            >
               {t("preview")}
             </Button>
             <Button type="submit" className={classes.button} prefix={IconSave} color="green">

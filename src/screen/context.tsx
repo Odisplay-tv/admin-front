@@ -2,6 +2,7 @@ import React, {FC, createContext, useContext, useEffect, useState} from "react"
 import {useTranslation} from "react-i18next"
 import {toast} from "react-toastify"
 
+import useAsync from "../async/context"
 import {useAuthState} from "../auth/context"
 import {firestore} from "../app/firebase"
 import {Screen, PartialScreen, Group, emptyScreen, emptyGroup} from "./model"
@@ -31,6 +32,7 @@ const ScreenContext = createContext<ScreenState>(defaultState)
 
 export const ScreenContextProvider: FC = ({children}) => {
   const {auth} = useAuthState()
+  const {loading, setLoading} = useAsync()
   const [screens, setScreens] = useState<Screen[]>([])
   const [groups, setGroups] = useState<Group[]>([])
   const {t} = useTranslation(["screen"])
@@ -52,13 +54,18 @@ export const ScreenContextProvider: FC = ({children}) => {
   }, [t, auth])
 
   async function update(screen: PartialScreen, merge = true) {
+    if (loading) return
+    if (!auth) return
+    setLoading(true)
+
     try {
-      if (!auth) return
       await $screen.update(auth.uid, screen, merge)
       toast.success(t("successfully-updated"))
     } catch (err) {
       toast.error(t(err.message))
     }
+
+    setLoading(false)
   }
 
   async function _delete(id: string) {
