@@ -33,6 +33,7 @@ export type Screen = {
   id: string
   code: string
   name: string
+  orientation: "H" | "V"
   groupId: string | null
   layout: Layout
 }
@@ -52,6 +53,7 @@ export const emptyScreen: Screen = {
   id: "",
   code: "",
   name: "",
+  orientation: "H",
   groupId: null,
   layout: emptyLeaf(),
 }

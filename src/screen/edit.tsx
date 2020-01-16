@@ -41,6 +41,8 @@ const ScreenEdit: FC = () => {
   const {screens, ...$screen} = useScreens()
   const screen = find({id}, screens)
   const defaultLayout = getOr(undefined, "layout", screen)
+  const [orientation, setOrientation] = useState<"H" | "V">("H")
+
   const [layout, setLayout] = useState(defaultLayout)
   const [activeView, setActiveView] = useState<View | undefined>()
   const [name, setName] = useState("")
@@ -50,11 +52,15 @@ const ScreenEdit: FC = () => {
     evt.preventDefault()
     if (!screen) return
     if (!layout) return
-    $screen.update({...screen, name: name.trim(), layout}, false)
+    $screen.update({...screen, name: name.trim(), orientation, layout}, false)
   }
 
   function changeName(evt: React.ChangeEvent<HTMLInputElement>) {
     setName(evt.target.value)
+  }
+
+  function changeOrientation(evt: React.ChangeEvent<HTMLSelectElement>) {
+    setOrientation(evt.target.value as "H" | "V")
   }
 
   useEffect(() => {
@@ -66,6 +72,7 @@ const ScreenEdit: FC = () => {
   useEffect(() => {
     if (screen) {
       setName(screen.name)
+      setOrientation(screen.orientation)
     }
   }, [screen])
 
@@ -131,8 +138,13 @@ const ScreenEdit: FC = () => {
     <div className={classes.container}>
       <div>
         <h1 className={classes.title}>{t("screen:edit-title")}</h1>
-        <div className={classes.layout}>
-          <LayoutView layout={layout} onChange={setLayout} />
+        <div className={classes[orientation === "H" ? "layoutH" : "layoutV"]}>
+          <div
+            className={classes.layout}
+            style={{paddingTop: orientation === "H" ? "60%" : "140%"}}
+          >
+            <LayoutView layout={layout} onChange={setLayout} />
+          </div>
         </div>
       </div>
       <form className={classes.config} onSubmit={save}>
@@ -145,7 +157,15 @@ const ScreenEdit: FC = () => {
             {t("screen:status")} <input type="text" className={classes.statusInput} />
           </div>
           <div>
-            {t("screen:orientation")} <input type="text" className={classes.orientationInput} />
+            {t("screen:orientation")}
+            <select
+              className={classes.orientationInput}
+              value={orientation}
+              onChange={changeOrientation}
+            >
+              <option value="V">{t("vertical")}</option>
+              <option value="H">{t("horizontal")}</option>
+            </select>
           </div>
           <div>
             {t("screen:layout")} <input type="text" className={classes.layoutInput} />
