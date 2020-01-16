@@ -1,5 +1,7 @@
 import uuid from "uuid/v4"
 
+export type Orientation = "H" | "V"
+
 export type Layout = LeafLayout | VNodeLayout | HNodeLayout
 
 export type LeafLayoutData = {

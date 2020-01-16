@@ -1,7 +1,7 @@
 import omit from "lodash/fp/omit"
 
 import firebase, {functions, firestore} from "../app/firebase"
-import {Screen, PartialScreen, emptyLeaf} from "./model"
+import {Screen, PartialScreen} from "./model"
 
 type ChangeHandler = (doc?: firebase.firestore.DocumentData) => void
 
@@ -26,11 +26,11 @@ export function onPairingChange(code: string, handler: ChangeHandler) {
   })
 }
 
-export function onConfigChange(userId: string, screenId: string, handler: ChangeHandler) {
+export function onScreenChange(userId: string, screenId: string, handler: ChangeHandler) {
   return firestore(`users/${userId}/screens`, screenId).onSnapshot(async snap => {
     const screen = snap.data()
     if (!screen) return handler()
-    return handler(screen.layout || emptyLeaf())
+    return handler(screen)
   })
 }
 
@@ -58,7 +58,7 @@ export default {
   generatePairingCode,
   connectScreen,
   onPairingChange,
-  onConfigChange,
+  onScreenChange,
   update,
   delete: _delete,
   addGroup,

@@ -16,6 +16,12 @@
   }
 }
 
+.verticalOrientation {
+  justify-self: start;
+  transform: rotateZ(90deg) translateY(-100%);
+  transform-origin: 0 0;
+}
+
 .loader {
   height: 100px;
   width: 100px;
